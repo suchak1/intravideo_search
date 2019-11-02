@@ -6,7 +6,7 @@
 Follow these one-time steps to get started.
 
 1. Fork the original repo
-![Fork](fork.PNG)
+![Fork](pics/fork.PNG)
 
 2. Clone in the repo (replacing `USERNAME` with yours):
 ```
@@ -105,3 +105,20 @@ In order to contribute to the repo, one should follow this consistent step-by-st
 
 
 ## Notes
+
+Atom or VSCode is recommended as an IDE.
+
+Again, to pull in recent changes from the remote master branch the command is
+
+```
+git pull upstream master
+````
+
+Sometimes, recent changes in remote master will affect your work. In this case, you will run into merge conflicts errors that must be resolved. This is because git doesn't know whether you want to keep the changes in your code or replace them with someone else's (latest code from remote master).
+
+In Atom, a merge conflict looks like this:
+![](pics/conflict.PNG)
+
+Just click `Use me` next to `HEAD` (or maybe your branch name) if you would like to keep your code or `Use me` next to `master` if you would like to replace your conflicting code with the latest from remote master.
+
+Other IDEs / text editors may not be as intuitive.
