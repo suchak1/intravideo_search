@@ -1,107 +1,94 @@
-
-# ***_Guide to Git***
+# ***IntraVideo*** **Search**
+[![Build Status](https://travis-ci.org/suchak1/intravideo_search.png?branch=master)](https://travis-ci.org/suchak1/intravideo_search)
+[![Linux](https://img.shields.io/badge/os-Linux-1f425f.svg)](https://ubuntu.com/download/desktop)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-red.svg)](https://www.python.org/downloads/release/python-370/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+[![version](https://img.shields.io/github/v/tag/suchak1/intravideo_search)](https://github.com/suchak1/intravideo_search/tags)
+#### a project for CMSC 22001 -- Software Construction
+***
+*IntraVideo Search* is a search engine that takes a video source and search terms as inputs and produces short video clips as outputs. Using ML image classification APIs, we can search through a video and retrieve only the parts relevant to the user-specified search terms.
 
 ## Getting Started
 
-Follow these one-time steps to get started.
+### Prerequisites
 
-1. Fork the original repo
-![Fork](fork.PNG)
+<!---Obtain a free API key.--->
 
-2. Clone in the repo (replacing `USERNAME` with yours):
+### Contributing
+
+To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
+
+
+### Installation
+
+To install the necessary packages, simply run:
 ```
-git clone https://github.com/USERNAME/intravideo_search.git
+pip install -r requirements.txt
 ```
 
-3. Add a reference to the master branch of the remote repo called upstream:
+### New Packages
+
+To remake the `requirements.txt` file, run:
 ```
-git remote add upstream https://github.com/suchak1/intravideo_search.git
+pipreqs ./ --force
 ```
 
-## Contributing
+### Testing
 
-Note that each pull request should be a self-contained small change.
-For example,
-- implementing one function
-- fixing a bug
-- writing test cases for one function
-- updating a document
-- changing the build pipeline
+To run all tests, run:
+```
+pytest
+```
 
-In order to contribute to the repo, one should follow this consistent step-by-step process.
+To make new tests, follow the template in `test/test_hello_world.py`.
 
-1. Switch to your local master branch:
-	```
-	git checkout master
-	```
+### Prettify
 
-2. Pull in any changes from remote master
-	```
-	git pull upstream master
-	```
+To maintain consistent code style, consider executing the command:
 
-3. Create a new branch to house your proposed changes:
-	```
-	git checkout -b TYPE/short-descript-name
-	```
+```
+autopep8 -i -r ./
+```
 
-   where `short-descript-name` is the name of the change you are making.
+This will automatically update/rewrite all Python code in the entire repo to follow PEP8 style guidelines.
 
-    For example: `add_gui_render` for a branch implementing the render function in the GUI class.
-
-    Also, `TYPE` is the type of change.
-
-    For example, `TYPE` = one of the following:
-    - `doc` - documentation related change
-    - `feature` - new implementation
-    - `bug` - fix existing implementation
-    - `test` - test case addition or change
+## Deployment
 
 
-	So, the full branch name would be: `feature/add_gui_render`.
-    The command would be: `git checkout -b feature/add_gui_render`
+## Result
 
-4. Implement your local changes and save.
-5. (Optional Step)
-	Add any files you want to ignore to the `.gitignore`.
-	Secret credentials or local debugging files fall in this category.
-6. Check the tracking status of all the files in the repo with
-	```
-	git status
-	```
-	Note the result: if there are any files in the Untracked Files category that you would like added to the repo, then `git add` them in the next step.
-7. (Optional Step)
-	Add files that are brand new with `git add FILEPATH`.
-	Similarly, you can remove files from the repo with `git rm FILEPATH`
-	If you are simply modifying existing files, then don't worry about adding them explicitly here. That will be handled in the next step.
-8. Now, commit with
-	```
-	git commit -am "MESSAGE"`
-	```
-	where `MESSAGE` is a descriptive message about the change.
+## Files
 
-	The `-am` flag will automatically add modified files (files that already exist in the repo).  
-	Don't be afraid to commit as much as possible. In fact, committing often makes it easier to track down specific commits that introduce bugs and potential alternative code routes.
-9. When you're ready to make a pull request and show others your work, use
-	```
-	git push
-	```
-	This will probably give you an error message and a new command mentioning
-	`--set-upstream` . Run this new command instead to fix the error.
-10. Visit the link in the output of the previous command, and follow the PR template to submit a pull request. Once you click save, you will be able to see how your changes fare against the existing test suite.
+```docs/``` - markdown files for software dev
 
-	You can also request other group members to review your work.
+```pics/``` - any screenshots used in markdown files
 
-	Once you
-    - fill in the Proposed Changes section in the PR
-	- incorporate in others suggestions
-	- gain approval from at least 2 other group members
-	- pass all tests
+```src/``` - source code for the project
 
-	you can hit "Squash and Merge."
+- ```model.py``` - main driver
 
 
-***Congrats!*** You have now made a commit in the remote `master` branch.
+- ```view.py``` - GUI
+
+- ```controller.py``` - workhorse
+
+```utils/``` - various scripts to help in dev work
+
+- ```update.py``` - updates all packages that `pip` considers "outdated"
+- ```dev_dep.py``` - lists dev dependencies (packages that aren't explicitly used in source code but you believe the project needs) - this allows the `requirements.txt` to be complete when we remake it with `pipreqs`
+
+```.travis.yml``` - build pipeline
 
 
-## Notes
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md)
+ file for details.
+
+***
+
+[![Made with Python](https://forthebadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+
+<!---
+<<[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)>>
+--->
