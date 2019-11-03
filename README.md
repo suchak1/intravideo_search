@@ -14,6 +14,11 @@
 
 <!---Obtain a free API key.--->
 
+### Contributing
+
+To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
+
+
 ### Installation
 
 To install the necessary packages, simply run:
