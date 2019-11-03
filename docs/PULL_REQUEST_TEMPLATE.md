@@ -10,6 +10,10 @@
 
 * [ ] Does simply running `pytest` suffice?
 
+
+**Finally**,
+* [ ] Have you updated the version number, by running `git tag v0.x`?
+
 ------
 
 **For new features:**
