@@ -37,6 +37,16 @@ pytest
 
 To make new tests, follow the template in `test/test_hello_world.py`.
 
+### Prettify
+
+To maintain consistent code style, consider executing the command:
+
+```
+autopep8 -i -r ./
+```
+
+This will automatically update/rewrite all Python code in the entire repo to follow PEP8 style guidelines.
+
 ## Deployment
 
 
@@ -60,6 +70,7 @@ To make new tests, follow the template in `test/test_hello_world.py`.
 ```utils/``` - various scripts to help in dev work
 
 - ```update.py``` - updates all packages that `pip` considers "outdated"
+- ```dev_dep.py``` - lists dev dependencies (packages that aren't explicitly used in source code but you believe the project needs) - this allows the `requirements.txt` to be complete when we remake it with `pipreqs`
 
 ```.travis.yml``` - build pipeline
 
