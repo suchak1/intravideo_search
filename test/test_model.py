@@ -28,6 +28,11 @@ def test_interpret_results():
     with pytest.raises(Exception):
         job.interpret_results(results4)
 
+    # Non-Normalized APIScore
+    resultsNonNorm = [(3.0, 1.2)]
+    with pytest.raises(Exception):
+        job.interpret_results(resultsNonNorm)
+
     # Duplicate Timestamps
     results5 = [(1.0, 0.1), (1.0, 0.03)]
     with pytest.raises(Exception):
@@ -64,10 +69,11 @@ def test_interpret_results():
     # Ending clip
     results10 = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings = {"endtime", 40.0}
-    assert job.interpret_results(results10, cutoff=0.5) == [(25.0, 35.0)]
+    assert job.interpret_results(results10, cutoff=0.5) == [(25.0, 40.0)]
 
     # Cutoff of zero
     job.settings = {"endtime", 40.0}
-    assert job.interpret_results(results8, cutoff=0.0) ==
+    assert job.interpret_results(results8, cutoff=0.0) == [(0.0, 40.0)]
 
     # Cutoff of >1
+    assert job.interpret_results(results8, cutoff=1.1) == []

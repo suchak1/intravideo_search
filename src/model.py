@@ -39,11 +39,14 @@ class Job:
                             # the cutoff, and the endtime is either the end of
                             # the video or is below the cutoff. For endpoints
                             # of start: t and end:t+10, where the first result
-                            # prior to t is t-2 (or 0, whichever is appropriate)
-                            # and the first result prior to t+10 is t-6,
-                            # then the returned tuple should be:
+                            # prior to t is t-2 and the first result prior
+                            # to t+10 is t-6, then the returned tuple should be:
                             # ((t + (t-2))//2, ((t+10) + (t+6))//2)
-                            # => (t-1, t+8)
+                            # => (t-1, t+8).
+                            # Special behavior at beginning and end,
+                            # if the first or last result is positive, the whole
+                            # first/last chunk of the video up until the
+                            # first result/endofthevideo is included.
 
 
     def save_clips(self, timestamps):
