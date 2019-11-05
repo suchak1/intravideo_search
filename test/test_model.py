@@ -63,9 +63,11 @@ def test_interpret_results():
 
     # Ending clip
     results10 = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
+    job.settings = {"endtime", 40.0}
     assert job.interpret_results(results10, cutoff=0.5) == [(25.0, 35.0)]
 
     # Cutoff of zero
+    job.settings = {"endtime", 40.0}
     assert job.interpret_results(results8, cutoff=0.0) ==
 
     # Cutoff of >1
