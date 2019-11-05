@@ -29,10 +29,21 @@ class Job:
         # where APIScore_t is the score given by classify_frames()
         # to each frame_t fed through the API, normalized to be between [0,1].
 
+        # Also assuming "endtime" is included in settings.
+
         return timestamps   # where each timestamp is a tuple of start
-                            # time and end time, demarcating a sub-clip where
-                            # endpoints and midpoints all score above the cutoff
-                            # parameter. Denote end time as "-1"
+                            # time and end time, demarcating a sub-clip. A
+                            # positive result consits of a starttime, and
+                            # an endtime such that the starttime is above the
+                            # cutoff, all results in between the two are above
+                            # the cutoff, and the endtime is either the end of
+                            # the video or is below the cutoff. For endpoints
+                            # of start: t and end:t+10, where the first result
+                            # prior to t is t-2 (or 0, whichever is appropriate)
+                            # and the first result prior to t+10 is t-6,
+                            # then the returned tuple should be:
+                            # ((t + (t-2))//2, ((t+10) + (t+6))//2)
+                            # => (t-1, t+8)
 
 
     def save_clips(self, timestamps):
