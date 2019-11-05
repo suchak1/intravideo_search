@@ -4,10 +4,9 @@ sys.path.append('src')
 from model import *  # nopep8
 
 
-def test_interpret_results():
+def test_interpret_results_exceptions():
     job = Job()
 
-    # -------- Exceptions --------
     # Nonetype
     results1 = None
     with pytest.raises(Exception):
@@ -43,8 +42,9 @@ def test_interpret_results():
     with pytest.raises(Exception):
         job.interpret_results(toyResults, cutoff= -0.3)
 
+def test_interpret_results_valid_inputs():
+    job = Job()
 
-    # --------- Valid inputs ---------
     # Middle clip
     results6 = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
     assert job.interpret_results(results6, cutoff=0.5) == [(5.0, 15.0)]
