@@ -41,29 +41,31 @@ def test_interpret_results():
 
     # --------- Valid inputs ---------
     # Middle clip
-    results5 = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
-    assert job.interpret_results(results5, cutoff=0.5) == [(5.0, 15.0)]
+    results6 = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
+    assert job.interpret_results(results6, cutoff=0.5) == [(5.0, 15.0)]
 
     # Spanning multiple results
-    results6 = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
-    assert job.interpret_results(results6, cutoff=0.5) == [(0.5,25.0)]
+    results7 = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
+    assert job.interpret_results(results7, cutoff=0.5) == [(0.5,25.0)]
 
     # Multiple clips
-    results7 = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.1),
+    results8 = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.1),
                                                       (40.0, 0.7),
                                                       (50.0, 0.8),
                                                       (60.0, 0.01)]
 
-    assert job.interpret_results(results7, cutoff=0.5) == \
+    assert job.interpret_results(results8, cutoff=0.5) == \
     [(5.0, 25.0), (35.0, 55.0)]
 
     # Starting clip
-    results8 = [(1.0, 0.6), (10.0, 0.2), (20.0, 0.1), (30.0, 0.08)]
-    assert job.interpret_results(results6, cutoff=0.5) == [(0.5, 5.5)]
+    results9 = [(1.0, 0.6), (10.0, 0.2), (20.0, 0.1), (30.0, 0.08)]
+    assert job.interpret_results(results9, cutoff=0.5) == [(0.0, 5.5)]
 
     # Ending clip
-    results9 = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
-    assert job.interpret_results(results6, cutoff=0.5) == [(25.0, 5.5)]
+    results10 = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
+    assert job.interpret_results(results10, cutoff=0.5) == [(25.0, 35.0)]
 
     # Cutoff of zero
+    assert job.interpret_results(results8, cutoff=0.0) ==
+
     # Cutoff of >1
