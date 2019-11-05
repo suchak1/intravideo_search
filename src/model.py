@@ -2,12 +2,12 @@ class Job:
 
     "Model - data logic"
 
-    def __init__(self, settings):
+    def __init__(self, settings=None):
         self.video_path = settings.video_path
         self.settings = settings.settings
 
 
-    def doTheJob(self):
+    def do_the_job(self):
         data = self.classify_frames()
         results = self.interpret_results(data)
         save_clips(results)
@@ -23,11 +23,16 @@ class Job:
         return [Worker.classify_img(frame) for frame in frames]
 
 
-    def interpret_results(self, results):
+    def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
         # of the form ((float)timestamp_t, (float)APIScore_t)
+        # where APIScore_t is the score given by classify_frames()
+        # to each frame_t fed through the API, normalized to be between [0,1].
 
-        return timestamps  # where each timestamp is a tuple of start time and end time
+        return timestamps   # where each timestamp is a tuple of start
+                            # time and end time, demarcating a sub-clip where
+                            # endpoints and midpoints all score above the cutoff
+                            # parameter. Denote end time as "-1"
 
 
     def save_clips(self, timestamps):
