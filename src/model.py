@@ -19,6 +19,9 @@ class Job:
         return [Worker.classify_img(frame) for frame in frames]
 
     def interpret_results(self, results):
+        # Assuming arg: results is something like a list of tuples
+        # of the form (timestamp_t, APIOutputforframe_t)
+        
         return timestamps  # where each timestamp is a tuple of start time and end time
 
     def save_clips(self, timestamps):
