@@ -7,6 +7,7 @@ class Worker:
 
     def classify_img(self, img):
         # make api request
+        result = {}
         return result
 
     def make_clip(self, timestamp, path):
