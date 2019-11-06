@@ -11,10 +11,7 @@ class Job:
         self.save_clips(results)
 
     def get_frames(self):
-        '''
-        return 0  # do whatever to get frames from vid as specific times using self.settings
-        '''
-        pass
+        return []  # do whatever to get frames from vid as specific times using self.settings
 
     def classify_frames(self):
         '''
@@ -25,10 +22,8 @@ class Job:
         pass
 
     def interpret_results(self, results):
-        '''
+        timestamps = []
         return timestamps  # where each timestamp is a tuple of start time and end time
-        '''
-        pass
 
     def save_clips(self, timestamps):
         # use multiprocessing here
