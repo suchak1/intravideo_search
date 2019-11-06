@@ -40,12 +40,14 @@ class GUI:
         # tk.Label(win, text="Upload a video.").pack()
         # tk.Button(win,text="Upload").pack()
 
-        # tk.Label(win, text="Set recursion depth").pack()
+        # tk.Label(win, text="Set Recursion Depth").pack()
         # tk.Button(win,text="Set").pack()
 
-        # tk.Label(win, text="").pack()
-        # tk.Button(win,text="Upload").pack()
+        # tk.Label(win, text="Set Poll Rate").pack()
+        # tk.Button(win,text="Set").pack()
 
+        # tk.Label(win, text="Type Search Term").pack()
+        # tk.Button(win,text="Type").pack()
 
         # win.mainloop()
         return 0
