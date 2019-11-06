@@ -1,10 +1,12 @@
+import tkinter as tk
+
 class GUI:
 
     "Views - everything user sees"
 
     def __init__(self):
         self.video_path = ''  # string file path
-        self.settings = {}  # dictionary of key, val of key is string, val is int
+        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': ["dog"]}  # dictionary of key, val of key is string, val is int
         self.job = None  # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
@@ -28,4 +30,20 @@ class GUI:
     def render(self):
         # display GUI, including text fields, choose file, and start button
         # also calls set_settings and start_job when start button is pressed
+
+        # win = tk.Tk()
+
+        # win.title("Intravideo Search")
+
+        # tk.Label(win, text="Upload a video.").pack()
+        # tk.Button(win,text="Upload").pack()
+
+        # tk.Label(win, text="Set recursion depth").pack()
+        # tk.Button(win,text="Set").pack()
+
+        # tk.Label(win, text="").pack()
+        # tk.Button(win,text="Upload").pack()
+
+
+        # win.mainloop()
         return 0

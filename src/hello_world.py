@@ -1,5 +1,6 @@
-def main():
-    print('Hello World')
+import view, model, controller
 
+def main():
+    test_main()
 
 main()
