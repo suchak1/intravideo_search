@@ -3,9 +3,13 @@ class Job:
     "Model - data logic"
 
     def __init__(self, settings=None):
-        self.video_path = settings.video_path
-        self.settings = settings.settings
-
+        if not isinstance(settings, type(None)):
+            self.video_path = settings.video_path
+            self.settings = settings.settings
+        else:
+            self.viedo_path = None
+            self.settings = None
+        
 
     def do_the_job(self):
         data = self.classify_frames()
@@ -31,7 +35,8 @@ class Job:
 
         # Also assuming "endtime" is included in settings.
 
-        return timestamps   # where each timestamp is a tuple of start
+        return [(0.6, 666.6)]
+                            # where each timestamp is a tuple of start
                             # time and end time, demarcating a sub-clip. A
                             # positive result consits of a starttime, and
                             # an endtime such that the starttime is above the
