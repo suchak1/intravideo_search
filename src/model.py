@@ -8,10 +8,10 @@ class Job:
 
         data = self.classify_frames()
         results = self.interpret_results(data)
-        save_clips(results)
+        self.save_clips(results)
 
     def get_frames(self):
-        return 0  # do whatever to get frames from vid as specific times using self.settings
+        return []  # do whatever to get frames from vid as specific times using self.settings
 
     def classify_frames(self):
         frames = self.get_frames()
@@ -19,6 +19,7 @@ class Job:
         return [Worker.classify_img(frame) for frame in frames]
 
     def interpret_results(self, results):
+        timestamps = []
         return timestamps  # where each timestamp is a tuple of start time and end time
 
     def save_clips(self, timestamps):
