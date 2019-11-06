@@ -20,10 +20,18 @@ class GUI:
         # where values is a dictionary
 
     def start_job(self):
-        self.job = Job(self.get_settings())
+        try:
+            self.job = Job(self.get_settings())
+            return 1;
+        except:
+            return 0;
 
     def kill_job(self):
-        self.job.kill()
+        try:
+            self.job.kill()
+            return 1;
+        except:
+            return 0;
 
     def render(self):
         # display GUI, including text fields, choose file, and start button
