@@ -6,11 +6,13 @@ class GUI:
 
     def __init__(self):
         self.video_path = ''  # string file path
-        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': ["dog"]}  # dictionary of key, val of key is string, val is int
-        self.job = None  # this will be of class Job type, so not included in class diagram
+        # dictionary of key, val of key is string, val is int
+        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
+        self.job = None
+        # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
-        self.render()   # display GUI when this class instantiates
+        # self.render()   # display GUI when this class instantiates
 
     def get_settings(self):
         # get settings currently in text boxes of GUI
