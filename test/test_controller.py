@@ -44,10 +44,10 @@ def test_make_clip_invalid_vidpath():
 
 def test_make_clip_no_frames():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    clipPath = "test/sampleVideo/test.mp4"
     w = Worker()
     timestamp = (1.0, 1.0000001)
-    # # TODO:
+    outVidPath = w.make_clip(timestamp, videoPath)
+    assert outVidPath == ""
 
 def test_make_clip_full_video():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
