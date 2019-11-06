@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class GUI:
 
     "Views - everything user sees"
@@ -35,10 +36,10 @@ class GUI:
 
         path is the video_input path
         """
+        return False
         self.settings = values #be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
-        return False
 
     def start_job(self):
         self.job = Job(self.get_settings())
