@@ -6,7 +6,6 @@ sys.path.append('src')
 from view import *
 from model import *  # nopep8
 
-
 example_parameters1 = {
         'settings': {
             'conf': .9,
@@ -54,7 +53,6 @@ def test_job_constructor():
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
 
-    
     
 def test_interpret_results_null_input():
     job = Job()
@@ -166,5 +164,4 @@ def stampListsAreEqual(times1, times2):
             return False
 
     return True
-
 
