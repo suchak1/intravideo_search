@@ -29,7 +29,7 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
-    assert w.classify(None) == None
+    assert w.classify_img(None) == None
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
