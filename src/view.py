@@ -22,16 +22,16 @@ class GUI:
     def start_job(self):
         try:
             self.job = Job(self.get_settings())
-            return True;
+            return True
         except:
-            return False;
+            return False
 
     def kill_job(self):
         try:
             self.job.kill()
-            return True;
+            return True
         except:
-            return False;
+            return False
 
     def render(self):
         # display GUI, including text fields, choose file, and start button

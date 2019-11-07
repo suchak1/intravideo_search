@@ -2,7 +2,7 @@ import sys
 sys.path.append('src')
 from view import *  # nopep8
 
-g = GUI();
-assert g.start_job() == True;
+g = GUI()
+assert g.start_job()
 
-assert g.kill_job() == False;
+assert g.kill_job()
