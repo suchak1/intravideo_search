@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-
+from PIL import Image
+from PIL import ImageChops
+import os
 import sys
 import pytest
 sys.path.append('src')
 from view import *
 from model import *  # nopep8
+import cv2
 
 example_parameters1 = {
         'settings': {
@@ -77,6 +80,8 @@ def test_job_constructor():
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
 
+
+    
     
 def test_interpret_results_null_input():
     job = Job()
@@ -189,3 +194,19 @@ def stampListsAreEqual(times1, times2):
 
     return True
 
+def areImagesSame(im1, im2):
+    return ImageChops.difference(im1,im2).getbbox() is None
+
+def test_get_frames():
+    g = GUI()
+    g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
+                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    j = Job(g)
+    frames = j.get_frames()
+    assert len(frames) == 2
+    # frame at 0 seconds of sample video
+    frame1 = Image.open('test/sampleVideo/frame1.jpg')
+    # frame at 5 seconds of sample video
+    frame2 = Image.open('test/sampleVideo/frame2.jpg')
+    assert areImagesSame(frames[0],frame1) == True
+    assert areImagesSame(frames[1],frame2) == True
