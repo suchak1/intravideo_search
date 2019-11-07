@@ -1,5 +1,7 @@
-import sys, time
-sys.path.append('../src')
+import sys
+import pytest
+sys.path.append('src')
+#sys.path.append('../src')
 from view import *  # nopep8
 #from model import *
 import tkinter as tk
