@@ -1,17 +1,20 @@
+
+import tkinter as tk
 # -*- coding: utf-8 -*-
+
 class GUI:
 
     "Views - everything user sees"
 
     def __init__(self):
         self.video_path = ''  # string file path
-        self.settings = {}  # dictionary of key, val of key is string, val is int
-                            # Please ensure this contains "endtime" the timestamp of
-                            #   the final frame of the video.
-                            #initialize default settings
+        # dictionary of key, val of key is string, val is int
 
-
-        self.job = None  # this will be of class Job type, so not included in class diagram
+        # Mahmoud and I talked this over and decided that this we would keep
+        # these default values.
+        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
+        self.job = None
+        # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
         self.render()   # display GUI when this class instantiates
@@ -53,4 +56,24 @@ class GUI:
     def render(self):
         # display GUI, including text fields, choose file, and start button
         # also calls set_settings and start_job when start button is pressed
+
+        # win = tk.Tk()
+
+        # win.title("Intravideo Search")
+        # win.geometry("500x500")
+        # tk.Label(win, text= "Video path: " + self.video_path).pack()
+        # tk.Button(win,text="Upload").pack()
+
+        # tk.Label(win, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['search'])).pack()
+        # tk.Button(win,text="Set").pack()
+
+        # tk.Label(win, text="Set Poll Rate").pack()
+        # tk.Button(win,text="Set").pack()
+
+        # tk.Label(win, text="Type Search Term").pack()
+        # tk.Button(win,text="Type").pack()
+
+        # tk.Button(win,text="Kill this window", command= win.destroy).pack()
+
+        # win.mainloop()
         return 0
