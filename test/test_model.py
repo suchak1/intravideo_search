@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import pytest
 sys.path.append('src')
 from view import *
 from model import *  # nopep8
