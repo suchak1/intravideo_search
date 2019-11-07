@@ -26,8 +26,6 @@ def test_set_settings():
 
 	view = GUI()
   
-  assert g.start_job()
-  assert g.kill_job()
   
 	set1 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': ['dog', 'pet']} #should be true
 	assert view.set_settings(set1, path) == True
@@ -293,6 +291,14 @@ def test_get_settings():
 	assert view.get_settings() == default
 	view.set_settings(set24, notapath)
 	assert view.get_settings() == default
+
+def test_start():
+    view = GUI()
+    assert view.start_job()
+
+def test_kill();
+    view = GUI()
+    assert view.kill_job()
 
 def test_render():
     # The theory behind test_render is that the unit tests
