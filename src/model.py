@@ -4,28 +4,28 @@ class Job:
 
     def __init__(self, settings=None):
         if not isinstance(settings, type(None)):
-            self.video_path = settings.video_path
-            self.settings = settings.settings
+            self.video_path = settings['video_path']
+            self.settings = settings['settings']
+            self.do_the_job()
         else:
             self.viedo_path = None
             self.settings = None
-        
 
     def do_the_job(self):
         data = self.classify_frames()
         results = self.interpret_results(data)
         save_clips(results)
 
-
     def get_frames(self):
-        return 0  # do whatever to get frames from vid as specific times using self.settings
-
+        return []  # do whatever to get frames from vid as specific times using self.settings
 
     def classify_frames(self):
+        '''
         frames = self.get_frames()
         # use multiprocessing on loop in list comprehension below
         return [Worker.classify_img(frame) for frame in frames]
-
+        '''
+        pass
 
     def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
@@ -53,12 +53,13 @@ class Job:
                             # first/last chunk of the video up until the
                             # first result/endofthevideo is included.
 
-
     def save_clips(self, timestamps):
         # use multiprocessing here
+        '''
         [Worker.make_clip(timestamp, self.video_path)
          for timestamp in timestamps]
-
+        '''
+        pass
 
     def kill(self):
         quit()
