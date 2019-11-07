@@ -1,6 +1,6 @@
-
 import tkinter as tk
 # -*- coding: utf-8 -*-
+
 
 class GUI:
 
@@ -43,15 +43,23 @@ class GUI:
         path is the video_input path
         """
         return False
-        self.settings = values #be sure that values are always in the same order. Do validation
+        self.settings = values  # be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
 
     def start_job(self):
-        self.job = Job(self.get_settings())
+        try:
+            self.job = Job(self.get_settings())
+            return True
+        except:
+            return False
 
     def kill_job(self):
-        self.job.kill()
+        try:
+            self.job.kill()
+            return True
+        except:
+            return False
 
     def render(self):
         # display GUI, including text fields, choose file, and start button

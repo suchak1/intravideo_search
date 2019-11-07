@@ -36,22 +36,22 @@ class Job:
         # Also assuming "endtime" is included in settings.
 
         return [(0.6, 666.6)]
-                            # where each timestamp is a tuple of start
-                            # time and end time, demarcating a sub-clip. A
-                            # positive result consits of a starttime, and
-                            # an endtime such that the starttime is above the
-                            # cutoff, all results in between the two are above
-                            # the cutoff, and the endtime is either the end of
-                            # the video or is below the cutoff. For endpoints
-                            # of start: t and end:t+10, where the first result
-                            # prior to t is t-2 and the first result prior
-                            # to t+10 is t-6, then the returned tuple should be:
-                            # ((t + (t-2))//2, ((t+10) + (t+6))//2)
-                            # => (t-1, t+8).
-                            # Special behavior at beginning and end,
-                            # if the first or last result is positive, the whole
-                            # first/last chunk of the video up until the
-                            # first result/endofthevideo is included.
+        # where each timestamp is a tuple of start
+        # time and end time, demarcating a sub-clip. A
+        # positive result consits of a starttime, and
+        # an endtime such that the starttime is above the
+        # cutoff, all results in between the two are above
+        # the cutoff, and the endtime is either the end of
+        # the video or is below the cutoff. For endpoints
+        # of start: t and end:t+10, where the first result
+        # prior to t is t-2 and the first result prior
+        # to t+10 is t-6, then the returned tuple should be:
+        # ((t + (t-2))//2, ((t+10) + (t+6))//2)
+        # => (t-1, t+8).
+        # Special behavior at beginning and end,
+        # if the first or last result is positive, the whole
+        # first/last chunk of the video up until the
+        # first result/endofthevideo is included.
 
     def save_clips(self, timestamps):
         # use multiprocessing here
