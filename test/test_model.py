@@ -53,3 +53,4 @@ def test_job_constructor():
     assert callable(getattr(j, 'interpret_results')) == True
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
+
