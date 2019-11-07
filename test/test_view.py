@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append('src') #note: this only works if you're in the parent directory, not the test directory
+import pytest
+sys.path.append('src')
 from view import *  # nopep8
 
 
