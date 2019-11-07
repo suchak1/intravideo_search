@@ -3,7 +3,7 @@ class Worker:
     "Controller - data requests"
 
     def __init__(self):
-        return 0
+        return 
 
     def classify_img(self, img):
         # make api request
