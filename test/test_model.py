@@ -9,7 +9,6 @@ from view import *
 from model import *  # nopep8
 import cv2
 
-
 example_parameters1 = {
         'settings': {
             'conf': .9,
@@ -21,6 +20,18 @@ example_parameters1 = {
         }
 
 example_job1 = Job(example_parameters1)
+
+example_parameters2 = {
+        'settings': {
+            'conf': .9,
+            'poll': 4,
+            'anti': 5,
+            'search': ["rabbit"]
+            },
+        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+        }
+
+example_job2 = Job(example_parameters2)
 
 
 def test_save_clips():
@@ -45,6 +56,18 @@ def test_save_clips():
     assert os.path.isfile(path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
     assert os.path.isfile(path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
 
+def test_classify_frames():
+    frame_list1 = example_job2.classify_frames()
+    frame_list = example_job1.classify_frames()
+    assert frame_list1[0][0] == 0
+    assert frame_list1[0][1] > 0.7
+    assert frame_list1[1][0] == 5
+    assert frame_list1[1][1] > 0.7
+
+    assert frame_list[0][0] == 0
+    assert frame_list[0][1] < 0.7
+    assert frame_list[1][0] == 4
+    assert frame_list[1][1] < 0.7
 
 def test_job_constructor():
     j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
@@ -57,23 +80,9 @@ def test_job_constructor():
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
 
-def areImagesSame(im1, im2):
-    return ImageChops.difference(im1,im2).getbbox() is None
 
-def test_get_frames():
-    g = GUI()
-    g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
-    j = Job(g)
-    frames = j.get_frames()
-    assert len(frames) == 2
-    # frame at 0 seconds of sample video
-    frame1 = Image.open('test/sampleVideo/frame1.jpg')
-    # frame at 5 seconds of sample video
-    frame2 = Image.open('test/sampleVideo/frame2.jpg')
-    assert areImagesSame(frames[0],frame1) == True
-    assert areImagesSame(frames[1],frame2) == True
-
+    
+    
 def test_interpret_results_null_input():
     job = Job()
     results = None
@@ -184,3 +193,20 @@ def stampListsAreEqual(times1, times2):
             return False
 
     return True
+
+def areImagesSame(im1, im2):
+    return ImageChops.difference(im1,im2).getbbox() is None
+
+def test_get_frames():
+    g = GUI()
+    g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
+                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    j = Job(g)
+    frames = j.get_frames()
+    assert len(frames) == 2
+    # frame at 0 seconds of sample video
+    frame1 = Image.open('test/sampleVideo/frame1.jpg')
+    # frame at 5 seconds of sample video
+    frame2 = Image.open('test/sampleVideo/frame2.jpg')
+    assert areImagesSame(frames[0],frame1) == True
+    assert areImagesSame(frames[1],frame2) == True
