@@ -51,12 +51,14 @@ def test_make_clip_negative_time():
     with pytest.raises(Exception):
         w.make_clip(timestamp, videoPath)
 
+
 def test_make_clip_out_of_order():
     w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     timestamp = (10.0, 5.0)
     with pytest.raises(Exception):
         w.make_clip(timestamp, videoPath)
+
 
 def test_make_clip_null_input():
     w = Worker()
@@ -65,12 +67,14 @@ def test_make_clip_null_input():
     with pytest.raises(Exception):
         w.make_clip(timestamp, videoPath)
 
+
 def test_make_clip_zero_delta():
     w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     timestamp = (2.0, 2.0)
     with pytest.raises(Exception):
         w.make_clip(timestamp, videoPath)
+
 
 def test_make_clip_invalid_vidpath():
     w = Worker()
@@ -86,6 +90,7 @@ def test_make_clip_no_frames():
     outVidPath = w.make_clip(timestamp, videoPath)
     assert outVidPath == ""
 
+
 def test_make_clip_full_video():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     w = Worker()
@@ -98,16 +103,19 @@ def test_make_clip_from_mid():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     clipPath = "test/sampleVideo/test.mp4"
     timestamp = (1.0, 3.0)
-    ffmpeg_extract_subclip(videoPath, timestamp[0], timestamp[1], targetname=clipPath)
+    ffmpeg_extract_subclip(
+        videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     assert areVideosAndAreEqual(clipPath, outVidPath)
+
 
 def test_make_clip_from_start():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     clipPath = "test/sampleVideo/test.mp4"
     timestamp = (0.0, 3.0)
-    ffmpeg_extract_subclip(videoPath, timestamp[0], timestamp[1], targetname=clipPath)
+    ffmpeg_extract_subclip(
+        videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     assert areVideosAndAreEqual(clipPath, outVidPath)
@@ -117,7 +125,8 @@ def test_make_clip_from_end():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     clipPath = "test/sampleVideo/test.mp4"
     timestamp = (3.0, 1000000.0)
-    ffmpeg_extract_subclip(videoPath, timestamp[0], timestamp[1], targetname=clipPath)
+    ffmpeg_extract_subclip(
+        videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     assert areVideosAndAreEqual(clipPath, outVidPath)
@@ -133,6 +142,7 @@ def areVideosAndAreEqual(vidPath1, vidPath2):
     if not videosAreEqual(testVid, outVid):
         return False
     return True
+
 
 def videosAreEqual(vidCap1, vidCap2):
     while(vidCap1.isOpened() and vidCap2.isOpened()):

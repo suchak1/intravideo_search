@@ -7,14 +7,14 @@ from view import *
 from model import *  # nopep8
 
 example_parameters1 = {
-        'settings': {
-            'conf': .9,
-            'poll': 5,
-            'anti': 5,
-            'search': ["dog"]
-            },
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-        }
+    'settings': {
+        'conf': .9,
+        'poll': 5,
+        'anti': 5,
+        'search': ["dog"]
+    },
+    'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+}
 
 example_job1 = Job(example_parameters1)
 
@@ -38,27 +38,32 @@ def test_save_clips():
     assert example_job1.save_clips([timestamps1])
     assert example_job1.save_clips([timestamps1, timestamps2])
     path = os.path.splitext(example_job1.settings['video_path'])
-    assert os.path.isfile(path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
-    assert os.path.isfile(path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
+    assert os.path.isfile(
+        path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
+    assert os.path.isfile(
+        path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
 
 
 def test_job_constructor():
-    j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
-    assert getattr(j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-    assert getattr(j, 'settings') == {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']}
+    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
+             'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+    assert getattr(
+        j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+    assert getattr(j, 'settings') == {
+        'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']}
     assert callable(getattr(j, 'get_frames')) == True
     assert callable(getattr(j, 'classify_frames')) == True
     assert callable(getattr(j, 'interpret_results')) == True
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
 
-    
+
 def test_interpret_results_null_input():
     job = Job()
     results = None
     with pytest.raises(Exception):
         job.interpret_results(results)
+
 
 def test_interpret_results_empty_input():
     job = Job()
@@ -66,11 +71,13 @@ def test_interpret_results_empty_input():
     with pytest.raises(Exception):
         job.interpret_results(results)
 
+
 def test_interpret_results_negative_time():
     job = Job()
-    results =[(-2.0, 0.1)]
+    results = [(-2.0, 0.1)]
     with pytest.raises(Exception):
         job.interpret_results(results)
+
 
 def test_interpret_results_negative_score():
     job = Job()
@@ -78,11 +85,13 @@ def test_interpret_results_negative_score():
     with pytest.raises(Exception):
         job.interpret_results(results)
 
+
 def test_interpret_results_unnormalized_score():
     job = Job()
     resultsNonNorm = [(3.0, 1.2)]
     with pytest.raises(Exception):
         job.interpret_results(resultsNonNorm)
+
 
 def test_interpret_results_duplicate_times():
     job = Job()
@@ -90,11 +99,13 @@ def test_interpret_results_duplicate_times():
     with pytest.raises(Exception):
         job.interpret_results(results)
 
+
 def test_interpret_results_negative_cutoff():
     job = Job()
     toyResults = [(1.0, 1)]
     with pytest.raises(Exception):
-        job.interpret_results(toyResults, cutoff= -0.3)
+        job.interpret_results(toyResults, cutoff=-0.3)
+
 
 def test_interpret_results_out_of_order():
     job = Job()
@@ -110,58 +121,65 @@ def test_interpret_results_mid_clip():
     results = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
     assert job.interpret_results(results, cutoff=0.5) == [(5.0, 15.0)]
 
+
 def test_interpret_results_spanning_clip():
     job = Job()
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5), [(0.5,25.0)])
+    assert stampListsAreEqual(job.interpret_results(
+        results, cutoff=0.5), [(0.5, 25.0)])
+
 
 def test_interpret_results_multiple_seperate_clips():
     job = Job()
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.1),
-                                                      (40.0, 0.7),
-                                                      (50.0, 0.8),
-                                                      (60.0, 0.01)]
+               (40.0, 0.7),
+               (50.0, 0.8),
+               (60.0, 0.01)]
 
     assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                                                [(5.0, 25.0), (35.0, 55.0)])
+                              [(5.0, 25.0), (35.0, 55.0)])
+
 
 def test_interpret_results_from_start():
     job = Job()
     results = [(1.0, 0.6), (10.0, 0.2), (20.0, 0.1), (30.0, 0.08)]
     assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                                                            [(0.0, 5.5)])
+                              [(0.0, 5.5)])
+
 
 def test_interpret_results_from_end():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings = {"endtime", 40.0}
     assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                                                            [(25.0, 40.0)])
+                              [(25.0, 40.0)])
+
 
 def test_interpret_results_zero_cutoff():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings = {"endtime", 40.0}
     assert stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
-                                                                [(0.0, 40.0)])
+                              [(0.0, 40.0)])
+
 
 def test_interpret_results_cutoff_morethan_1():
     job = Job()
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.1),
-                                                      (40.0, 0.7),
-                                                      (50.0, 0.8),
-                                                      (60.0, 0.01)]
+               (40.0, 0.7),
+               (50.0, 0.8),
+               (60.0, 0.01)]
     assert stampListsAreEqual(job.interpret_results(results, cutoff=1.1), [])
+
 
 def stampListsAreEqual(times1, times2):
     if not isinstance(times1, type([])) or \
        not isinstance(times2, type([])) or \
        not (len(times1) == len(times2)):
-       return False
+        return False
 
     for i in range(len(times1)):
         if not (times1[i] == times2[i]):
             return False
 
     return True
-
