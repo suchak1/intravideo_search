@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
+import pytest
 sys.path.append('src')
 from view import *  # nopep8
-#from model import *
+# from model import 
 import tkinter as tk
 
 def test_constructor():
