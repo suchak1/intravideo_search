@@ -3,8 +3,8 @@ class Job:
     "Model - data logic"
 
     def __init__(self, settings):
-        self.video_path = settings.video_path
-        self.settings = settings.settings
+        self.video_path = settings['video_path']
+        self.settings = settings['settings']
 
         data = self.classify_frames()
         results = self.interpret_results(data)
@@ -14,9 +14,12 @@ class Job:
         return []  # do whatever to get frames from vid as specific times using self.settings
 
     def classify_frames(self):
+        '''
         frames = self.get_frames()
         # use multiprocessing on loop in list comprehension below
         return [Worker.classify_img(frame) for frame in frames]
+        '''
+        pass
 
     def interpret_results(self, results):
         timestamps = []
@@ -24,8 +27,11 @@ class Job:
 
     def save_clips(self, timestamps):
         # use multiprocessing here
+        '''
         [Worker.make_clip(timestamp, self.video_path)
          for timestamp in timestamps]
+        '''
+        pass
 
     def kill(self):
         quit()
