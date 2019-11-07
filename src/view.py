@@ -8,6 +8,9 @@ class GUI:
     def __init__(self):
         self.video_path = ''  # string file path
         # dictionary of key, val of key is string, val is int
+
+        # Mahmoud and I talked this over and decided that this we would keep
+        # these default values.
         self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
         self.job = None
         # this will be of class Job type, so not included in class diagram
