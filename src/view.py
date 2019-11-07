@@ -6,7 +6,10 @@ class GUI:
     def __init__(self):
         self.video_path = ''  # string file path
         self.settings = {}  # dictionary of key, val of key is string, val is int
-        #initialize default settings
+                            # Please ensure this contains "endtime" the timestamp of
+                            #   the final frame of the video.
+                            #initialize default settings
+
 
         self.job = None  # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
