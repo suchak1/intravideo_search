@@ -19,6 +19,18 @@ example_parameters1 = {
 
 example_job1 = Job(example_parameters1)
 
+example_parameters2 = {
+        'settings': {
+            'conf': .9,
+            'poll': 4,
+            'anti': 5,
+            'search': ["rabbit"]
+            },
+        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+        }
+
+example_job2 = Job(example_parameters2)
+
 
 def test_save_clips():
     timestamps1 = [0, 5]
@@ -42,6 +54,18 @@ def test_save_clips():
     assert os.path.isfile(path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
     assert os.path.isfile(path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
 
+def test_classify_frames():
+    frame_list1 = example_job2.classify_frames()
+    frame_list = example_job1.classify_frames()
+    assert frame_list1[0][0] == 0
+    assert frame_list1[0][1] > 0.7
+    assert frame_list1[1][0] == 5
+    assert frame_list1[1][1] > 0.7
+
+    assert frame_list[0][0] == 0
+    assert frame_list[0][1] < 0.7
+    assert frame_list[1][0] == 4
+    assert frame_list[1][1] < 0.7
 
 def test_job_constructor():
     j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
