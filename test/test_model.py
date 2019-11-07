@@ -16,7 +16,7 @@ example_parameters1 = {
         'anti': 5,
         'search': ["dog"]
     },
-    'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+    'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
 
 example_job1 = Job(example_parameters1)
@@ -28,7 +28,7 @@ example_parameters2 = {
             'anti': 5,
             'search': ["rabbit"]
             },
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+        'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
         }
 
 example_job2 = Job(example_parameters2)
@@ -52,7 +52,7 @@ def test_save_clips():
 
     assert example_job1.save_clips([timestamps1])
     assert example_job1.save_clips([timestamps1, timestamps2])
-    path = os.path.splitext(example_job1.settings['video_path'])
+    path = os.path.splitext(example_job1.video_path)
     assert os.path.isfile(
         path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
     assert os.path.isfile(
@@ -73,9 +73,9 @@ def test_classify_frames():
 
 def test_job_constructor():
     j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
-             'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+             'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
     assert getattr(
-        j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+        j, 'video') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
     assert getattr(j, 'settings') == {
         'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']}
     assert callable(getattr(j, 'get_frames')) == True
@@ -214,10 +214,8 @@ def areImagesSame(im1, im2):
     return ImageChops.difference(im1,im2).getbbox() is None
 
 def test_get_frames():
-    g = GUI()
-    g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
-    j = Job(g)
+    j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
+        'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
     frames = j.get_frames()
     assert len(frames) == 2
     # frame at 0 seconds of sample video
