@@ -14,7 +14,7 @@ class Job:
     def do_the_job(self):
         data = self.classify_frames()
         results = self.interpret_results(data)
-        save_clips(results)
+        self.save_clips(results)
 
     def get_frames(self):
         return []  # do whatever to get frames from vid as specific times using self.settings
