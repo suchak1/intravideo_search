@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from PIL import Image
+from PIL import ImageChops
 import os
 import sys
 import pytest
@@ -56,6 +57,9 @@ def test_job_constructor():
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
 
+def areImagesSame(im1, im2):
+    return ImageChops.difference(im1,im2).getbbox() is None
+
 def test_get_frames():
     g = GUI()
     g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
@@ -67,9 +71,8 @@ def test_get_frames():
     frame1 = Image.open('test/sampleVideo/frame1.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/frame2.jpg')
-    assert frames[0].all() == frame1.all()
-    assert frames[1].all() == frame2.all()
-
+    assert areImagesSame(frames[0],frame1) == True
+    assert areImagesSame(frames[1],frame2) == True
 
 def test_interpret_results_null_input():
     job = Job()
