@@ -8,14 +8,14 @@ from model import *  # nopep8
 
 
 example_parameters1 = {
-        'settings': {
-            'conf': .9,
-            'poll': 5,
-            'anti': 5,
-            'search': ["dog"]
-            },
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-        }
+    'settings': {
+        'conf': .9,
+        'poll': 5,
+        'anti': 5,
+        'search': ["dog"]
+    },
+    'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+}
 
 example_job1 = Job(example_parameters1)
 
@@ -39,18 +39,21 @@ def test_save_clips():
     assert example_job1.save_clips([timestamps1])
     assert example_job1.save_clips([timestamps1, timestamps2])
     path = os.path.splitext(example_job1.settings['video_path'])
-    assert os.path.isfile(path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
-    assert os.path.isfile(path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
+    assert os.path.isfile(
+        path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
+    assert os.path.isfile(
+        path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
 
 
 def test_job_constructor():
-    j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
-    assert getattr(j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-    assert getattr(j, 'settings') == {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']}
+    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
+             'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+    assert getattr(
+        j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+    assert getattr(j, 'settings') == {
+        'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']}
     assert callable(getattr(j, 'get_frames')) == True
     assert callable(getattr(j, 'classify_frames')) == True
     assert callable(getattr(j, 'interpret_results')) == True
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
-
