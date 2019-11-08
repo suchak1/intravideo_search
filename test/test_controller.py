@@ -1,18 +1,19 @@
+import cv2
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from PIL import Image
 import os
 import sys
 import pytest
+import pytest_check as check
 sys.path.append('src')
 from controller import *  # nopep8
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-import cv2
 
 
 def test_constructor():
     w = Worker()
     # Test that the constructor was created correctly and has all the methods
-    assert "classify_img" in dir(w)
-    assert "make_clip" in dir(w)
+    check.is_true("classify_img" in dir(w))
+    check.is_true("make_clip" in dir(w))
 
 
 def test_classify_img():
@@ -31,17 +32,17 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
-    assert w.classify_img(None) == None
+    check.is_none(w.classify_img(None))
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
         # should all be true
         # (that 'banana' is in classification dict for 'banana.jpg' and so on)
-        assert name in w.classify_img(img)
+        check.is_in(name, w.classify_img(img))
 
         # now let's try assertions that should definitely be wrong
         # (that 'waterfall' is in the classification dict for 'banana.jpg')
-        assert wrong_names[idx] not in w.classify(img)
+        check.is_not_in(wrong_names[idx] not in w.classify(img))
 
 
 def test_make_clip_negative_time():
@@ -88,7 +89,7 @@ def test_make_clip_no_frames():
     w = Worker()
     timestamp = (1.0, 1.0000001)
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert outVidPath == ""
+    check.equal(outVidPath, '')
 
 
 def test_make_clip_full_video():
@@ -96,7 +97,7 @@ def test_make_clip_full_video():
     w = Worker()
     timestamp = (0.0, 100000000000.0)
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(videoPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(videoPath, outVidPath))
 
 
 def test_make_clip_from_mid():
@@ -107,7 +108,7 @@ def test_make_clip_from_mid():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def test_make_clip_from_start():
@@ -118,7 +119,7 @@ def test_make_clip_from_start():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def test_make_clip_from_end():
@@ -129,7 +130,7 @@ def test_make_clip_from_end():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def areVideosAndAreEqual(vidPath1, vidPath2):

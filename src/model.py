@@ -8,7 +8,7 @@ class Job:
             self.settings = settings['settings']
             self.do_the_job()
         else:
-            self.viedo_path = None
+            self.video_path = None
             self.settings = None
 
     def do_the_job(self):
