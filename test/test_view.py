@@ -2,9 +2,10 @@
 import tkinter as tk
 import sys
 import pytest
+import pytest_check as check
 sys.path.append('src')
 from view import *  # nopep8
-# from model import
+from model import *  # nopep8
 
 
 def test_constructor():
@@ -14,12 +15,10 @@ def test_constructor():
 
     # test default constructor with no paramters
     test_gui = GUI()
-    assert test_gui.video_path == ''
-    assert test_gui.settings == {'conf': .9,
-                                 'poll': 5, 'anti': 5, 'search': [""]}
-    assert test_gui.job == None
-
-    return 0
+    check.equal(test_gui.video_path, '')
+    check.equal(test_gui.settings, {'conf': .9,
+                                 'poll': 5, 'anti': 5, 'search': [""]})
+    check.is_none(test_gui.job)
 
 
 def test_set_settings():
@@ -30,121 +29,121 @@ def test_set_settings():
 
     set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set1, path) == True
-    assert view.set_settings(set1, notapath) == False
+    check.is_true(view.set_settings(set1, path))
+    check.is_false(view.set_settings(set1, notapath))
 
     set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'search': ['car']}  # should be true
-    assert view.set_settings(set2, path) == True
-    assert view.set_settings(set2, notapath) == False
+    check.is_true(view.set_settings(set2, path))
+    check.is_false(view.set_settings(set2, notapath))
 
     set3 = {'conf': 0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set3, path) == True
-    assert view.set_settings(set3, notapath) == False
+    check.is_true(view.set_settings(set3, path))
+    check.is_false(view.set_settings(set3, notapath))
 
     # should be false, conf is negative
     set4 = {'conf': -0.1, 'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}
-    assert view.set_settings(set4, path) == False
-    assert view.set_settings(set4, notapath) == False
+    check.is_false(view.set_settings(set4, path))
+    check.is_false(view.set_settings(set4, notapath))
 
     set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set5, path) == True
-    assert view.set_settings(set5, notapath) == False
+    check.is_true(view.set_settings(set5, path))
+    check.is_false(view.set_settings(set5, notapath))
 
     set6 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, conf is >1
-    assert view.set_settings(set6, path) == False
-    assert view.set_settings(set6, notapath) == False
+    check.is_false(view.set_settings(set6, path))
+    check.is_false(view.set_settings(set6, notapath))
 
     set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set7, path) == True
-    assert view.set_settings(set7, notapath) == False
+    check.is_true(view.set_settings(set7, path))
+    check.is_false(view.set_settings(set7, notapath))
 
     set8 = {'conf': 1.1, 'poll': -1, 'anti': 5,
             'search': ['dog', 'pet']}  # should be false, poll is < 0
-    assert view.set_settings(set8, path) == True
-    assert view.set_settings(set8, notapath) == False
+    check.is_true(view.set_settings(set8, path))
+    check.is_false(view.set_settings(set8, notapath))
 
     set9 = {'conf': 1.1, 'poll': 500000, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set9, path) == False
-    assert view.set_settings(set9, notapath) == False
+    check.is_false(view.set_settings(set9, path))
+    check.is_false(view.set_settings(set9, notapath))
 
     set10 = {'conf': 1.1, 'poll': 5.2, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, poll is not an integer
-    assert view.set_settings(set10, path) == True
-    assert view.set_settings(set10, notapath) == False
+    check.is_true(view.set_settings(set10, path))
+    check.is_false(view.set_settings(set10, notapath))
 
     set11 = {'conf': 1.1, 'poll': 5, 'anti': 0,
              'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set11, path) == False
-    assert view.set_settings(set11, notapath) == False
+    check.is_false(view.set_settings(set11, path))
+    check.is_false(view.set_settings(set11, notapath))
 
     set12 = {'conf': 1.1, 'poll': 5, 'anti': -1,
              'search': ['dog', 'pet']}  # should be false, anti is < 0
-    assert view.set_settings(set12, path) == True
-    assert view.set_settings(set12, notapath) == False
+    check.is_true(view.set_settings(set12, path))
+    check.is_false(view.set_settings(set12, notapath))
 
     set13 = {'conf': 1.1, 'poll': 5, 'anti': 5000000,
              'search': ['dog', 'pet']}  # should be true
-    assert view.set_settings(set13, path) == True
-    assert view.set_settings(set13, notapath) == False
+    check.is_true(view.set_settings(set13, path))
+    check.is_false(view.set_settings(set13, notapath))
 
     set14 = {'conf': 1.1, 'poll': 5, 'anti': 5.2, 'search': [
         'dog', 'pet']}  # should be false, anti is not an integer
-    assert view.set_settings(set14, path) == False
-    assert view.set_settings(set14, notapath) == False
+    check.is_false(view.set_settings(set14, path))
+    check.is_false(view.set_settings(set14, notapath))
 
     set15 = {'conf': 1.1, 'poll': 5, 'anti': 5,
              'search': ['dog', 'pet', '50']}  # should be true
-    assert view.set_settings(set15, path) == True
-    assert view.set_settings(set15, notapath) == False
+    check.is_true(view.set_settings(set15, path))
+    check.is_false(view.set_settings(set15, notapath))
 
     # should be false, no search terms
     set16 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': []}
-    assert view.set_settings(set16, path) == False
-    assert view.set_settings(set16, notapath) == False
+    check.is_false(view.set_settings(set16, path))
+    check.is_false(view.set_settings(set16, notapath))
 
     # should be false, one value is not a string
     set17 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [84, '84']}
-    assert view.set_settings(set17, path) == False
-    assert view.set_settings(set17, notapath) == False
+    check.is_false(view.set_settings(set17, path))
+    check.is_false(view.set_settings(set17, notapath))
 
     # should be true, even if out of order
     set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 1.1, 'anti': 5}
-    assert view.set_settings(set18, path) == True
-    assert view.set_settings(set18, notapath) == False
+    check.is_true(view.set_settings(set18, path))
+    check.is_false(view.set_settings(set18, notapath))
 
     set19 = {'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}  # should be false
-    assert view.set_settings(set19, path) == False
-    assert view.set_settings(set19, notapath) == False
+    check.is_false(view.set_settings(set19, path))
+    check.is_false(view.set_settings(set19, notapath))
 
     set20 = {'conf': 1.1, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false
-    assert view.set_settings(set20, path) == False
-    assert view.set_settings(set20, notapath) == False
+    check.is_false(view.set_settings(set20, path))
+    check.is_false(view.set_settings(set20, notapath))
 
     set21 = {'conf': 1.1, 'poll': 5, 'search': [
         'dog', 'pet']}  # should be false
-    assert view.set_settings(set21, path) == False
-    assert view.set_settings(set21, notapath) == False
+    check.is_false(view.set_settings(set21, path))
+    check.is_false(view.set_settings(set21, notapath))
 
     set22 = {'conf': 1.1, 'poll': 5, 'anti': 5}  # should be false
-    assert view.set_settings(set22, path) == False
-    assert view.set_settings(set22, notapath) == False
+    check.is_false(view.set_settings(set22, path))
+    check.is_false(view.set_settings(set22, notapath))
 
     set23 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet'], 'video': 'path/to/video'}  # should be false, extra key
-    assert view.set_settings(set23, path) == False
-    assert view.set_settings(set23, notapath) == False
+    check.is_false(view.set_settings(set23, path))
+    check.is_false(view.set_settings(set23, notapath))
 
     set24 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet'], 'x': 0}  # should be false
-    assert view.set_settings(set24, path) == False
-    assert view.set_settings(set24, notapath) == False
+    check.is_false(view.set_settings(set24, path))
+    check.is_false(view.set_settings(set24, notapath))
 
 
 def test_get_settings():
@@ -158,196 +157,196 @@ def test_get_settings():
     view = GUI()
     default = {"video": '', "settings": {'conf': 0.9,
                                          'poll': 5, 'anti': 5, 'search': []}}  # default settings
-    assert view.get_settings() == default  # should be the default
+    check.equal(view.get_settings(), default)  # should be the default
 
     set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
     d1 = {"video": 'here/is/a/path', "settings": {'conf': 0.9,
                                                   'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}}
     view.set_settings(set1, path)
-    assert view.get_settings() == d1
+    check.equal(view.get_settings(), d1)
     view.set_settings(set1, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'search': ['car']}  # should be true
     d2 = {"video": 'here/is/a/path', "settings": {'conf': 0.1,
                                                   'poll': 2, 'anti': 8, 'search': ['car']}}
     view.set_settings(set2, path)
-    assert view.get_settings == d2
+    check.equal(view.get_settings(), d2)
     view.set_settings(set2, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set3 = {'conf': 0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
     d3 = {"video": 'here/is/a/path', "settings": {'conf': 0,
                                                   'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}}
     view.set_settings(set3, path)
-    assert view.get_settings() == d3
+    check.equal(view.get_settings(), d3)
     view.set_settings(set3, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     # should be false, conf is negative
     set4 = {'conf': -0.1, 'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}
     view.set_settings(set4, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set4, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
     d5 = {"video": 'here/is/a/path', "settings": set5}
     view.set_settings(set5, path)
-    assert view.get_settings() == d5
+    check.equal(view.get_settings(), d5)
     view.set_settings(set5, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set6 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, conf is >1
     view.set_settings(set6, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set6, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
     d7 = {"video": 'here/is/a/path', "settings": set7}
     view.set_settings(set7, path)
-    assert view.get_settings() == d7
+    check.equal(view.get_settings(), d7)
     view.set_settings(set7, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set8 = {'conf': 1.1, 'poll': -1, 'anti': 5,
             'search': ['dog', 'pet']}  # should be false, poll is < 0
     view.set_settings(set8, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set8, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set9 = {'conf': 1.1, 'poll': 500000, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
     d9 = {"video": 'here/is/a/path', "settings": set9}
     view.set_settings(set9, path)
-    assert view.get_settings() == d9
+    check.equal(view.get_settings(), d9)
     view.set_settings(set9, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set10 = {'conf': 1.1, 'poll': 5.2, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, poll is not an integer
     view.set_settings(set10, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set10, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set11 = {'conf': 1.1, 'poll': 5, 'anti': 0,
              'search': ['dog', 'pet']}  # should be true
     d11 = {"video": 'here/is/a/path', "settings": set11}
     view.set_settings(set11, path)
-    assert view.get_settings() == d11
+    check.equal(view.get_settings(), d11)
     view.set_settings(set11, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set12 = {'conf': 1.1, 'poll': 5, 'anti': -1,
              'search': ['dog', 'pet']}  # should be false, anti is < 0
     view.set_settings(set12, path)
-    assert view.get_settings() == defaults
+    check.equal(view.get_settings(), default)
     view.set_settings(set12, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set13 = {'conf': 1.1, 'poll': 5, 'anti': 5000000,
              'search': ['dog', 'pet']}  # should be true
     d13 = {"video": 'here/is/a/path', "settings": set13}
     view.set_settings(set13, path)
-    assert view.get_settings() == d13
+    check.equal(view.get_settings(), d13)
     view.set_settings(set13, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set14 = {'conf': 1.1, 'poll': 5, 'anti': 5.2, 'search': [
         'dog', 'pet']}  # should be false, anti is not an integer
     view.set_settings(set14, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set14, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set15 = {'conf': 1.1, 'poll': 5, 'anti': 5,
              'search': ['dog', 'pet', '50']}  # should be true
     d15 = {"video": 'here/is/a/path', "settings": set15}
     view.set_settings(set15, path)
-    assert view.get_settings() == d15
+    check.equal(view.get_settings(), d15)
     view.set_settings(set15, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     # should be false, no search terms
     set16 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': []}
     view.set_settings(set16, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set16, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     # should be false, one value is not a string
     set17 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [84, '84']}
     view.set_settings(set17, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set17, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     # should be true, even if out of order
     set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 1.1, 'anti': 5}
     d18 = {"video": 'here/is/a/path', "settings": set18}
     view.set_settings(set18, path)
-    assert view.get_settings() == d18
+    check.equal(view.get_settings(), d18)
     view.set_settings(set18, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set19 = {'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}  # should be false
     view.set_settings(set19, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set19, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set20 = {'conf': 1.1, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false
     view.set_settings(set20, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set20, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set21 = {'conf': 1.1, 'poll': 5, 'search': [
         'dog', 'pet']}  # should be false
     view.set_settings(set21, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set21, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set22 = {'conf': 1.1, 'poll': 5, 'anti': 5}  # should be false
     view.set_settings(set22, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set22, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set23 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet'], 'video': 'path/to/video'}  # should be false, extra key
     view.set_settings(set23, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set23, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
     set24 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': [
         'dog', 'pet'], 'x': 0}  # should be false
     view.set_settings(set24, path)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
     view.set_settings(set24, notapath)
-    assert view.get_settings() == default
+    check.equal(view.get_settings(), default)
 
 
 def test_start():
     view = GUI()
-    assert view.start_job()
+    check.is_true(view.start_job())
 
 
 def test_kill():
     view = GUI()
-    assert view.kill_job()
+    check.is_true(view.kill_job())
 
 
 def test_render():
@@ -370,48 +369,48 @@ def test_render():
     # is given.
 
     test_gui = GUI()
-    assert test_gui.video_path == ''
-    assert test_gui.settings == {'conf': .9,
-                                 'poll': 5, 'anti': 5, 'search': [""]}
-    assert test_gui.job == None
+    check.equal(test_gui.video_path, '')
+    check.equal(test_gui.settings, {'conf': .9,
+                                 'poll': 5, 'anti': 5, 'search': [""]})
+    check.is_none(test_gui.job)
 
     # change the parameters to some valid input that a user would use
     test_gui.video_path = '~/Desktop/test.mp4'
     test_gui.set_settings({'conf': .5, 'poll': 3, 'anti': 1, 'search': [
                           "child"]}, test_gui.video_path)
-    test_job1 = Job(test_gui.settings)
+    test_job1 = Job(test_gui.get_settings())
     test_gui.job = test_job1
     # assert that these changes have gone through
-    assert test_gui.video_path == '~/Desktop/test.mp4'
-    assert test_gui.settings == {'conf': .5, 'poll': 3, 'anti': 1, 'search': [
-        "child"], 'path': '~/Desktop/test.mp4'}
-    #assert test_gui.job == test_job1
+    check.equal(test_gui.video_path, '~/Desktop/test.mp4')
+    check.equal(test_gui.settings, {'conf': .5, 'poll': 3, 'anti': 1, 'search': [
+        "child"], 'path': '~/Desktop/test.mp4'})
+    # assert test_gui.job check.equal() test_job1
 
     test_gui.render()
 
     # change the parameters to another valid input that a user would use
     test_gui.video_path = '../folder2/video.mp4'
     test_gui.set_settings({'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-                          "child, kid, ball"]}, test_gui.video_path)
+                          "child, kid, ball"], 'video': test_gui.video_path})
     test_job1 = Job(test_gui.settings)
     test_gui.job = test_job1
     # assert that these changes have gone through
-    assert test_gui.video_path == '../folder2/video.mp4'
-    assert test_gui.settings == {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-        "child, kid, ball"], 'path': '../folder2/video.mp4'}
-    assert test_gui.job == test_job1
+    check.equal(test_gui.video_path, '../folder2/video.mp4')
+    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
+        "child, kid, ball"], 'path': '../folder2/video.mp4'})
+    check.equal(test_gui.job, test_job1)
 
     test_gui.render()
 
     # change the video path to a very very long video path.
     # Keep the rest of the parameters the same
     test_gui.video_path = '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4'
-    assert test_gui.video_path == '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4'
+    check.equal(test_gui.video_path, '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4')
     test_gui.set_settings(test_giu.settings, test_gui.video_path)
     # make sure the other two parameters have not changed
-    assert test_gui.settings == {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-        "child, kid, ball"], 'path': test_giu.video_path}
-    assert test_gui.job == test_job1
+    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
+        "child, kid, ball"], 'path': test_giu.video_path})
+    check.equal(test_gui.job, test_job1)
 
     test_gui.render()
 
@@ -423,10 +422,10 @@ def test_render():
                          'anti': 0, 'search': ["child, kid, ball"]}
     test_gui.set_settings(test_gui.settings, test_gui.video_path)
     # make sure the correct parameters have changed
-    assert test_gui.video_path == ''
-    assert test_gui.settings == {
-        'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"], 'path': ''}
-    assert test_gui.job == test_job1
+    check.equal(test_gui.video_path, '')
+    check.equal(test_gui.settings, {
+        'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"], 'path': ''})
+    check.equal(test_gui.job, test_job1)
 
     test_gui.render()
 
@@ -439,10 +438,10 @@ def test_render():
     test_gui.set_settings(test_giu.settings, test_gui.video_path)
 
     # make sure that the parameters have not changed from the false input
-    assert test_gui.video_path == ''
-    assert test_gui.settings == {
-        'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"]}
-    assert test_gui.job == test_job1
+    check.equal(test_gui.video_path, '')
+    check.equal(test_gui.settings, {
+        'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"]})
+    check.equal(test_gui.job, test_job1)
 
     # Here, we will start testing more levels of the settings parameter in specific.
     # Valid inputs for settings should not throw a GUI error message
@@ -457,20 +456,20 @@ def test_render():
                           'anti': 462, 'search': ["comptuter"]}
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # make sure that these parameters have been appropriately changed
-    assert test_gui2.video_path == '~/Documents/downloadedvideo.mp4'
-    assert test_gui2.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Documents/downloadedvideo.mp4'}
-    assert test_gui2.job == None
+    check.equal(test_gui2.video_path, '~/Documents/downloadedvideo.mp4')
+    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Documents/downloadedvideo.mp4'})
+    check.is_none(test_gui2.job)
 
     # change the settings used so there are some invalid values (negative settings)
     test_gui2.settings = {'conf': -10, 'poll': -
                           1, 'anti': -5, 'search': ["uhhhh"]}
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the previous values remain
-    assert test_gui2.video_path == '~/Documents/downloadedvideo.mp4'
-    assert test_gui2.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Documents/downloadedvideo.mp4'}
-    assert test_gui.job == None
+    check.equal(test_gui2.video_path, '~/Documents/downloadedvideo.mp4')
+    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Documents/downloadedvideo.mp4'})
+    check.is_none(test_gui.job)
 
     test_gui2.render()
 
@@ -479,10 +478,10 @@ def test_render():
                           'anti': 'should not work', 'search': ["seach term"]}
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the previous values remain
-    assert test_gui2.video_path == '~/Documents/downloadedvideo.mp4'
-    assert test_gui2.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Documents/downloadedvideo.mp4'}
-    assert test_gui.job == None
+    check.equal(test_gui2.video_path, '~/Documents/downloadedvideo.mp4')
+    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Documents/downloadedvideo.mp4'})
+    check.is_none(test_gui.job)
 
     test_gui2.render()
 
@@ -492,13 +491,13 @@ def test_render():
     test_gui3 = GUI()
 
     # change the video_path to something other an empty
-    test_gui3.video_path == '~/Downloads/testingdifferentjobs.mp4'
+    test_gui3.video_path = '~/Downloads/testingdifferentjobs.mp4'
     test_gui3.set_settings(test_gui3.settings, test_giu3.video_path)
     # make sure the default settings have been invoked into set_settings
-    assert test_gui3.video_path == '~/Downloads/testingdifferentjobs.mp4'
-    assert test_gui3.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'}
-    assert test_gui3.job == None
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
+    check.equal(test_gui3.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'})
+    check.is_none(test_gui3.job)
 
     # create a new Job object with the default parameters in the GUI object
     test_job3 = Job(test_gui3.settings)
@@ -506,18 +505,18 @@ def test_render():
     # change the value of the GUI's job
     test_gui3.job = test_job3
     # make sure job has changed, but all the other settings stay the same
-    assert test_gui3.video_path == '~/Downloads/testingdifferentjobs.mp4'
-    assert test_gui3.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'}
-    assert test_gui3.job == test_job3
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
+    check.equal(test_gui3.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'})
+    check.equal(test_gui3.job, test_job3)
 
     # change the job back to None
     test_gui3.job = None
     # make sure job has changed, but all the other settings stay the same
-    assert test_gui3.video_path == '~/Downloads/testingdifferentjobs.mp4'
-    assert test_gui3.settings == {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
-        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'}
-    assert test_gui3.job == None
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
+    check.equal(test_gui3.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
+        ""], 'path': '~/Downloads/testingdifferentjobs.mp4'})
+    check.is_none(test_gui3.job)
 
     # test_constructor()
     # test_render()
