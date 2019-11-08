@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import cv2
 from PIL import Image, ImageChops
 import os
 import sys
@@ -7,7 +8,6 @@ import pytest_check as check
 sys.path.append('src')
 from view import *  # nopep8
 from model import *  # nopep8
-import cv2
 
 example_parameters1 = {
     'settings': {
@@ -22,14 +22,14 @@ example_parameters1 = {
 example_job1 = Job(example_parameters1)
 
 example_parameters2 = {
-        'settings': {
-            'conf': .9,
-            'poll': 4,
-            'anti': 5,
-            'search': ["rabbit"]
-            },
-        'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-        }
+    'settings': {
+        'conf': .9,
+        'poll': 4,
+        'anti': 5,
+        'search': ["rabbit"]
+    },
+    'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+}
 
 example_job2 = Job(example_parameters2)
 
@@ -50,26 +50,30 @@ def test_save_clips():
         example_job1.save_clips([timestamps5])
         example_job1.save_clips([timestamps6])
 
-    assert example_job1.save_clips([timestamps1])
-    assert example_job1.save_clips([timestamps1, timestamps2])
+    check.is_true(example_job1.save_clips([timestamps1]))
+    check.is_true(example_job1.save_clips([timestamps1, timestamps2]))
     path = os.path.splitext(example_job1.settings['video_path'])
-    assert os.path.isfile(
-        path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1])
-    assert os.path.isfile(
-        path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1])
+    check.is_true(
+        os.path.isfile(
+            path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1]))
+    check.is_true(
+        os.path.isfile(
+            path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1]))
+
 
 def test_classify_frames():
     frame_list1 = example_job2.classify_frames()
     frame_list = example_job1.classify_frames()
-    assert frame_list1[0][0] == 0
-    assert frame_list1[0][1] > 0.7
-    assert frame_list1[1][0] == 5
-    assert frame_list1[1][1] > 0.7
+    check.is_equal(frame_list1[0][0], 0)
+    check.is_greater(frame_list1[0][1], 0.7)
+    check.is_equal(frame_list1[1][0], 5)
+    check.is_greater(frame_list1[1][1], 0.7)
 
-    assert frame_list[0][0] == 0
-    assert frame_list[0][1] < 0.7
-    assert frame_list[1][0] == 4
-    assert frame_list[1][1] < 0.7
+    check.is_equal(frame_list[0][0], 0)
+    check.is_less(frame_list[0][1], 0.7)
+    check.is_equal(frame_list[1][0], 4)
+    check.is_less(frame_list[1][1], 0.7)
+
 
 def test_job_constructor():
     j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
@@ -83,6 +87,7 @@ def test_job_constructor():
     assert callable(getattr(j, 'interpret_results')) == True
     assert callable(getattr(j, 'save_clips')) == True
     assert callable(getattr(j, 'kill')) == True
+
 
 def test_interpret_results_null_input():
     job = Job()
@@ -210,13 +215,15 @@ def stampListsAreEqual(times1, times2):
 
     return True
 
+
 def areImagesSame(im1, im2):
-    return ImageChops.difference(im1,im2).getbbox() is None
+    return ImageChops.difference(im1, im2).getbbox() is None
+
 
 def test_get_frames():
     g = GUI()
-    g.set_settings({'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    g.set_settings({'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
+                   'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
     j = Job(g)
     frames = j.get_frames()
     check.is_equal(len(frames), 2)

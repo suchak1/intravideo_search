@@ -1,3 +1,5 @@
+import cv2
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from PIL import Image
 import os
 import sys
@@ -5,8 +7,6 @@ import pytest
 import pytest_check as check
 sys.path.append('src')
 from controller import *  # nopep8
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-import cv2
 
 
 def test_constructor():
