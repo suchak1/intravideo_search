@@ -22,12 +22,12 @@ example_parameters1 = {
 example_job1 = Job(example_parameters1)
 
 example_parameters2 = {
-        'settings': {
-            'conf': .9,
-            'poll': 4,
-            'anti': 5,
-            'search': ["rabbit"]
-        },
+    'settings': {
+        'conf': .9,
+        'poll': 4,
+        'anti': 5,
+        'search': ["rabbit"]
+    },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
 
@@ -222,8 +222,8 @@ def areImagesSame(im1, im2):
 
 
 def test_get_frames():
-    j = Job({'settings': {'conf':.9, 'poll':5, 'anti':5, 'search':['dog']},
-        'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
+             'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
     frames = j.get_frames()
     check.equal(len(frames), 2)
     # frame at 0 seconds of sample video

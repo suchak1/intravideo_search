@@ -17,7 +17,7 @@ def test_constructor():
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {'conf': .9,
-                                 'poll': 5, 'anti': 5, 'search': [""]})
+                                    'poll': 5, 'anti': 5, 'search': [""]})
     check.is_none(test_gui.job)
 
 
@@ -371,7 +371,7 @@ def test_render():
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {'conf': .9,
-                                 'poll': 5, 'anti': 5, 'search': [""]})
+                                    'poll': 5, 'anti': 5, 'search': [""]})
     check.is_none(test_gui.job)
 
     # change the parameters to some valid input that a user would use
