@@ -89,7 +89,7 @@ def test_make_clip_no_frames():
     w = Worker()
     timestamp = (1.0, 1.0000001)
     outVidPath = w.make_clip(timestamp, videoPath)
-    check.is_equal(outVidPath, '')
+    check.equal(outVidPath, '')
 
 
 def test_make_clip_full_video():

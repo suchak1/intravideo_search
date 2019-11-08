@@ -64,29 +64,29 @@ def test_save_clips():
 def test_classify_frames():
     frame_list1 = example_job2.classify_frames()
     frame_list = example_job1.classify_frames()
-    check.is_equal(frame_list1[0][0], 0)
+    check.equal(frame_list1[0][0], 0)
     check.is_greater(frame_list1[0][1], 0.7)
-    check.is_equal(frame_list1[1][0], 5)
+    check.equal(frame_list1[1][0], 5)
     check.is_greater(frame_list1[1][1], 0.7)
 
-    check.is_equal(frame_list[0][0], 0)
+    check.equal(frame_list[0][0], 0)
     check.is_less(frame_list[0][1], 0.7)
-    check.is_equal(frame_list[1][0], 4)
+    check.equal(frame_list[1][0], 4)
     check.is_less(frame_list[1][1], 0.7)
 
 
 def test_job_constructor():
     j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
              'video_path': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
-    assert getattr(
-        j, 'video_path') == 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
-    assert getattr(j, 'settings') == {
-        'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']}
-    assert callable(getattr(j, 'get_frames')) == True
-    assert callable(getattr(j, 'classify_frames')) == True
-    assert callable(getattr(j, 'interpret_results')) == True
-    assert callable(getattr(j, 'save_clips')) == True
-    assert callable(getattr(j, 'kill')) == True
+    check.equal(getattr(
+        j, 'video_path'), 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    check.equal(getattr(j, 'settings'), {
+        'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']})
+    check.is_true(callable(getattr(j, 'get_frames')))
+    check.is_true(callable(getattr(j, 'classify_frames')))
+    check.is_true(callable(getattr(j, 'interpret_results')))
+    check.is_true(callable(getattr(j, 'save_clips')))
+    check.is_true(callable(getattr(j, 'kill')))
 
 
 def test_interpret_results_null_input():
@@ -144,20 +144,20 @@ def test_interpret_results_out_of_order():
     results2 = [(1.0, 0.03), (3.0, 0.6)]
     times1 = job.interpret_results(results1)
     times2 = job.interpret_results(results2)
-    assert stampListsAreEqual(times1, times2)
+    check.is_true(stampListsAreEqual(times1, times2))
 
 
 def test_interpret_results_mid_clip():
     job = Job()
     results = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
-    assert job.interpret_results(results, cutoff=0.5) == [(5.0, 15.0)]
+    check.equal(job.interpret_results(results, cutoff=0.5), [(5.0, 15.0)])
 
 
 def test_interpret_results_spanning_clip():
     job = Job()
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
-    assert stampListsAreEqual(job.interpret_results(
-        results, cutoff=0.5), [(0.5, 25.0)])
+    check.is_true(stampListsAreEqual(job.interpret_results(
+        results, cutoff=0.5), [(0.5, 25.0)]))
 
 
 def test_interpret_results_multiple_seperate_clips():
@@ -167,31 +167,31 @@ def test_interpret_results_multiple_seperate_clips():
                (50.0, 0.8),
                (60.0, 0.01)]
 
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                              [(5.0, 25.0), (35.0, 55.0)])
+    check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
+                                     [(5.0, 25.0), (35.0, 55.0)]))
 
 
 def test_interpret_results_from_start():
     job = Job()
     results = [(1.0, 0.6), (10.0, 0.2), (20.0, 0.1), (30.0, 0.08)]
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                              [(0.0, 5.5)])
+    check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
+                                     [(0.0, 5.5)]))
 
 
 def test_interpret_results_from_end():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings = {"endtime", 40.0}
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                              [(25.0, 40.0)])
+    check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
+                                     [(25.0, 40.0)]))
 
 
 def test_interpret_results_zero_cutoff():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings = {"endtime", 40.0}
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
-                              [(0.0, 40.0)])
+    check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
+                                     [(0.0, 40.0)]))
 
 
 def test_interpret_results_cutoff_morethan_1():
@@ -200,7 +200,8 @@ def test_interpret_results_cutoff_morethan_1():
                (40.0, 0.7),
                (50.0, 0.8),
                (60.0, 0.01)]
-    assert stampListsAreEqual(job.interpret_results(results, cutoff=1.1), [])
+    check.is_true(stampListsAreEqual(
+        job.interpret_results(results, cutoff=1.1), []))
 
 
 def stampListsAreEqual(times1, times2):
@@ -224,9 +225,9 @@ def test_get_frames():
     g = GUI()
     g.set_settings({'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
                    'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
-    j = Job(g)
+    j = Job(g.get_settings())
     frames = j.get_frames()
-    check.is_equal(len(frames), 2)
+    check.equal(len(frames), 2)
     # frame at 0 seconds of sample video
     frame1 = Image.open('test/sampleVideo/frame1.jpg')
     # frame at 5 seconds of sample video
