@@ -88,7 +88,7 @@ def test_make_clip_no_frames():
     w = Worker()
     timestamp = (1.0, 1.0000001)
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert outVidPath == ""
+    check.is_equal(outVidPath, '')
 
 
 def test_make_clip_full_video():
@@ -96,7 +96,7 @@ def test_make_clip_full_video():
     w = Worker()
     timestamp = (0.0, 100000000000.0)
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(videoPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(videoPath, outVidPath))
 
 
 def test_make_clip_from_mid():
@@ -107,7 +107,7 @@ def test_make_clip_from_mid():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def test_make_clip_from_start():
@@ -118,7 +118,7 @@ def test_make_clip_from_start():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def test_make_clip_from_end():
@@ -129,7 +129,7 @@ def test_make_clip_from_end():
         videoPath, timestamp[0], timestamp[1], targetname=clipPath)
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
-    assert areVideosAndAreEqual(clipPath, outVidPath)
+    check.is_true(areVideosAndAreEqual(clipPath, outVidPath))
 
 
 def areVideosAndAreEqual(vidPath1, vidPath2):
