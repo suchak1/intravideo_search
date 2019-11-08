@@ -31,17 +31,17 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
-    assert w.classify_img(None) == None
+    check.is_none(w.classify_img(None))
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
         # should all be true
         # (that 'banana' is in classification dict for 'banana.jpg' and so on)
-        assert name in w.classify_img(img)
+        check.is_in(name, w.classify_img(img))
 
         # now let's try assertions that should definitely be wrong
         # (that 'waterfall' is in the classification dict for 'banana.jpg')
-        assert wrong_names[idx] not in w.classify(img)
+        check.is_not_in(wrong_names[idx] not in w.classify(img))
 
 
 def test_make_clip_negative_time():
