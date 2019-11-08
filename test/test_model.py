@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from PIL import Image
-from PIL import ImageChops
+from PIL import Image, ImageChops
 import os
 import sys
 import pytest
+import pytest_check as check
 sys.path.append('src')
-from view import *
+from view import *  # nopep8
 from model import *  # nopep8
 import cv2
 
@@ -42,7 +42,7 @@ def test_save_clips():
     timestamps5 = [1, -5]
     timestamps6 = [1, 1]
 
-    assert not example_job1.save_clips([])
+    check.is_false(example_job1.save_clips([]))
 
     with pytest.raises(Exception):
         example_job1.save_clips([timestamps3])
@@ -219,10 +219,10 @@ def test_get_frames():
                     'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
     j = Job(g)
     frames = j.get_frames()
-    assert len(frames) == 2
+    check.is_equal(len(frames), 2)
     # frame at 0 seconds of sample video
     frame1 = Image.open('test/sampleVideo/frame1.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/frame2.jpg')
-    assert areImagesSame(frames[0],frame1) == True
-    assert areImagesSame(frames[1],frame2) == True
+    check.is_true(areImagesSame(frames[0], frame1))
+    check.is_true(areImagesSame(frames[1], frame2))

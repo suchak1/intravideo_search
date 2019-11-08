@@ -1,6 +1,7 @@
 from PIL import Image
 import os
 import sys
+import pytest
 import pytest_check as check
 sys.path.append('src')
 from controller import *  # nopep8
