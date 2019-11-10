@@ -1,3 +1,6 @@
+from multiprocessing import Pool
+from controller import Worker
+
 class Job:
 
     "Model - data logic"
@@ -54,12 +57,13 @@ class Job:
         # first result/endofthevideo is included.
 
     def save_clips(self, timestamps):
-        # use multiprocessing here
-        '''
-        [Worker.make_clip(timestamp, self.video_path)
-         for timestamp in timestamps]
-        '''
-        pass
+        with Pool() as pool:
+            v = self.video_path
+            args_list = [(t, v) for t in timestamps]
+            map_results = pool.starmap(Worker().make_clip, args_list)
+
+        return map_results
+
 
     def kill(self):
         quit()
