@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 # -*- coding: utf-8 -*-
 
@@ -12,7 +13,7 @@ class GUI:
 
         # Mahmoud and I talked this over and decided that this we would keep
         # these default values.
-        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
+        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
         self.job = None
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
@@ -42,10 +43,45 @@ class GUI:
 
         path is the video_input path
         """
-        return False
+        if not os.path.exists(path):
+            self.video_path = ''
+            self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+            return False
+
+        expected_keys = ['conf', 'poll', 'anti', 'search']
+        missing = [x for x in expected_keys if x not in values.keys()]
+        if len(missing) > 0:
+            self.video_path = ''
+            self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+            return False
+
+        extra = [x for x in values.keys() if x not in expected_keys]
+        if len(extra) > 0:
+            self.video_path = ''
+            self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+            return False
+
+        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['search'] == []):
+            self.video_path = ''
+            self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+            return False
+
+        try:
+            if not (isinstance(values['poll'], int) and isinstance(values['anti'], int)):
+                raise TypeError
+
+            for term in values['search']:
+                if not isinstance(term, str):
+                    raise TypeError
+        except:
+            self.video_path = ''
+            self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+            return False
+
         self.settings = values  # be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
+        return True
 
     def start_job(self):
         try:
