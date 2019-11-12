@@ -25,11 +25,11 @@ class Job:
         poll = self.settings['poll']
         count = 0
         frms = []
-        vidcap = cv2.VideoCapture(vidPath)
+        video = cv2.VideoCapture(vidPath)
         success = True
         while success:
-            vidcap.set(cv2.CAP_PROP_POS_MSEC, (count*1000*poll))
-            success,frame = vidcap.read()
+            video.set(cv2.CAP_PROP_POS_MSEC, (count*1000*poll))
+            success,frame = video.read()
             if success:
                 cv2.imwrite('frame%d.jpg' % count, frame)
                 try:
