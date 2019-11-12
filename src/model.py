@@ -31,10 +31,10 @@ class Job:
             video.set(cv2.CAP_PROP_POS_MSEC, (count*1000*poll))
             success,frame = video.read()
             if success:
-                cv2.imwrite('frame%d.jpg' % count, frame)
+                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
                 try:
-                    f = Image.open('frame%d.jpg' % count)
-                    os.remove('frame%d.jpg' % count)
+                    f = Image.open('frame%d.jpg' % count) # make frame Image
+                    os.remove('frame%d.jpg' % count) # delete frame.jpg
                     frms.append(f)
                 except:
                     raise NameError('getFrameError')
