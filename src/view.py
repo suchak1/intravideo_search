@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import *
 # -*- coding: utf-8 -*-
 
 
@@ -65,10 +65,11 @@ class GUI:
         # display GUI, including text fields, choose file, and start button
         # also calls set_settings and start_job when start button is pressed
 
-        # win = tk.Tk()
+        win = Tk()
 
-        # win.title("Intravideo Search")
-        # win.geometry("500x500")
+        win.title("Intravideo Search")
+        win.geometry("960x540")
+
         # tk.Label(win, text= "Video path: " + self.video_path).pack()
         # tk.Button(win,text="Upload").pack()
 
@@ -81,7 +82,50 @@ class GUI:
         # tk.Label(win, text="Type Search Term").pack()
         # tk.Button(win,text="Type").pack()
 
-        # tk.Button(win,text="Kill this window", command= win.destroy).pack()
+        lbl1 = Label(win, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
+        lbl1.grid(column=0, row=0)
 
-        # win.mainloop()
+        lbl2 = Label(win, text="Upload a video file.", justify=LEFT)
+        lbl2.grid(sticky = W, column=0,row=1)
+
+        button1 = Button(win, text="Upload", anchor="w")
+        button1.grid(column=0, row=1)
+
+        lbl3 = Label(win, text="Confidence:", justify=LEFT)
+        lbl3.grid(sticky = W, column=0, row=2)
+
+        slider1 = Scale(win, from_=0, to=100, length = 200, orient=HORIZONTAL)
+        slider1.grid(sticky = W, column=1, row=2)
+
+        lbl4 = Label(win, text="Polling Rate:", justify=LEFT)
+        lbl4.grid(sticky = W, column=0, row=3)
+
+        slider2 = Scale(win, from_=0, to=200, length = 200, orient=HORIZONTAL)
+        slider2.grid(sticky = W, column=1, row=3)
+
+        lbl5 = Label(win, text="Anti:", justify=LEFT)
+        lbl5.grid(sticky = W, column=0, row=4)
+
+        slider3 = Scale(win, from_=0, to=200, length = 200, orient=HORIZONTAL)
+        slider3.grid(sticky = W, column=1, row=4)
+
+        lbl6 = Label(win, text="Search Terms:", justify=LEFT)
+        lbl6.grid(sticky=W, column=0, row=5)
+
+        entry1 = Entry(win)
+        entry1.grid(sticky=W, column=1, row=5)
+
+        button2 = Button(win, text="Add", anchor='w')
+        button2.grid(sticky=W, column=2, row=5)
+
+        button3 = Button(win, text="Clear", anchor='w')
+        button3.grid(sticky=W, column=3, row=5)
+
+
+        kill_button = Button(win,text="Kill this window", command= win.destroy)
+        kill_button.grid(column=0, row=100)
+
+        win.mainloop()
         return 0
+
+test_gui = GUI()
