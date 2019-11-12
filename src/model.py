@@ -26,7 +26,7 @@ class Job:
         count = 0
         frms = []
         vidcap = cv2.VideoCapture(vidPath)
-        success,frame = vidcap.read()
+        success = True
         while success:
             vidcap.set(cv2.CAP_PROP_POS_MSEC, (count*1000*poll))
             success,frame = vidcap.read()
@@ -39,7 +39,7 @@ class Job:
                 except:
                     raise NameError('getFrameError')
             count += 1
-        return frms  # do whatever to get frames from vid as specific times using self.settings
+        return frms
 
     def classify_frames(self):
         '''
