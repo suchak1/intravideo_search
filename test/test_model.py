@@ -149,8 +149,8 @@ def test_interpret_results_mid_clip():
 def test_interpret_results_spanning_clip():
     job = Job(example_parameters1)
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
-    check.is_true(stampListsAreEqual(job.interpret_results(
-        results, cutoff=0.5), [(0.5, 25.0)]))
+    check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
+                                    [(0.5, 25.0)]))
 
 
 def test_interpret_results_multiple_seperate_clips():
