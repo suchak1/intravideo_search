@@ -1,23 +1,29 @@
+import os
 import tkinter as tk
 # -*- coding: utf-8 -*-
 
+
+DEFAULT = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
 
 class GUI:
 
     "Views - everything user sees"
 
     def __init__(self):
-        self.video_path = ''  # string file path
         # dictionary of key, val of key is string, val is int
 
         # Mahmoud and I talked this over and decided that this we would keep
         # these default values.
-        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
+        self.set_default_settings()
         self.job = None
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
         self.render()   # display GUI when this class instantiates
+
+    def set_default_settings(self):
+        self.settings = DEFAULT
+        self.video_path = ''
 
     def get_settings(self):
         # get settings currently in text boxes of GUI
@@ -42,10 +48,40 @@ class GUI:
 
         path is the video_input path
         """
-        return False
+        if not os.path.exists(path):
+            self.set_default_settings()
+            return False
+
+        expected_keys = ['conf', 'poll', 'anti', 'search']
+        missing = [x for x in expected_keys if x not in values.keys()]
+        if len(missing) > 0:
+            self.set_default_settings()
+            return False
+
+        extra = [x for x in values.keys() if x not in expected_keys]
+        if len(extra) > 0:
+            self.set_default_settings()
+            return False
+
+        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['search'] == []):
+            self.set_default_settings()
+            return False
+
+        try:
+            if not (isinstance(values['poll'], int) and isinstance(values['anti'], int)):
+                raise TypeError
+
+            for term in values['search']:
+                if not isinstance(term, str):
+                    raise TypeError
+        except:
+            self.set_default_settings()
+            return False
+
         self.settings = values  # be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
+        return True
 
     def start_job(self):
         try:
