@@ -3,7 +3,7 @@ import tkinter as tk
 import sys
 import pytest
 import pytest_check as check
-sys.path.append('src')
+sys.path.append('../src')
 from view import *  # nopep8
 from model import *  # nopep8
 
@@ -391,7 +391,7 @@ def test_render():
     # change the parameters to another valid input that a user would use
     test_gui.video_path = '../folder2/video.mp4'
     test_gui.set_settings({'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-                          "child, kid, ball"], 'video': test_gui.video_path})
+                          "child, kid, ball"]}, test_gui.video_path)
     test_job1 = Job(test_gui.settings)
     test_gui.job = test_job1
     # assert that these changes have gone through
@@ -518,5 +518,7 @@ def test_render():
         ""], 'path': '~/Downloads/testingdifferentjobs.mp4'})
     check.is_none(test_gui3.job)
 
-    # test_constructor()
-    # test_render()
+test_constructor()
+test_set_settings()
+test_get_settings()
+test_render()

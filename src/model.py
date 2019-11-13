@@ -4,7 +4,7 @@ class Job:
 
     def __init__(self, settings=None):
         if not isinstance(settings, type(None)):
-            self.video_path = settings['video']
+            self.video_path = settings['path']
             self.settings = settings['settings']
             self.do_the_job()
         else:
