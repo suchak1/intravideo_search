@@ -3,7 +3,7 @@ import tkinter as tk
 import sys
 import pytest
 import pytest_check as check
-sys.path.append('../src')
+sys.path.append('src')
 from view import *  # nopep8
 from model import *  # nopep8
 
