@@ -18,5 +18,6 @@ class Worker:
         return result
 
     def make_clip(self, timestamp, path):
-        # using timestamp[0] (start time) and timestamp[1] (end time)
-        return path  # clip path
+        clipPath = path + "_subclip({},{})".format(timestamp[0], timestamp[1])
+        ffmpeg_extract_subclip(path, timestamp[0], timestamp[1], targetname=clipPath)
+        return clipPath  # clip path
