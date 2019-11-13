@@ -33,6 +33,29 @@ example_parameters2 = {
 
 example_job2 = Job(example_parameters2)
 
+example_parameters3 = {
+    'settings': {
+        'conf': .9,
+        'poll': 1,
+        'anti': 3,
+        'search': ["rock"]
+    },
+    'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
+}
+
+example_job3 = Job(example_parameters3)
+
+example_parameters4 = {
+    'settings': {
+        'conf': .9,
+        'poll': 8,
+        'anti': 6,
+        'search': ["water"]
+    },
+    'video': 'test/sampleVideo/SampleVideoNature.mp4'
+}
+
+example_job4 = Job(example_parameters4)
 
 def test_save_clips():
     timestamps1 = [0, 5]
@@ -82,11 +105,7 @@ def test_job_constructor():
         j, 'video_path'), 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
     check.equal(getattr(j, 'settings'), {
         'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']})
-    check.is_true(callable(getattr(j, 'get_frames')))
-    check.is_true(callable(getattr(j, 'classify_frames')))
-    check.is_true(callable(getattr(j, 'interpret_results')))
-    check.is_true(callable(getattr(j, 'save_clips')))
-    check.is_true(callable(getattr(j, 'kill')))
+    # redundant tests removed from milestone 3a comments
 
 
 def test_interpret_results_null_input():
@@ -220,10 +239,9 @@ def stampListsAreEqual(times1, times2):
 def areImagesSame(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
 
-
-def test_get_frames():
-    #j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
-    #         'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+# add tests for get_frames() based on comments from milestone 3a
+# now test with different videos and different settings
+def test_get_frames_poll_5():
     frames = example_job1.get_frames()
     check.equal(len(frames), 2)
     # frame at 0 seconds of sample video
@@ -232,3 +250,21 @@ def test_get_frames():
     frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
     check.is_true(areImagesSame(frames[0], frame1))
     check.is_true(areImagesSame(frames[1], frame2))
+
+def test_get_frames_poll_1():
+    frames = example_job3.get_frames()
+    check.equal(len(frames), 6)
+    # check frames against expected frame at each second (because poll = 1)
+    for i in range(6):
+        path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
+        compare_img = Image.open(path)
+        check.is_true(areImagesSame(frames[i], compare_img))
+
+def test_get_frames_poll_8():
+    frames = example_job4.get_frames()
+    check.equal(len(frames), 4)
+    # check frames against frame at 0,8,16,24 seconds (because poll = 8)
+    for i in range(4):
+        path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
+        compare_img = Image.open(path)
+        check.is_true(areImagesSame(frames[i], compare_img))
