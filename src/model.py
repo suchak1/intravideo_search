@@ -35,6 +35,39 @@ class Job:
 
         # Also assuming "endtime" is included in settings.
 
+        if not isinstance(results, type([])):
+            raise TypeError("Expected List. Got {}".format(type(results)))
+            return
+        if len(results) == 0:
+            return []
+
+        timeSet = set()
+        for elt in results:
+            if elt[0] < 0:
+                raise ValueError("Negative time stamp in results. Please don't do that. Got {}".format(elt[0]))
+                return
+            if elt[1] < 0:
+                raise ValueError("Negative score in results. Don't do this to me. Got {}".format(elt[1]))
+                return
+            if elt[1] > 1:
+                raise ValueError("Un-normalized score in results. Got {}, expected value in [0,1]".format(elt[1]))
+                return
+            if elt[0] < sorted(list(timeSet))[-1]:
+                raise ValueError("Results given out of order. I could fix this, but \
+                this probably means something is funky with whatever process produced this.")
+                return
+            if elt[0] in timeSet:
+                raise ValueError("Duplicate times in results. Found more than one of: {}".format(elt[0]))
+                return
+            else:
+                timeSet.add(elt[0])
+            if cutoff < 0:
+                raise ValueError("Cutoff parameter less than zero. Got: {}".format(cutoff))
+                return
+
+
+
+
         return [(0.6, 666.6)]
         # where each timestamp is a tuple of start
         # time and end time, demarcating a sub-clip. A

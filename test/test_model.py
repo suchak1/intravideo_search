@@ -93,14 +93,8 @@ def test_interpret_results_null_input():
     job = Job()
     results = None
     with pytest.raises(Exception):
-        job.interpret_results(results)
-
-
-def test_interpret_results_empty_input():
-    job = Job()
-    results = []
-    with pytest.raises(Exception):
-        job.interpret_results(results)
+        ret = job.interpret_results(results)
+        assert(isinstance(ret, type(None)))
 
 
 def test_interpret_results_negative_time():
@@ -140,12 +134,9 @@ def test_interpret_results_negative_cutoff():
 
 def test_interpret_results_out_of_order():
     job = Job()
-    results1 = [(3.0, 0.6), (1.0, 0.03)]
-    results2 = [(1.0, 0.03), (3.0, 0.6)]
-    times1 = job.interpret_results(results1)
-    times2 = job.interpret_results(results2)
-    check.is_true(stampListsAreEqual(times1, times2))
-
+    results = [(3.0, 0.6), (1.0, 0.03)]
+    with pytest.raises(Exception):
+        job.interpret_results(results)
 
 def test_interpret_results_mid_clip():
     job = Job()
