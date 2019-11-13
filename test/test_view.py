@@ -382,8 +382,8 @@ def test_render():
     test_gui.job = test_job1
     # assert that these changes have gone through
     check.equal(test_gui.video_path, '~/Desktop/test.mp4')
-    check.equal(test_gui.settings, {'conf': .5, 'poll': 3, 'anti': 1, 'search': [
-        "child"], 'path': '~/Desktop/test.mp4'})
+    check.equal(test_gui.settings, {'settings': {'conf': .5, 'poll': 3, 'anti': 1, 'search': [
+        "child"]}, 'video': '~/Desktop/test.mp4'})
     # assert test_gui.job check.equal() test_job1
 
     test_gui.render()
@@ -392,12 +392,12 @@ def test_render():
     test_gui.video_path = '../folder2/video.mp4'
     test_gui.set_settings({'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
                           "child, kid, ball"]}, test_gui.video_path)
-    test_job1 = Job(test_gui.settings)
+    test_job1 = Job({'settings': test_gui.settings, 'video': test_gui.video_path})
     test_gui.job = test_job1
     # assert that these changes have gone through
     check.equal(test_gui.video_path, '../folder2/video.mp4')
-    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-        "child, kid, ball"], 'path': '../folder2/video.mp4'})
+    check.equal(test_gui.settings, {'settings' : {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
+        "child, kid, ball"]}, 'video': '../folder2/video.mp4'})
     check.equal(test_gui.job, test_job1)
 
     test_gui.render()
@@ -406,10 +406,10 @@ def test_render():
     # Keep the rest of the parameters the same
     test_gui.video_path = '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4'
     check.equal(test_gui.video_path, '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4')
-    test_gui.set_settings(test_giu.settings, test_gui.video_path)
+    test_gui.set_settings(test_gui.settings, test_gui.video_path)
     # make sure the other two parameters have not changed
-    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
-        "child, kid, ball"], 'path': test_giu.video_path})
+    check.equal(test_gui.settings, {'settings' : {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': [
+        "child, kid, ball"]}, 'video': test_gui.video_path})
     check.equal(test_gui.job, test_job1)
 
     test_gui.render()
@@ -423,8 +423,7 @@ def test_render():
     test_gui.set_settings(test_gui.settings, test_gui.video_path)
     # make sure the correct parameters have changed
     check.equal(test_gui.video_path, '')
-    check.equal(test_gui.settings, {
-        'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"], 'path': ''})
+    check.equal(test_gui.settings, {'settings' : {'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"]}, 'video': ''})
     check.equal(test_gui.job, test_job1)
 
     test_gui.render()
@@ -432,10 +431,7 @@ def test_render():
     # change video path to an invalid value or type
     # the point of this test to make sure the GUI visually throws an error message
     # Because these types of errors will be caught by the logic unit tests,
-    test_gui.video_path = 2
-    test_gui.settings = {'conf': 0.2, 'poll': 0,
-                         'anti': 0, 'search': ["child, kid, ball"]}
-    test_gui.set_settings(test_giu.settings, test_gui.video_path)
+    test_gui.set_settings({'conf': 0.2, 'poll': 0, 'anti': 0, 'search': ["child, kid, ball"]}, 2)
 
     # make sure that the parameters have not changed from the false input
     check.equal(test_gui.video_path, '')
@@ -492,7 +488,7 @@ def test_render():
 
     # change the video_path to something other an empty
     test_gui3.video_path = '~/Downloads/testingdifferentjobs.mp4'
-    test_gui3.set_settings(test_gui3.settings, test_giu3.video_path)
+    test_gui3.set_settings(test_gui3.settings, test_gui3.video_path)
     # make sure the default settings have been invoked into set_settings
     check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
     check.equal(test_gui3.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
@@ -500,7 +496,7 @@ def test_render():
     check.is_none(test_gui3.job)
 
     # create a new Job object with the default parameters in the GUI object
-    test_job3 = Job(test_gui3.settings)
+    test_job3 = Job({'settings': test_gui3.settings, 'video': test_gui3.video_path})
 
     # change the value of the GUI's job
     test_gui3.job = test_job3
