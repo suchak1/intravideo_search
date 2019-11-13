@@ -25,7 +25,7 @@ class Job:
         # use multiprocessing on loop in list comprehension below
         return [Worker.classify_img(frame) for frame in frames]
         '''
-        pass
+        return [(6.66, 0.6)]
 
     def has_valid_args_interpret_results(self, results, cutoff):
 
@@ -43,15 +43,15 @@ class Job:
             if elt[1] > 1:
                 raise ValueError("Un-normalized score in results. Got {}, expected value in [0,1]".format(elt[1]))
                 return -1
-            if elt[0] < sorted(list(timeSet))[-1]:
-                raise ValueError("Results given out of order. I could fix this, but \
-                this probably means something is funky with whatever process produced this.")
-                return -1
             if elt[0] in timeSet:
                 raise ValueError("Duplicate times in results. Found more than one of: {}".format(elt[0]))
                 return -1
             else:
                 timeSet.add(elt[0])
+            if elt[0] < sorted(list(timeSet))[-1]:
+                raise ValueError("Results given out of order. I could fix this, but \
+                this probably means something is funky with whatever process produced this.")
+                return -1
             if cutoff < 0:
                 raise ValueError("Cutoff parameter less than zero. Got: {}".format(cutoff))
                 return -1
@@ -63,21 +63,27 @@ class Job:
         i = 0
         while(True):
             if i >= len(results):
+                print("Got to the end!")
                 break
             if results[i][1] >= cutoff:
+                print("Found a goodie at {}!".format(i))
                 foundEnd = False
-                for j, elts in range(i+1, len(results)):
+                for j in range(i+1, len(results)):
                     if results[j][1] < cutoff:
-                        positiveResults.append(i, j)
+                        print("Found the end of it at {}!".format(j))
+                        positiveResults.append((i, j))
                         foundEnd = True
                         break
                 if foundEnd:
+                    print("Continuing on {}".format(j+1))
                     i = j+1
                     continue
                 else:
+                    print("Did not find an end.")
                     positiveResults.append((i, len(results)-1))
                     break
             else:
+                print("Baddie at {}.".format(i))
                 i += 1
                 continue
 
@@ -98,17 +104,19 @@ class Job:
         if len(results) == 0:
             return []
 
+        print("FILTERING ENDPOINTS")
         clipEndpointIdxs = self.get_filtered_endpoints(results, cutoff)
+        print(clipEndpointIdxs)
 
         adjustedEndpoints = []
-        for endpts in clipEndpointsIdxs:
+        for endpts in clipEndpointIdxs:
             startIdx = endpts[0]
             endIdx = endpts[1]
 
             result1 = results[startIdx]
             result2 = results[endIdx]
 
-            if startIdk == 0:
+            if startIdx == 0:
                 startTime = 0.0
             else:
                 thisTime = result1[0]
@@ -120,10 +128,10 @@ class Job:
             else:
                 thisTime = result2[0]
                 nextTime = results[endIdx+1][0]
-                endTime = (thisTime + lastTime) / 2
+                endTime = (thisTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
-            
+
         return adjustedEndpoints
         # where each timestamp is a tuple of start
         # time and end time, demarcating a sub-clip. A
