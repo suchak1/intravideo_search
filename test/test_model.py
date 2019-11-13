@@ -222,13 +222,13 @@ def areImagesSame(im1, im2):
 
 
 def test_get_frames():
-    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
-             'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
-    frames = j.get_frames()
+    #j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
+    #         'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
+    frames = example_job1.get_frames()
     check.equal(len(frames), 2)
     # frame at 0 seconds of sample video
-    frame1 = Image.open('test/sampleVideo/frame1.jpg')
+    frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
     # frame at 5 seconds of sample video
-    frame2 = Image.open('test/sampleVideo/frame2.jpg')
+    frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
     check.is_true(areImagesSame(frames[0], frame1))
     check.is_true(areImagesSame(frames[1], frame2))
