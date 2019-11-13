@@ -63,27 +63,27 @@ class Job:
         i = 0
         while(True):
             if i >= len(results):
-                print("Got to the end!")
+                #print("Got to the end!")
                 break
             if results[i][1] >= cutoff:
-                print("Found a goodie at {}!".format(i))
+                #print("Found a goodie at {}!".format(i))
                 foundEnd = False
                 for j in range(i+1, len(results)):
                     if results[j][1] < cutoff:
-                        print("Found the end of it at {}!".format(j))
+                        #print("Found the end of it at {}!".format(j))
                         positiveResults.append((i, j))
                         foundEnd = True
                         break
                 if foundEnd:
-                    print("Continuing on {}".format(j+1))
+                    #print("Continuing on {}".format(j+1))
                     i = j+1
                     continue
                 else:
-                    print("Did not find an end.")
+                    #print("Did not find an end.")
                     positiveResults.append((i, -1))
                     break
             else:
-                print("Baddie at {}.".format(i))
+                #print("Baddie at {}.".format(i))
                 i += 1
                 continue
 
@@ -104,13 +104,13 @@ class Job:
         if len(results) == 0:
             return []
 
-        print("FILTERING ENDPOINTS")
+        #print("FILTERING ENDPOINTS")
         clipEndpointIdxs = self.get_filtered_endpoints(results, cutoff)
-        print(clipEndpointIdxs)
+        """print(clipEndpointIdxs)
         for endpoints in clipEndpointIdxs:
             print("Clip:")
             for point in endpoints:
-                print("\t"+str(results[point][0]))
+                print("\t"+str(results[point][0]))"""
 
         adjustedEndpoints = []
         for endpts in clipEndpointIdxs:
@@ -121,22 +121,22 @@ class Job:
             result2 = results[endIdx]
 
             if startIdx == 0:
-                print("Starting at the start! startTime: 0.0")
+                #print("Starting at the start! startTime: 0.0")
                 startTime = 0.0
             else:
                 thisTime = result1[0]
                 lastTime = results[startIdx-1][0]
                 startTime = (thisTime + lastTime) / 2
-                print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
+                #print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
 
             if endIdx == -1:
                 endTime = self.settings["runtime"]
-                print("Ending at the end. endTime {}".format(endTime))
+                #print("Ending at the end. endTime {}".format(endTime))
             else:
                 finalTime = results[endIdx-1][0]
                 nextTime = results[endIdx][0]
                 endTime = (finalTime + nextTime) / 2
-                print("thisTime {}, nextTime {}, endTime {}".format(finalTime, nextTime, endTime))
+                #print("thisTime {}, nextTime {}, endTime {}".format(finalTime, nextTime, endTime))
 
             adjustedEndpoints.append((startTime, endTime))
 
