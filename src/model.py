@@ -80,7 +80,7 @@ class Job:
                     continue
                 else:
                     print("Did not find an end.")
-                    positiveResults.append((i, len(results)-1))
+                    positiveResults.append((i, -1))
                     break
             else:
                 print("Baddie at {}.".format(i))
@@ -129,14 +129,14 @@ class Job:
                 startTime = (thisTime + lastTime) / 2
                 print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
 
-            if endIdx == (len(results) - 1):
+            if endIdx == -1:
                 endTime = self.settings["runtime"]
                 print("Ending at the end. endTime {}".format(endTime))
             else:
-                thisTime = result1[0]
+                finalTime = results[endIdx-1][0]
                 nextTime = results[endIdx][0]
-                endTime = (thisTime + nextTime) / 2
-                print("thisTime {}, nextTime {}, endTime {}".format(thisTime, nextTime, endTime))
+                endTime = (finalTime + nextTime) / 2
+                print("thisTime {}, nextTime {}, endTime {}".format(finalTime, nextTime, endTime))
 
             adjustedEndpoints.append((startTime, endTime))
 
