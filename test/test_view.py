@@ -17,12 +17,12 @@ def test_constructor():
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {'conf': .9,
-                                    'poll': 5, 'anti': 5, 'search': [""]})
+                                    'poll': 5, 'anti': 5, 'search': []})
     check.is_none(test_gui.job)
 
 
 def test_set_settings():
-    path = 'here/is/a/path'
+    path = './test/sampleVideo/test.mp4'
     notapath = 52
 
     view = GUI()
@@ -62,58 +62,58 @@ def test_set_settings():
     check.is_true(view.set_settings(set7, path))
     check.is_false(view.set_settings(set7, notapath))
 
-    set8 = {'conf': 1.1, 'poll': -1, 'anti': 5,
+    set8 = {'conf': 0.5, 'poll': -1, 'anti': 5,
             'search': ['dog', 'pet']}  # should be false, poll is < 0
-    check.is_true(view.set_settings(set8, path))
+    check.is_false(view.set_settings(set8, path))
     check.is_false(view.set_settings(set8, notapath))
 
-    set9 = {'conf': 1.1, 'poll': 500000, 'anti': 5,
+    set9 = {'conf': 0.5, 'poll': 500000, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    check.is_false(view.set_settings(set9, path))
+    check.is_true(view.set_settings(set9, path))
     check.is_false(view.set_settings(set9, notapath))
 
-    set10 = {'conf': 1.1, 'poll': 5.2, 'anti': 5, 'search': [
+    set10 = {'conf': 0.5, 'poll': 5.2, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, poll is not an integer
-    check.is_true(view.set_settings(set10, path))
+    check.is_false(view.set_settings(set10, path))
     check.is_false(view.set_settings(set10, notapath))
 
-    set11 = {'conf': 1.1, 'poll': 5, 'anti': 0,
+    set11 = {'conf': 0.5, 'poll': 5, 'anti': 0,
              'search': ['dog', 'pet']}  # should be true
-    check.is_false(view.set_settings(set11, path))
+    check.is_true(view.set_settings(set11, path))
     check.is_false(view.set_settings(set11, notapath))
 
-    set12 = {'conf': 1.1, 'poll': 5, 'anti': -1,
+    set12 = {'conf': 0.5, 'poll': 5, 'anti': -1,
              'search': ['dog', 'pet']}  # should be false, anti is < 0
-    check.is_true(view.set_settings(set12, path))
+    check.is_false(view.set_settings(set12, path))
     check.is_false(view.set_settings(set12, notapath))
 
-    set13 = {'conf': 1.1, 'poll': 5, 'anti': 5000000,
+    set13 = {'conf': 0.5, 'poll': 5, 'anti': 5000000,
              'search': ['dog', 'pet']}  # should be true
     check.is_true(view.set_settings(set13, path))
     check.is_false(view.set_settings(set13, notapath))
 
-    set14 = {'conf': 1.1, 'poll': 5, 'anti': 5.2, 'search': [
+    set14 = {'conf': 0.5, 'poll': 5, 'anti': 5.2, 'search': [
         'dog', 'pet']}  # should be false, anti is not an integer
     check.is_false(view.set_settings(set14, path))
     check.is_false(view.set_settings(set14, notapath))
 
-    set15 = {'conf': 1.1, 'poll': 5, 'anti': 5,
+    set15 = {'conf': 0.5, 'poll': 5, 'anti': 5,
              'search': ['dog', 'pet', '50']}  # should be true
     check.is_true(view.set_settings(set15, path))
     check.is_false(view.set_settings(set15, notapath))
 
     # should be false, no search terms
-    set16 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': []}
+    set16 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'search': []}
     check.is_false(view.set_settings(set16, path))
     check.is_false(view.set_settings(set16, notapath))
 
     # should be false, one value is not a string
-    set17 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [84, '84']}
+    set17 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'search': [84, '84']}
     check.is_false(view.set_settings(set17, path))
     check.is_false(view.set_settings(set17, notapath))
 
     # should be true, even if out of order
-    set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 1.1, 'anti': 5}
+    set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 0.5, 'anti': 5}
     check.is_true(view.set_settings(set18, path))
     check.is_false(view.set_settings(set18, notapath))
 
@@ -121,17 +121,17 @@ def test_set_settings():
     check.is_false(view.set_settings(set19, path))
     check.is_false(view.set_settings(set19, notapath))
 
-    set20 = {'conf': 1.1, 'anti': 5, 'search': [
+    set20 = {'conf': 0.5, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false
     check.is_false(view.set_settings(set20, path))
     check.is_false(view.set_settings(set20, notapath))
 
-    set21 = {'conf': 1.1, 'poll': 5, 'search': [
+    set21 = {'conf': 0.5, 'poll': 5, 'search': [
         'dog', 'pet']}  # should be false
     check.is_false(view.set_settings(set21, path))
     check.is_false(view.set_settings(set21, notapath))
 
-    set22 = {'conf': 1.1, 'poll': 5, 'anti': 5}  # should be false
+    set22 = {'conf': 0.5, 'poll': 5, 'anti': 5}  # should be false
     check.is_false(view.set_settings(set22, path))
     check.is_false(view.set_settings(set22, notapath))
 
@@ -151,7 +151,7 @@ def test_get_settings():
             Assumption: If set_settings fails, the default values are set for all of the parameters
     """
 
-    path = 'here/is/a/path'
+    path = './test/sampleVideo/test.mp4'
     notapath = 52
 
     view = GUI()
@@ -161,7 +161,7 @@ def test_get_settings():
 
     set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    d1 = {"video": 'here/is/a/path', "settings": {'conf': 0.9,
+    d1 = {"video": './test/sampleVideo/test.mp4', "settings": {'conf': 0.9,
                                                   'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}}
     view.set_settings(set1, path)
     check.equal(view.get_settings(), d1)
@@ -170,7 +170,7 @@ def test_get_settings():
 
     set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'search': ['car']}  # should be true
-    d2 = {"video": 'here/is/a/path', "settings": {'conf': 0.1,
+    d2 = {"video": './test/sampleVideo/test.mp4', "settings": {'conf': 0.1,
                                                   'poll': 2, 'anti': 8, 'search': ['car']}}
     view.set_settings(set2, path)
     check.equal(view.get_settings(), d2)
@@ -179,7 +179,7 @@ def test_get_settings():
 
     set3 = {'conf': 0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    d3 = {"video": 'here/is/a/path', "settings": {'conf': 0,
+    d3 = {"video": './test/sampleVideo/test.mp4', "settings": {'conf': 0,
                                                   'poll': 5, 'anti': 5, 'search': ['dog', 'pet']}}
     view.set_settings(set3, path)
     check.equal(view.get_settings(), d3)
@@ -195,7 +195,7 @@ def test_get_settings():
 
     set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    d5 = {"video": 'here/is/a/path', "settings": set5}
+    d5 = {"video": './test/sampleVideo/test.mp4', "settings": set5}
     view.set_settings(set5, path)
     check.equal(view.get_settings(), d5)
     view.set_settings(set5, notapath)
@@ -210,7 +210,7 @@ def test_get_settings():
 
     set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    d7 = {"video": 'here/is/a/path', "settings": set7}
+    d7 = {"video": './test/sampleVideo/test.mp4', "settings": set7}
     view.set_settings(set7, path)
     check.equal(view.get_settings(), d7)
     view.set_settings(set7, notapath)
@@ -223,76 +223,76 @@ def test_get_settings():
     view.set_settings(set8, notapath)
     check.equal(view.get_settings(), default)
 
-    set9 = {'conf': 1.1, 'poll': 500000, 'anti': 5,
+    set9 = {'conf': 0.9, 'poll': 500000, 'anti': 5,
             'search': ['dog', 'pet']}  # should be true
-    d9 = {"video": 'here/is/a/path', "settings": set9}
+    d9 = {"video": './test/sampleVideo/test.mp4', "settings": set9}
     view.set_settings(set9, path)
     check.equal(view.get_settings(), d9)
     view.set_settings(set9, notapath)
     check.equal(view.get_settings(), default)
 
-    set10 = {'conf': 1.1, 'poll': 5.2, 'anti': 5, 'search': [
+    set10 = {'conf': 0.9, 'poll': 5.2, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false, poll is not an integer
     view.set_settings(set10, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set10, notapath)
     check.equal(view.get_settings(), default)
 
-    set11 = {'conf': 1.1, 'poll': 5, 'anti': 0,
+    set11 = {'conf': 0.9, 'poll': 5, 'anti': 0,
              'search': ['dog', 'pet']}  # should be true
-    d11 = {"video": 'here/is/a/path', "settings": set11}
+    d11 = {"video": './test/sampleVideo/test.mp4', "settings": set11}
     view.set_settings(set11, path)
     check.equal(view.get_settings(), d11)
     view.set_settings(set11, notapath)
     check.equal(view.get_settings(), default)
 
-    set12 = {'conf': 1.1, 'poll': 5, 'anti': -1,
+    set12 = {'conf': 0.9, 'poll': 5, 'anti': -1,
              'search': ['dog', 'pet']}  # should be false, anti is < 0
     view.set_settings(set12, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set12, notapath)
     check.equal(view.get_settings(), default)
 
-    set13 = {'conf': 1.1, 'poll': 5, 'anti': 5000000,
+    set13 = {'conf': 0.9, 'poll': 5, 'anti': 5000000,
              'search': ['dog', 'pet']}  # should be true
-    d13 = {"video": 'here/is/a/path', "settings": set13}
+    d13 = {"video": './test/sampleVideo/test.mp4', "settings": set13}
     view.set_settings(set13, path)
     check.equal(view.get_settings(), d13)
     view.set_settings(set13, notapath)
     check.equal(view.get_settings(), default)
 
-    set14 = {'conf': 1.1, 'poll': 5, 'anti': 5.2, 'search': [
+    set14 = {'conf': 0.9, 'poll': 5, 'anti': 5.2, 'search': [
         'dog', 'pet']}  # should be false, anti is not an integer
     view.set_settings(set14, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set14, notapath)
     check.equal(view.get_settings(), default)
 
-    set15 = {'conf': 1.1, 'poll': 5, 'anti': 5,
+    set15 = {'conf': 0.9, 'poll': 5, 'anti': 5,
              'search': ['dog', 'pet', '50']}  # should be true
-    d15 = {"video": 'here/is/a/path', "settings": set15}
+    d15 = {"video": './test/sampleVideo/test.mp4', "settings": set15}
     view.set_settings(set15, path)
     check.equal(view.get_settings(), d15)
     view.set_settings(set15, notapath)
     check.equal(view.get_settings(), default)
 
     # should be false, no search terms
-    set16 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': []}
+    set16 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': []}
     view.set_settings(set16, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set16, notapath)
     check.equal(view.get_settings(), default)
 
     # should be false, one value is not a string
-    set17 = {'conf': 1.1, 'poll': 5, 'anti': 5, 'search': [84, '84']}
+    set17 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'search': [84, '84']}
     view.set_settings(set17, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set17, notapath)
     check.equal(view.get_settings(), default)
 
     # should be true, even if out of order
-    set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 1.1, 'anti': 5}
-    d18 = {"video": 'here/is/a/path', "settings": set18}
+    set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 0.9, 'anti': 5}
+    d18 = {"video": './test/sampleVideo/test.mp4', "settings": set18}
     view.set_settings(set18, path)
     check.equal(view.get_settings(), d18)
     view.set_settings(set18, notapath)
@@ -304,21 +304,21 @@ def test_get_settings():
     view.set_settings(set19, notapath)
     check.equal(view.get_settings(), default)
 
-    set20 = {'conf': 1.1, 'anti': 5, 'search': [
+    set20 = {'conf': 0.9, 'anti': 5, 'search': [
         'dog', 'pet']}  # should be false
     view.set_settings(set20, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set20, notapath)
     check.equal(view.get_settings(), default)
 
-    set21 = {'conf': 1.1, 'poll': 5, 'search': [
+    set21 = {'conf': 0.9, 'poll': 5, 'search': [
         'dog', 'pet']}  # should be false
     view.set_settings(set21, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set21, notapath)
     check.equal(view.get_settings(), default)
 
-    set22 = {'conf': 1.1, 'poll': 5, 'anti': 5}  # should be false
+    set22 = {'conf': 0.9, 'poll': 5, 'anti': 5}  # should be false
     view.set_settings(set22, path)
     check.equal(view.get_settings(), default)
     view.set_settings(set22, notapath)

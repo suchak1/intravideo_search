@@ -1,24 +1,34 @@
+<<<<<<< HEAD
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+=======
+import os
+import tkinter as tk
+>>>>>>> 8306383bf2e3bb68bac4598ab3791ff73cf7e080
 # -*- coding: utf-8 -*-
 
+
+DEFAULT = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
 
 class GUI:
 
     "Views - everything user sees"
 
     def __init__(self):
-        self.video_path = ''  # string file path
         # dictionary of key, val of key is string, val is int
 
         # Mahmoud and I talked this over and decided that this we would keep
         # these default values.
-        self.settings = {'conf': .9, 'poll': 5, 'anti': 5, 'search': [""]}
+        self.set_default_settings()
         self.job = None
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
         self.render()   # display GUI when this class instantiates
+
+    def set_default_settings(self):
+        self.settings = DEFAULT
+        self.video_path = ''
 
     def get_settings(self):
         # get settings currently in text boxes of GUI
@@ -46,6 +56,7 @@ class GUI:
         self.settings = values  # be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
+        return True
 
     def start_job(self):
         try:
