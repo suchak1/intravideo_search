@@ -31,34 +31,36 @@ class Job:
 
         if not isinstance(results, type([])):
             raise TypeError("Expected List. Got {}".format(type(results)))
-            return -1
         timeSet = set()
         for elt in results:
             if elt[0] < 0:
                 raise ValueError("Negative time stamp in results. Please don't do that. Got {}".format(elt[0]))
-                return -1
             if elt[1] < 0:
                 raise ValueError("Negative score in results. Don't do this to me. Got {}".format(elt[1]))
-                return -1
             if elt[1] > 1:
                 raise ValueError("Un-normalized score in results. Got {}, expected value in [0,1]".format(elt[1]))
-                return -1
             if elt[0] in timeSet:
                 raise ValueError("Duplicate times in results. Found more than one of: {}".format(elt[0]))
-                return -1
             else:
                 timeSet.add(elt[0])
             if elt[0] < sorted(list(timeSet))[-1]:
                 raise ValueError("Results given out of order. I could fix this, but \
                 this probably means something is funky with whatever process produced this.")
-                return -1
             if cutoff < 0:
                 raise ValueError("Cutoff parameter less than zero. Got: {}".format(cutoff))
-                return -1
 
-        return 0
 
-    def get_filtered_endpoints(self, results, cutoff):
+    def interpret_results(self, results, cutoff=0.5):
+        # Assuming arg: results is something like a list of tuples
+        # of the form ((float)timestamp_t, (float)APIScore_t)
+        # where APIScore_t is the score given by classify_frames()
+        # to each frame_t fed through the API, normalized to be between [0,1].
+        # Also assuming "runtime" is included in settings.
+        # Checking that the arguments are valid.
+        self.has_valid_args_interpret_results(results, cutoff)
+        if len(results) == 0:
+            return []
+
         positiveResults = []
         i = 0
         while(True):
@@ -87,33 +89,8 @@ class Job:
                 i += 1
                 continue
 
-        return positiveResults
-
-    def interpret_results(self, results, cutoff=0.5):
-        # Assuming arg: results is something like a list of tuples
-        # of the form ((float)timestamp_t, (float)APIScore_t)
-        # where APIScore_t is the score given by classify_frames()
-        # to each frame_t fed through the API, normalized to be between [0,1].
-
-        # Also assuming "endtime" is included in settings.
-
-        # Checking that the arguments are valid.
-        ret = self.has_valid_args_interpret_results(results, cutoff)
-        if ret == -1:
-            return
-        if len(results) == 0:
-            return []
-
-        #print("FILTERING ENDPOINTS")
-        clipEndpointIdxs = self.get_filtered_endpoints(results, cutoff)
-        """print(clipEndpointIdxs)
-        for endpoints in clipEndpointIdxs:
-            print("Clip:")
-            for point in endpoints:
-                print("\t"+str(results[point][0]))"""
-
         adjustedEndpoints = []
-        for endpts in clipEndpointIdxs:
+        for endpts in positiveResults:
             startIdx = endpts[0]
             endIdx = endpts[1]
 
@@ -140,7 +117,7 @@ class Job:
 
             adjustedEndpoints.append((startTime, endTime))
 
-        print(adjustedEndpoints)
+        #print(adjustedEndpoints)
 
         return adjustedEndpoints
         # where each timestamp is a tuple of start
