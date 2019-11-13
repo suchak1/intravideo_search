@@ -107,6 +107,10 @@ class Job:
         print("FILTERING ENDPOINTS")
         clipEndpointIdxs = self.get_filtered_endpoints(results, cutoff)
         print(clipEndpointIdxs)
+        for endpoints in clipEndpointIdxs:
+            print("Clip:")
+            for point in endpoints:
+                print("\t"+str(results[point][0]))
 
         adjustedEndpoints = []
         for endpts in clipEndpointIdxs:
@@ -117,20 +121,26 @@ class Job:
             result2 = results[endIdx]
 
             if startIdx == 0:
+                print("Starting at the start! startTime: 0.0")
                 startTime = 0.0
             else:
                 thisTime = result1[0]
                 lastTime = results[startIdx-1][0]
                 startTime = (thisTime + lastTime) / 2
+                print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
 
             if endIdx == (len(results) - 1):
                 endTime = self.settings["runtime"]
+                print("Ending at the end. endTime {}".format(endTime))
             else:
-                thisTime = result2[0]
-                nextTime = results[endIdx+1][0]
+                thisTime = result1[0]
+                nextTime = results[endIdx][0]
                 endTime = (thisTime + nextTime) / 2
+                print("thisTime {}, nextTime {}, endTime {}".format(thisTime, nextTime, endTime))
 
             adjustedEndpoints.append((startTime, endTime))
+
+        print(adjustedEndpoints)
 
         return adjustedEndpoints
         # where each timestamp is a tuple of start
