@@ -513,8 +513,3 @@ def test_render():
     check.equal(test_gui3.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': [
         ""], 'path': '~/Downloads/testingdifferentjobs.mp4'})
     check.is_none(test_gui3.job)
-
-test_constructor()
-test_set_settings()
-test_get_settings()
-test_render()
