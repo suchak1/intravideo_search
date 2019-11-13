@@ -172,7 +172,7 @@ def test_interpret_results_from_start():
 def test_interpret_results_from_end():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
-    job.settings = {"endtime", 40.0}
+    job.settings = {"runtime", 40.0}
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
                                      [(25.0, 40.0)]))
 
@@ -180,7 +180,7 @@ def test_interpret_results_from_end():
 def test_interpret_results_zero_cutoff():
     job = Job()
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
-    job.settings = {"endtime", 40.0}
+    job.settings = {"runtime", 40.0}
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
                                      [(0.0, 40.0)]))
 

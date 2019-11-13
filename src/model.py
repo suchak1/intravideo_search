@@ -98,18 +98,33 @@ class Job:
         if len(results) == 0:
             return []
 
-        clipEndpoints = self.get_filtered_endpoints(results, cutoff)
+        clipEndpointIdxs = self.get_filtered_endpoints(results, cutoff)
 
         adjustedEndpoints = []
-        
+        for endpts in clipEndpointsIdxs:
+            startIdx = endpts[0]
+            endIdx = endpts[1]
 
+            result1 = results[startIdx]
+            result2 = results[endIdx]
 
+            if startIdk == 0:
+                startTime = 0.0
+            else:
+                thisTime = result1[0]
+                lastTime = results[startIdx-1][0]
+                startTime = (thisTime + lastTime) / 2
 
+            if endIdx == (len(results) - 1):
+                endTime = self.settings["runtime"]
+            else:
+                thisTime = result2[0]
+                nextTime = results[endIdx+1][0]
+                endTime = (thisTime + lastTime) / 2
 
-
-
-
-        return [(0.6, 666.6)]
+            adjustedEndpoints.append((startTime, endTime))
+            
+        return adjustedEndpoints
         # where each timestamp is a tuple of start
         # time and end time, demarcating a sub-clip. A
         # positive result consits of a starttime, and
