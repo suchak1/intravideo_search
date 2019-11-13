@@ -58,6 +58,31 @@ class Job:
 
         return 0
 
+    def get_filtered_endpoints(self, results, cutoff):
+        positiveResults = []
+        i = 0
+        while(True):
+            if i >= len(results):
+                break
+            if results[i][1] >= cutoff:
+                foundEnd = False
+                for j, elts in range(i+1, len(results)):
+                    if results[j][1] < cutoff:
+                        positiveResults.append(i, j)
+                        foundEnd = True
+                        break
+                if foundEnd:
+                    i = j+1
+                    continue
+                else:
+                    positiveResults.append((i, len(results)-1))
+                    break
+            else:
+                i += 1
+                continue
+
+        return positiveResults
+
     def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
         # of the form ((float)timestamp_t, (float)APIScore_t)
@@ -73,9 +98,10 @@ class Job:
         if len(results) == 0:
             return []
 
-        positiveResults = []
-        for i, elt in enumerate(results):
-            if elt[1] >= cutoff: positiveResults.append(i)
+        clipEndpoints = self.get_filtered_endpoints(results, cutoff)
+
+        adjustedEndpoints = []
+        
 
 
 
