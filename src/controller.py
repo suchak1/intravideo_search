@@ -20,21 +20,24 @@ class Worker:
         result = {}
         return result
 
-    def make_clip(self, timestamp, path):
+    def make_clip(self, timestamp, path, outputPath=None):
+        # Args: timestamp:((int)t0, (int)t1), path: (string)"path/to/input/video.mp4"
+        #                                  outputPath: (string) "path/to/destination/video.mp4"
+
         if isinstance(timestamp, type(None)) or isinstance(path, type(None)) \
                                              or isinstance(timestamp[0], type(None)) \
                                              or isinstance(timestamp[1], type(None)):
             raise TypeError("Nonetype in arguments. Naughty naughty.")
-
         if not os.path.isfile(path):
             raise ValueError("No file at {}".format(path))
+        if isinstance(outputPath, type(None)):
+            clipPath = path[:-4] + "_subclip({},{})".format(timestamp[0], timestamp[1]) + path[-4:]
+        else:
+            clipPath = outputPath
 
         numFrames, fps, framH, frameW, fourcc = self.getVideoInfo(path)
-        clipPath = path[:-4] + "_subclip({},{})".format(timestamp[0], timestamp[1]) + path[-4:]
-
         if timestamp[1] > int(numFrames/fps):
             timestamp = (timestamp[0], int(numFrames/fps))
-
         delta = timestamp[1] - timestamp[0]
         if delta < 0:
             raise ValueError("Timestamp is out of order! Abort!")
