@@ -15,7 +15,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime': 0.5
+        'runtime': 100
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -33,7 +33,7 @@ example_parameters2 = {
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
 
-#example_job2 = Job(example_parameters2)
+example_job2 = Job(example_parameters2)
 
 example_parameters3 = {
     'settings': {
@@ -46,7 +46,7 @@ example_parameters3 = {
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
 
-#example_job3 = Job(example_parameters3)
+example_job3 = Job(example_parameters3)
 
 example_parameters4 = {
     'settings': {
@@ -59,7 +59,7 @@ example_parameters4 = {
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
 
-#example_job4 = Job(example_parameters4)
+example_job4 = Job(example_parameters4)
 
 def test_save_clips():
     timestamps1 = [0, 5]
