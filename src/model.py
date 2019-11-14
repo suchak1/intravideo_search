@@ -1,5 +1,6 @@
 from controller import Worker
 import os
+import sys
 import cv2
 from PIL import Image
 #from multiprocessing import Pool
@@ -169,4 +170,4 @@ class Job:
 
 
     def kill(self):
-        quit()
+        del self

@@ -13,7 +13,7 @@
 - if there is a module import error run "python -m pytest"
 
 ### (4) Acceptance tests
-As we are unsure if if the program works end to end with the frontend
+As we are unsure if the program works end to end with the frontend
 interacting fully with the backend, our tests currently are those found in the
 test_x.py files. There are several sample videos and images provided, however,
 for these tests.
