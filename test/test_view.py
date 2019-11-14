@@ -345,15 +345,11 @@ def test_default_settings():
 	check.equal(view.get_settings(), {"video": '', "settings": {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}})
 
 
-def test_start():
-    view = GUI()
-    check.is_true(view.start_job())
-
-
-def test_kill():
+def test_start_and_kill():
     view = GUI()
     check.is_true(view.start_job())
     check.is_true(view.kill_job())
+    # combined because kill needs a started Job and this reduces redundancy
 
 
 def test_render():
