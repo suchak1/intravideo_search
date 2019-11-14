@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 import os
+from model import Job
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.

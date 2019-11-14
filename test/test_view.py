@@ -352,6 +352,7 @@ def test_start():
 
 def test_kill():
     view = GUI()
+    check.is_true(view.start_job())
     check.is_true(view.kill_job())
 
 
