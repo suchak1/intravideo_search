@@ -13,7 +13,7 @@ class Job:
         if not isinstance(settings, type(None)):
             self.video_path = settings['video']
             self.settings = settings['settings']
-            self.do_the_job()
+            # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None

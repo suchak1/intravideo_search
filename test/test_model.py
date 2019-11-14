@@ -15,7 +15,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime': 100.0
+        'runtime':100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -41,7 +41,7 @@ example_parameters3 = {
         'poll': 1,
         'anti': 3,
         'search': ["rock"],
-        'runtime': 100.0
+        'runtime':100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
