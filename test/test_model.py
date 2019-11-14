@@ -74,6 +74,15 @@ def test_classify_frames():
     check.equal(frame_list[1][0], 4)
     check.is_less(frame_list[1][1], 0.7)
 
+def test_score():
+    j = Job(example_parameters1)
+    api_results1 = {'dog': 0.9, 'cat': 0.7}
+    api_results2 = {'cat': 0.7}
+    check.equal(j.score(api_results1), 0.9)
+    check.equal(j.score(api_results2), 0)
+    with pytest.raises(Exception):
+        j.score('a string')
+
 
 def test_job_constructor():
     j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']},
