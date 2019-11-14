@@ -25,17 +25,101 @@ class Job:
         # use multiprocessing on loop in list comprehension below
         return [Worker.classify_img(frame) for frame in frames]
         '''
-        pass
+        return [(6.66, 0.6)]
+
+    def has_valid_args_interpret_results(self, results, cutoff):
+
+        if not isinstance(results, type([])):
+            raise TypeError("Expected List. Got {}".format(type(results)))
+        timeSet = set()
+        for elt in results:
+            if elt[0] < 0:
+                raise ValueError("Negative time stamp in results. Please don't do that. Got {}".format(elt[0]))
+            if elt[1] < 0:
+                raise ValueError("Negative score in results. Don't do this to me. Got {}".format(elt[1]))
+            if elt[1] > 1:
+                raise ValueError("Un-normalized score in results. Got {}, expected value in [0,1]".format(elt[1]))
+            if elt[0] in timeSet:
+                raise ValueError("Duplicate times in results. Found more than one of: {}".format(elt[0]))
+            else:
+                timeSet.add(elt[0])
+            if elt[0] < sorted(list(timeSet))[-1]:
+                raise ValueError("Results given out of order. I could fix this, but \
+                this probably means something is funky with whatever process produced this.")
+            if cutoff < 0:
+                raise ValueError("Cutoff parameter less than zero. Got: {}".format(cutoff))
+
 
     def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
         # of the form ((float)timestamp_t, (float)APIScore_t)
         # where APIScore_t is the score given by classify_frames()
         # to each frame_t fed through the API, normalized to be between [0,1].
+        # Also assuming "runtime" is included in settings.
+        # Checking that the arguments are valid.
+        self.has_valid_args_interpret_results(results, cutoff)
+        if len(results) == 0:
+            return []
 
-        # Also assuming "endtime" is included in settings.
+        positiveResults = []
+        i = 0
+        while(True):
+            if i >= len(results):
+                #print("Got to the end!")
+                break
+            if results[i][1] >= cutoff:
+                #print("Found a goodie at {}!".format(i))
+                foundEnd = False
+                for j in range(i+1, len(results)):
+                    if results[j][1] < cutoff:
+                        #print("Found the end of it at {}!".format(j))
+                        positiveResults.append((i, j))
+                        foundEnd = True
+                        break
+                if foundEnd:
+                    #print("Continuing on {}".format(j+1))
+                    i = j+1
+                    continue
+                else:
+                    #print("Did not find an end.")
+                    positiveResults.append((i, -1))
+                    break
+            else:
+                #print("Baddie at {}.".format(i))
+                i += 1
+                continue
 
-        return [(0.6, 666.6)]
+        adjustedEndpoints = []
+        for endpts in positiveResults:
+            startIdx = endpts[0]
+            endIdx = endpts[1]
+
+            result1 = results[startIdx]
+            result2 = results[endIdx]
+
+            if startIdx == 0:
+                #print("Starting at the start! startTime: 0.0")
+                startTime = 0.0
+            else:
+                thisTime = result1[0]
+                lastTime = results[startIdx-1][0]
+                startTime = (thisTime + lastTime) / 2
+                #print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
+
+            if endIdx == -1:
+                endTime = self.settings["runtime"]
+                #print("Ending at the end. endTime {}".format(endTime))
+            else:
+                finalTime = results[endIdx-1][0]
+                nextTime = results[endIdx][0]
+                endTime = (finalTime + nextTime) / 2
+                #print("thisTime {}, nextTime {}, endTime {}".format(finalTime, nextTime, endTime))
+
+            adjustedEndpoints.append((startTime, endTime))
+
+        #print(adjustedEndpoints)
+
+        return adjustedEndpoints
         # where each timestamp is a tuple of start
         # time and end time, demarcating a sub-clip. A
         # positive result consits of a starttime, and
