@@ -204,3 +204,4 @@ class GUI:
 
         win.mainloop()
         return 0
+GUI().render()
