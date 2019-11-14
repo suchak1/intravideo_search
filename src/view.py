@@ -202,17 +202,5 @@ class GUI:
         kill_button = Button(win,text="Kill this window", command= win.destroy)
         kill_button.grid(column=0, row=100)
 
-        # tk.Label(win, text= "Video path: " + self.video_path).pack()
-        # tk.Button(win,text="Upload").pack()
-
-        # tk.Label(win, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['search'])).pack()
-        # tk.Button(win,text="Set").pack()
-
-        # tk.Label(win, text="Set Poll Rate").pack()
-        # tk.Button(win,text="Set").pack()
-
-        # tk.Label(win, text="Type Search Term").pack()
-        # tk.Button(win,text="Type").pack()
-
         win.mainloop()
         return 0

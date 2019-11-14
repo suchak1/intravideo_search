@@ -519,7 +519,7 @@ def test_render():
 
     # change the job back to None
     test_gui3.job = None
-    # make sure job has changed, but all the other settings stay the same
+    # make sure Job has returned to None, but the other settings remain.
     check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
     check.equal(test_gui3.settings, {'conf': .73, 'poll': 93, 'anti': 146, 'search': ['boy']})
     check.is_none(test_gui3.job)
