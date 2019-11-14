@@ -1,8 +1,12 @@
+import os
+import cv2
+from PIL import Image
+
 class Job:
 
     "Model - data logic"
 
-    def __init__(self, settings=None):
+    def __init__(self, settings):
         if not isinstance(settings, type(None)):
             self.video_path = settings['video']
             self.settings = settings['settings']
@@ -17,7 +21,32 @@ class Job:
         self.save_clips(results)
 
     def get_frames(self):
-        return []  # do whatever to get frames from vid as specific times using self.settings
+        # Given video and poll setting, returns list of tuples
+        # where the first element is an Image of the frame from the video
+        # at each timestamp designated by poll setting, and the second
+        # element is the timestamp. For example, if poll is 5, get_frames()
+        # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
+        # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+        vidPath = self.video_path
+        poll = self.settings['poll']
+        count = 0
+        frms = []
+        video = cv2.VideoCapture(vidPath)
+        success = True
+        while success:
+            timestamp = (count*poll)
+            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
+            success,frame = video.read()
+            if success:
+                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
+                try:
+                    f = Image.open('frame%d.jpg' % count) # make frame Image
+                    os.remove('frame%d.jpg' % count) # delete frame.jpg
+                    frms.append((f,timestamp))
+                except:
+                    raise NameError('getFrameError')
+            count += 1
+        return frms
 
     def classify_frames(self):
         '''
