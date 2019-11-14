@@ -19,7 +19,7 @@ class GUI:
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
-        self.render()   # display GUI when this class instantiates
+        # self.render()   # display GUI when this class instantiates
 
     def set_default_settings(self):
         self.settings = DEFAULT
