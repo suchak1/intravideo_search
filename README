@@ -58,6 +58,7 @@ to reflect this, also added more tests to get_frames per comments
 from milestone 3a
 David: made comments preceding the make_clip tests indicating minor changes
 in the way the ground-truth is generated
+Mahmoud: Added unit test for default GUI settings; video path changes
 Note: other minor changes are noted in the comments in the test filenames
 
 (8) Notes for TA
