@@ -1,4 +1,4 @@
-from multiprocessing import Pool
+#from multiprocessing import Pool
 from controller import Worker
 
 class Job:
@@ -141,12 +141,15 @@ class Job:
         # first result/endofthevideo is included.
 
     def save_clips(self, timestamps):
-        with Pool() as pool:
-            v = self.video_path
-            args_list = [(t, v) for t in timestamps]
-            map_results = pool.starmap(Worker().make_clip, args_list)
+        #with Pool() as pool:
+        #    v = self.video_path
+        #    args_list = [(t, v) for t in timestamps]
+        #    map_results = pool.starmap(Worker().make_clip, args_list)
 
-        return map_results
+        #return map_results
+        # multiprocessing is running into issues with shared resources
+        v = self.video_path
+        return [Worker().make_clip(t, v) for t in timestamps]
 
 
     def kill(self):
