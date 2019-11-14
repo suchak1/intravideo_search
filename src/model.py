@@ -30,8 +30,6 @@ class Job:
         for term in search_terms:
             max_score = max(max_score, confidence_dict.get(term, 0))
         return max_score
-        # use multiprocessing on loop in list comprehension below
-        return [Worker.classify_img(frame) for frame in frames]
 
     def has_valid_args_interpret_results(self, results, cutoff):
 
