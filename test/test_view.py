@@ -342,7 +342,9 @@ def test_get_settings():
 def test_default_settings():
 	view = GUI()
 	view.set_default_settings()
-	check.equal(view.get_settings(), {"video": '', "settings": {'conf': .9, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
+	check.equal(view.get_settings(), {
+        "video": '', "settings": {
+            'conf': .9, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
 
 
 def test_start_and_kill():
