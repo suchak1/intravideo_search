@@ -14,6 +14,10 @@ class Worker:
         return
 
     def classify_img(self, img):
+        # input: Image object to classify
+        # output: classification results in dictionary
+        # where key is object as a string
+        # and value is confidence level scaled 0-100
         if not isinstance(img, Image.Image):
             return None
 
