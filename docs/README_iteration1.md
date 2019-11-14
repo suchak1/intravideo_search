@@ -68,7 +68,7 @@ moved to iteration 2.
 - **Mahmoud:** GUI get_settings and set_settings, work with Jeremy, AK
 - **AK:** GUI/Job start_job and kill_job, work with Jeremy, Mahmoud
 - **Rachel:** Job constructor and get_frames, work with Ralph
-- **Ralph:** Job classify_frames, work with Rachel, Krish, David
+- **Ralph:** Job classify_frames and save_clips, work with Rachel, Krish, David
 - **David:** Job interpret_results and Worker make_clip, work with Krish and Ralph
 for interpret_results, work with Ralph for make_clip
 - **Krish:** Worker classify_img and last min various bug fixes, work with Ralph, David
