@@ -26,11 +26,6 @@ class Worker:
         results = {prediction : probabilities[idx] for idx, prediction in enumerate(predictions)}
         return results
 
-<<<<<<< HEAD
-    def make_clip(self, timestamp, path):
-        # using timestamp[0] (start time) and timestamp[1] (end time)
-        return path  # clip path
-=======
     def make_clip(self, timestamp, path, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
         #       path: (string)"path/to/input/video.mp4"
@@ -83,4 +78,3 @@ class Worker:
         frameW = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
         fourcc = int(video.get(cv2.CAP_PROP_FOURCC))
         return numFrames, fps, frameH, frameW, fourcc
->>>>>>> 8543ce4d311bae01234601b9a335ab85449e8582
