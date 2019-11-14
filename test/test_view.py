@@ -1,5 +1,3 @@
-
-# -*- coding: utf-8 -*-
 import tkinter as tk
 import sys
 import pytest
@@ -7,7 +5,6 @@ import pytest_check as check
 sys.path.append('src')
 from view import *  # nopep8
 from model import *  # nopep8
-
 
 def test_constructor():
 
@@ -23,7 +20,7 @@ def test_constructor():
 
 
 def test_set_settings():
-    path = './test/sampleVideo/testStart.mp4'
+    path = './test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
     notapath = 52
 
     view = GUI()
@@ -152,7 +149,7 @@ def test_get_settings():
             Assumption: If set_settings fails, the default values are set for all of the parameters
     """
 
-    path = './test/sampleVideo/testStart.mp4'
+    path = './test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
     notapath = 52
 
     view = GUI()
@@ -162,7 +159,7 @@ def test_get_settings():
 
     set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d1 = {"video": './test/sampleVideo/testStart.mp4', "settings": {'conf': 0.9,
+    d1 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": {'conf': 0.9,
                                                   'poll': 5, 'anti': 5, 'runtime': 10, 'search': ['dog', 'pet']}}
     view.set_settings(set1, path)
     check.equal(view.get_settings(), d1)
@@ -171,7 +168,7 @@ def test_get_settings():
 
     set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'runtime': 10, 'search': ['car']}  # should be true
-    d2 = {"video": './test/sampleVideo/testStart.mp4', "settings": {'conf': 0.1,
+    d2 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": {'conf': 0.1,
                                                   'poll': 2, 'anti': 8, 'runtime': 10, 'search': ['car']}}
     view.set_settings(set2, path)
     check.equal(view.get_settings(), d2)
@@ -180,7 +177,7 @@ def test_get_settings():
 
     set3 = {'conf': 0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d3 = {"video": './test/sampleVideo/testStart.mp4', "settings": {'conf': 0,
+    d3 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": {'conf': 0,
                                                   'poll': 5, 'anti': 5, 'runtime': 10, 'search': ['dog', 'pet']}}
     view.set_settings(set3, path)
     check.equal(view.get_settings(), d3)
@@ -196,7 +193,7 @@ def test_get_settings():
 
     set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d5 = {"video": './test/sampleVideo/testStart.mp4', "settings": set5}
+    d5 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set5}
     view.set_settings(set5, path)
     check.equal(view.get_settings(), d5)
     view.set_settings(set5, notapath)
@@ -211,7 +208,7 @@ def test_get_settings():
 
     set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d7 = {"video": './test/sampleVideo/testStart.mp4', "settings": set7}
+    d7 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set7}
     view.set_settings(set7, path)
     check.equal(view.get_settings(), d7)
     view.set_settings(set7, notapath)
@@ -226,7 +223,7 @@ def test_get_settings():
 
     set9 = {'conf': 0.9, 'poll': 500000, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d9 = {"video": './test/sampleVideo/testStart.mp4', "settings": set9}
+    d9 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set9}
     view.set_settings(set9, path)
     check.equal(view.get_settings(), d9)
     view.set_settings(set9, notapath)
@@ -241,7 +238,7 @@ def test_get_settings():
 
     set11 = {'conf': 0.9, 'poll': 5, 'anti': 0,
              'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d11 = {"video": './test/sampleVideo/testStart.mp4', "settings": set11}
+    d11 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set11}
     view.set_settings(set11, path)
     check.equal(view.get_settings(), d11)
     view.set_settings(set11, notapath)
@@ -256,7 +253,7 @@ def test_get_settings():
 
     set13 = {'conf': 0.9, 'poll': 5, 'anti': 5000000,
              'runtime': 10, 'search': ['dog', 'pet']}  # should be true
-    d13 = {"video": './test/sampleVideo/testStart.mp4', "settings": set13}
+    d13 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set13}
     view.set_settings(set13, path)
     check.equal(view.get_settings(), d13)
     view.set_settings(set13, notapath)
@@ -271,7 +268,7 @@ def test_get_settings():
 
     set15 = {'conf': 0.9, 'poll': 5, 'anti': 5,
              'runtime': 10, 'search': ['dog', 'pet', '50']}  # should be true
-    d15 = {"video": './test/sampleVideo/testStart.mp4', "settings": set15}
+    d15 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set15}
     view.set_settings(set15, path)
     check.equal(view.get_settings(), d15)
     view.set_settings(set15, notapath)
@@ -293,7 +290,7 @@ def test_get_settings():
 
     # should be true, even if out of order
     set18 = {'search': ['dog', 'pet'], 'poll': 5, 'conf': 0.9, 'anti': 5, 'runtime': 10}
-    d18 = {"video": './test/sampleVideo/testStart.mp4', "settings": set18}
+    d18 = {"video": './test/sampleVideo/SampleVideo_1280x720_1mb.mp4', "settings": set18}
     view.set_settings(set18, path)
     check.equal(view.get_settings(), d18)
     view.set_settings(set18, notapath)
@@ -340,14 +337,19 @@ def test_get_settings():
     check.equal(view.get_settings(), default)
 
 
-def test_start():
+def test_default_settings():
+	view = GUI()
+	view.set_default_settings()
+	check.equal(view.get_settings(), {
+        "video": '', "settings": {
+            'conf': .9, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
+
+
+def test_start_and_kill():
     view = GUI()
     check.is_true(view.start_job())
-
-
-def test_kill():
-    view = GUI()
     check.is_true(view.kill_job())
+    # combined because kill needs a started Job and this reduces redundancy
 
 
 def test_render():
@@ -381,31 +383,50 @@ def test_render():
     check.is_none(test_gui.job)
 
     # change the video path and settings to some valid input that a user would use
-    test_gui.video_path = 'test/sampleVideo/SampleVideoNature.mp4'
+    test_gui.video_path = './test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
     test_gui.set_settings({'conf': .5, 'poll': 3, 'anti': 1, 'runtime': 10, 'search': ['child']}, test_gui.video_path)
 
     # assert that these changes have gone through
-    check.equal(test_gui.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
-    check.equal(test_gui.get_settings(),
-    {'settings': {'conf': .5, 'poll': 3, 'anti': 1, 'runtime': 10, 'search': ['child']}, 'video': 'test/sampleVideo/SampleVideoNature.mp4'})
+    check.equal(test_gui.video_path, './test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    check.equal(test_gui.get_settings(), {'settings': {'conf': .5, 'poll': 3, 'anti': 1, 'runtime': 10, 'search': ['child']}, 'video': '~/Desktop/FinalSpriteCranberry.mp4'})
     check.is_none(test_gui.job)
 
-    #test_gui.render()
+    test_gui.render()
 
     # change the video_path, settings, and job to another valid input that a user would use
-    test_gui.video_path = 'test/sampleVideo/SampleVideoNature.mp4'
+    test_gui.video_path = '../folder2/video.mp4'
     test_gui.set_settings({'conf': 0.2, 'poll': 1, 'anti': 1, 'runtime': 10, 'search': [
                           "child, kid, ball"]}, test_gui.video_path)
     # create a test job object to use as the test_gui.job parameter
-    #test_job1 = Job(test_gui.get_settings())
-    #test_gui.job = test_job1
+    test_job1 = Job(test_gui.get_settings())
+    test_gui.job = test_job1
     # assert that these changes have gone through
-    check.equal(test_gui.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
+    check.equal(test_gui.video_path, '../folder2/video.mp4')
     check.equal(test_gui.settings, {'conf': 0.2, 'poll': 1, 'anti': 1, 'runtime': 10, 'search': [
         "child, kid, ball"]})
-    #check.equal(test_gui.job, test_job1)
+    check.equal(test_gui.job, test_job1)
 
-    #test_gui.render()
+    test_gui.render()
+
+    # change the video path to a very very long video path.
+    test_gui.video_path = '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4'
+    test_gui.set_settings(test_gui.settings, test_gui.video_path)
+    # make sure the other two parameters have not changed, but video path has changed
+    check.equal(test_gui.video_path, '../folder2/video/folder2/folder7/New Folder/Killa/destroy/superlongfoldernamethatshouldnotbeallowed/testfolder/youcouldntfindmecouldyou.mp4')
+    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 1, 'anti': 1, 'runtime': 10, 'search': ["child, kid, ball"]})
+    check.equal(test_gui.job, test_job1)
+
+    test_gui.render()
+
+    # change the video path to an empty one
+    test_gui.video_path = ''
+    test_gui.set_settings(test_gui.settings, test_gui.video_path)
+    # make sure the correct parameters have changed, and the others have remained the same
+    check.equal(test_gui.video_path, '')
+    check.equal(test_gui.settings, {'conf': 0.2, 'poll': 1, 'anti': 1, 'runtime': 10, 'search': ["child, kid, ball"]})
+    check.equal(test_gui.job, test_job1)
+
+    test_gui.render()
 
     # change video path to an invalid value or type
     # the point of this test to make sure that the GUI realizes the invalid input
@@ -420,9 +441,9 @@ def test_render():
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {
         'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
-    #check.equal(test_gui.job, test_job1)
+    check.equal(test_gui.job, test_job1)
 
-    #test_gui.render()
+    test_gui.render()
 
     # Here, we will start testing more levels of the settings parameter in specific.
     # Valid inputs for settings should not throw a GUI error message and
@@ -434,17 +455,17 @@ def test_render():
     test_gui2 = GUI()
 
     # change the video_path to a normal one, make sure GUI displays the new settings
-    test_gui2.video_path = 'test/sampleVideo/SampleVideoNature.mp4'
+    test_gui2.video_path = '~/Documents/downloadedvideo.mp4'
     test_gui2.settings = {'conf': .75, 'poll': 571,
                           'anti': 462, 'runtime': 10, 'search': ["comptuter"]}
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # make sure that these parameters have been appropriately changed
-    check.equal(test_gui2.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
+    check.equal(test_gui2.video_path, '~/Documents/downloadedvideo.mp4')
     check.equal(test_gui2.settings, {'conf': .75, 'poll': 571,
                           'anti': 462, 'runtime': 10, 'search': ["comptuter"]})
     check.is_none(test_gui2.job)
 
-    #test_gui2.render()
+    test_gui2.render()
 
     # change the settings used so there are some invalid values (negative settings)
     test_gui2.settings = {'conf': -10, 'poll': -
@@ -455,7 +476,7 @@ def test_render():
     check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
-    #test_gui2.render()
+    test_gui2.render()
 
     # change the settings to the wrong type
     test_gui2.settings = {'conf': 'hello', 'poll': 'nice',
@@ -466,7 +487,7 @@ def test_render():
     check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
-    #test_gui2.render()
+    test_gui2.render()
 
     # Here, we will be changing the parameters for the job object.
     # All of the following job objects should be valid and should run.
@@ -475,35 +496,35 @@ def test_render():
     test_gui3 = GUI()
 
     # change the video_path to something other an empty
-    test_gui3.video_path = 'test/sampleVideo/SampleVideoNature.mp4'
+    test_gui3.video_path = '~/Downloads/testingdifferentjobs.mp4'
     # make the settings something valid for set_settings
     test_gui3.settings = {'conf': .73, 'poll': 93, 'anti': 146, 'runtime': 10, 'search': ['boy']}
     test_gui3.set_settings(test_gui3.settings, test_gui3.video_path)
 
     # make sure that the job is empty, and the new settings have been achieved.
-    check.equal(test_gui3.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
     check.equal(test_gui3.settings, {'conf': .73, 'poll': 93, 'anti': 146, 'runtime': 10, 'search': ['boy']})
     check.is_none(test_gui3.job)
 
-    #test_gui3.render()
+    test_gui3.render()
 
     # create a new Job object with the updated settings and path.
-    #test_job3 = Job({'settings': test_gui3.settings, 'video': test_gui3.video_path})
+    test_job3 = Job({'settings': test_gui3.settings, 'video': test_gui3.video_path})
 
     # change the value of the GUI's job
-    #test_gui3.job = test_job3
+    test_gui3.job = test_job3
     # make sure job has changed, but all the other settings stay the same
-    check.equal(test_gui3.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
     check.equal(test_gui3.settings, {'conf': .73, 'poll': 93, 'anti': 146, 'runtime': 10, 'search': ['boy']})
-    #check.equal(test_gui3.job, test_job3)
+    check.equal(test_gui3.job, test_job3)
 
-    #test_gui3.render()
+    test_gui3.render()
 
     # change the job back to None
     test_gui3.job = None
     # make sure Job has returned to None, but the other settings remain.
-    check.equal(test_gui3.video_path, 'test/sampleVideo/SampleVideoNature.mp4')
+    check.equal(test_gui3.video_path, '~/Downloads/testingdifferentjobs.mp4')
     check.equal(test_gui3.settings, {'conf': .73, 'poll': 93, 'anti': 146, 'runtime': 10, 'search': ['boy']})
     check.is_none(test_gui3.job)
 
-    #test_gui3.render()
+    test_gui3.render()
