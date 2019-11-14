@@ -85,6 +85,8 @@ from milestone 3a
 in the way the ground-truth is generated
 - **Mahmoud:** Added unit test for default GUI settings; video path changes
 Note: other minor changes are noted in the comments in the test filenames
+- **Jeremy:** Commented out the render function calls as this would not work with the travis build
+and would not pass the pytest. 
 
 ### (8) Notes for TA
 While unit tests pass, it is not entirely certain if the program works end to
