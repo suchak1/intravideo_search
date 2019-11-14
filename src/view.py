@@ -4,7 +4,7 @@ import os
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
-DEFAULT = {'conf': .9, 'poll': 5, 'anti': 5, 'search': []}
+DEFAULT = {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
 
 class GUI:
 
@@ -55,7 +55,7 @@ class GUI:
         #print(path)
         #print(type(path))
 
-        expected_keys = ['conf', 'poll', 'anti', 'search']
+        expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
         missing = [x for x in expected_keys if x not in values.keys()]
         if len(missing) > 0:
             self.set_default_settings()
@@ -67,7 +67,7 @@ class GUI:
             return False
 
         try:
-            if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int)):
+            if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
                 raise TypeError
 
             if not isinstance(path, str):
@@ -82,7 +82,7 @@ class GUI:
             self.set_default_settings()
             return False
 
-        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['search'] == []):
+        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['runtime'] < 0 or values['search'] == []):
             self.set_default_settings()
             return False
 
@@ -180,7 +180,7 @@ class GUI:
         button3.grid(sticky=W, column=3, row=5)
 
         def display_settings():
-            temp_lbl1 = Label(win, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']))
+            temp_lbl1 = Label(win, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
             temp_lbl2 = Label(win, text="Search: ")
             temp_lbl2.grid(sticky=W, column=0, row=96)
