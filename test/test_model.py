@@ -104,14 +104,12 @@ def test_classify_frames():
 
 
 def test_job_constructor():
-    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog'], 'runtime':100.0},
+    j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog'], 'runtime': 100.0},
              'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
-    check.equal(getattr(
-        j, 'video_path'), 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
-    check.equal(getattr(j, 'settings'), {
-        'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog']})
+    check.equal(j.video_path, 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
+    check.equal(j.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog'], 'runtime': 100.0})
     # redundant tests removed from milestone 3a comments
-
+    # runtime key added to test dict as per new specs of settings
 
 def test_interpret_results_null_input():
     job = Job(example_parameters1)
