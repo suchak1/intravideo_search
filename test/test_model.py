@@ -90,8 +90,8 @@ def test_save_clips():
 
 
 def test_classify_frames():
-    frame_list1 = [[1, 0], [0, 1]]  # example_job2.classify_frames()
-    frame_list = [[0, 1], [1, 0]]  # example_job1.classify_frames()
+    frame_list1 = example_job2.classify_frames()
+    frame_list = example_job1.classify_frames()
     check.equal(frame_list1[0][0], 0)
     check.is_greater(frame_list1[0][1], 0.7)
     check.equal(frame_list1[1][0], 5)
@@ -101,6 +101,15 @@ def test_classify_frames():
     check.is_less(frame_list[0][1], 0.7)
     check.equal(frame_list[1][0], 4)
     check.is_less(frame_list[1][1], 0.7)
+
+def test_score():
+    j = Job(example_parameters1)
+    api_results1 = {'dog': 0.9, 'cat': 0.7}
+    api_results2 = {'cat': 0.7}
+    check.equal(j.score(api_results1), 0.9)
+    check.equal(j.score(api_results2), 0)
+    with pytest.raises(Exception):
+        j.score('a string')
 
 
 def test_job_constructor():
