@@ -1,10 +1,7 @@
-<<<<<<< HEAD
+
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-=======
 import os
-import tkinter as tk
->>>>>>> 8306383bf2e3bb68bac4598ab3791ff73cf7e080
 # -*- coding: utf-8 -*-
 
 
@@ -53,10 +50,41 @@ class GUI:
 
         path is the video_input path
         """
+        if not os.path.exists(path):
+            self.set_default_settings()
+            return False
+
+        expected_keys = ['conf', 'poll', 'anti', 'search']
+        missing = [x for x in expected_keys if x not in values.keys()]
+        if len(missing) > 0:
+            self.set_default_settings()
+            return False
+
+        extra = [x for x in values.keys() if x not in expected_keys]
+        if len(extra) > 0:
+            self.set_default_settings()
+            return False
+
+        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['search'] == []):
+            self.set_default_settings()
+            return False
+
+        try:
+            if not (isinstance(values['poll'], int) and isinstance(values['anti'], int)):
+                raise TypeError
+
+            for term in values['search']:
+                if not isinstance(term, str):
+                    raise TypeError
+        except:
+            self.set_default_settings()
+            return False
+
         self.settings = values  # be sure that values are always in the same order. Do validation
         self.video_path = path
         # where values is a dictionary
         return True
+
 
     def start_job(self):
         try:
