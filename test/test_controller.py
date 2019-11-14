@@ -21,18 +21,18 @@ def test_classify_img():
     image_names = [
         'banana',
         'basketball',
-        # 'beach',
-        # 'box',
-        # 'car',
-        # 'cat',
+        'carton',
         'cucumber',
-        # 'dog',
+        'fountain',
+        'golden_retriever',
         # 'rainbow',
         # 'soda',
-        'suit'
+        'passenger_car',
+        'seashore',
+        'sports_car',
+        'suit',
+        'tabby'
         # 'sun',
-        # 'train',
-        # 'waterfall'
     ]
     wrong_names = image_names[1:] + image_names[:1]
     img_ext = '.jpg'
