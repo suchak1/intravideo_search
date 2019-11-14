@@ -1,6 +1,8 @@
+from controller import Worker
 import os
 import cv2
 from PIL import Image
+#from multiprocessing import Pool
 
 class Job:
 
@@ -57,6 +59,9 @@ class Job:
         return [(6.66, 0.6)]
 
     def has_valid_args_interpret_results(self, results, cutoff):
+        # This is a very simple helper function which throws an exception
+        # in the case of invalid arguments. The functionality of this is
+        # sufficiently tested in the tests of the interpret_results() function.
 
         if not isinstance(results, type([])):
             raise TypeError("Expected List. Got {}".format(type(results)))
@@ -85,39 +90,40 @@ class Job:
         # where APIScore_t is the score given by classify_frames()
         # to each frame_t fed through the API, normalized to be between [0,1].
         # Also assuming "runtime" is included in settings.
+
         # Checking that the arguments are valid.
         self.has_valid_args_interpret_results(results, cutoff)
+
+        # If there are no results, return an empty list.
         if len(results) == 0:
             return []
 
+        # For each positive result, find the proper start/end times of the
+        # relevant sub-clip.
         positiveResults = []
         i = 0
         while(True):
             if i >= len(results):
-                #print("Got to the end!")
                 break
             if results[i][1] >= cutoff:
-                #print("Found a goodie at {}!".format(i))
                 foundEnd = False
                 for j in range(i+1, len(results)):
                     if results[j][1] < cutoff:
-                        #print("Found the end of it at {}!".format(j))
                         positiveResults.append((i, j))
                         foundEnd = True
                         break
                 if foundEnd:
-                    #print("Continuing on {}".format(j+1))
                     i = j+1
                     continue
                 else:
-                    #print("Did not find an end.")
                     positiveResults.append((i, -1))
                     break
             else:
-                #print("Baddie at {}.".format(i))
                 i += 1
                 continue
 
+        # Adjust those times to fit in the midpoint of the polled frames,
+        # for a smoother results.
         adjustedEndpoints = []
         for endpts in positiveResults:
             startIdx = endpts[0]
@@ -127,52 +133,35 @@ class Job:
             result2 = results[endIdx]
 
             if startIdx == 0:
-                #print("Starting at the start! startTime: 0.0")
                 startTime = 0.0
             else:
                 thisTime = result1[0]
                 lastTime = results[startIdx-1][0]
                 startTime = (thisTime + lastTime) / 2
-                #print("thisTime {}, lastTime {}, startTime {}".format(thisTime, lastTime, startTime))
 
             if endIdx == -1:
                 endTime = self.settings["runtime"]
-                #print("Ending at the end. endTime {}".format(endTime))
             else:
                 finalTime = results[endIdx-1][0]
                 nextTime = results[endIdx][0]
                 endTime = (finalTime + nextTime) / 2
-                #print("thisTime {}, nextTime {}, endTime {}".format(finalTime, nextTime, endTime))
 
             adjustedEndpoints.append((startTime, endTime))
 
-        #print(adjustedEndpoints)
-
         return adjustedEndpoints
-        # where each timestamp is a tuple of start
-        # time and end time, demarcating a sub-clip. A
-        # positive result consits of a starttime, and
-        # an endtime such that the starttime is above the
-        # cutoff, all results in between the two are above
-        # the cutoff, and the endtime is either the end of
-        # the video or is below the cutoff. For endpoints
-        # of start: t and end:t+10, where the first result
-        # prior to t is t-2 and the first result prior
-        # to t+10 is t-6, then the returned tuple should be:
-        # ((t + (t-2))//2, ((t+10) + (t+6))//2)
-        # => (t-1, t+8).
-        # Special behavior at beginning and end,
-        # if the first or last result is positive, the whole
-        # first/last chunk of the video up until the
-        # first result/endofthevideo is included.
+
 
     def save_clips(self, timestamps):
-        # use multiprocessing here
-        '''
-        [Worker.make_clip(timestamp, self.video_path)
-         for timestamp in timestamps]
-        '''
-        pass
+        #with Pool() as pool:
+        #    v = self.video_path
+        #    args_list = [(t, v) for t in timestamps]
+        #    map_results = pool.starmap(Worker().make_clip, args_list)
+
+        #return map_results
+        # multiprocessing is running into issues with shared resources
+        v = self.video_path
+        return [Worker().make_clip(t, v) for t in timestamps]
+
 
     def kill(self):
         quit()
