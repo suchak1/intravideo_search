@@ -2,25 +2,34 @@
 ## Specifications for Milestone 3.b
 
 ### (1) How to Compile
-- run `pip install -r requirements.txt` to install all necessary packages
-- note: Python 3.7 is required
+- To install all necessary packages, run:
+    ```
+    pip install -r requirements.txt
+    ```
+    - note: Python 3.7 is required
 
 ### (2) How to Run Code
-- run `python src/start.py` to run the GUI
+- To start the GUI, run:
+    ```
+    python src/start.py
+    ```
 
 ### (3) How to Run Unit Tests
-- to run all tests, run `pytest -vv`
+- To run all tests, run 
+    ```
+    pytest -vv
+    ```
     - `-vv` ensure verbose output
     - if there is a module import error, run `python -m pytest -vv`
 - Note: to run a single test file, just append the test file path like so
-```
-pytest test/test_controller.py -vv
-```
-and to run a single function, add the `-f` flag and the function name:
-```
-pytest test/test_controller.py -k "test_classify_img" -vv
-```
-This might be necessary since functions like `classify_img` take a while because loading a ML model for the first time is expensive.
+    ```
+    pytest test/test_controller.py -vv
+    ```
+    and to run a single function, add the `-k` flag and the function name:
+    ```
+    pytest test/test_controller.py -k "test_classify_img" -vv
+    ```
+    This might be necessary since functions like `classify_img` take a while because loading a ML model for the first time is expensive.
 
 
 ### (4) Acceptance tests
