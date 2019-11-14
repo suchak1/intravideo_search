@@ -31,7 +31,8 @@ class Worker:
         if not os.path.isfile(path):
             raise ValueError("No file at {}".format(path))
         if isinstance(outputPath, type(None)):
-            clipPath = path[:-4] + "_subclip({},{})".format(timestamp[0], timestamp[1]) + path[-4:]
+            pathRoot, pathExt = os.path.splitext(path)
+            clipPath = pathRoot + "_subclip({},{})".format(timestamp[0], timestamp[1]) + pathExt
         else:
             clipPath = outputPath
 
