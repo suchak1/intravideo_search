@@ -35,8 +35,8 @@ accuracy, matching similar terms, and composing a sentence based on whats
 happening in the video
 
 Note:
-The save_clips() feature as well as the basic string processing from
-the original plan for iteration 1 have been moved to iteration 2.
+The basic string processing from the original plan for iteration 1 has been
+moved to iteration 2.
 
 (6) Who Did What
 Jeremy: GUI constructor and render, work with Mahmoud, AK
