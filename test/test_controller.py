@@ -19,10 +19,33 @@ def test_constructor():
 
 def test_classify_img():
     image_dir = '/sampleImage/'
-    image_names = ['banana', 'basketball', 'beach', 'box',
-                   'car', 'cat', 'cucumber', 'dog', 'person',
-                   'rainbow', 'soda', 'sun', 'train', 'waterfall']
-    wrong_names = image_names[::-1]
+    # Changes to tests:
+    # we changed the images classified due to the limitations of our ML model
+    # since the model is only trained on 1000 object categories
+    # we will create a helper function in the next iteration
+    # to test for semantic simularity and get better search results
+    image_names = [
+        'banana',
+        'basketball',
+        'carton',
+        'cucumber',
+        'fountain',
+        'golden_retriever',
+        'goldfish',
+        'passenger_car',
+        'pop_bottle',
+        'seashore',
+        'space_shuttle',
+        'sports_car',
+        'suit',
+        'tabby',
+        'volcano'
+    ]
+    # Changes to tests:
+    # wrong_names is a rotation of original image_names
+    # as it is unlikely that basketball
+    # will be in the classification dict for banana and so on
+    wrong_names = image_names[1:] + image_names[:1]
     img_ext = '.jpg'
 
     # instead of simply using os.getcwd(), we use full_path so that pytest will
@@ -42,8 +65,8 @@ def test_classify_img():
         check.is_in(name, w.classify_img(img))
 
         # now let's try assertions that should definitely be wrong
-        # (that 'waterfall' is in the classification dict for 'banana.jpg')
-        check.is_not_in(wrong_names[idx] not in w.classify(img))
+        # (that 'volcano' is in the classification dict for 'banana.jpg')
+        check.is_not_in(wrong_names[idx], w.classify_img(img))
 
 
 def test_make_clip_negative_time():
@@ -94,6 +117,10 @@ def test_make_clip_no_frames():
     outVidPath = w.make_clip(timestamp, videoPath)
     check.equal(outVidPath, '')
 
+
+#   For the following test cases, for make_clip(), they now produce the
+#   ground truth comparison video clip in a better way. That is the only
+#   change.
 
 def test_make_clip_full_video():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"

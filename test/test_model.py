@@ -40,8 +40,13 @@ example_parameters3 = {
         'conf': .9,
         'poll': 1,
         'anti': 3,
+<<<<<<< HEAD
         'runtime': 10,
         'search': ["rock"]
+=======
+        'search': ["rock"],
+        'runtime':100.0
+>>>>>>> d29685d2a017fc55479a0f0c18a914857c5264fd
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -53,8 +58,13 @@ example_parameters4 = {
         'conf': .9,
         'poll': 8,
         'anti': 6,
+<<<<<<< HEAD
         'runtime': 10, 
         'search': ["water"]
+=======
+        'search': ["water"],
+        'runtime':100.0
+>>>>>>> d29685d2a017fc55479a0f0c18a914857c5264fd
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
@@ -80,17 +90,18 @@ def test_save_clips():
     check.is_true(example_job1.save_clips([timestamps1]))
     check.is_true(example_job1.save_clips([timestamps1, timestamps2]))
     path = os.path.splitext(example_job1.video_path)
+    # form of filenames updated to match implementation
     check.is_true(
         os.path.isfile(
-            path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1]))
+            path[0] + '_subclip(' + str(timestamps1[0]) + ',' + str(timestamps1[1]) + ')' + path[1]))
     check.is_true(
         os.path.isfile(
-            path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1]))
+            path[0] + '_subclip(' + str(timestamps2[0]) + ',' + str(timestamps2[1]) + ')' + path[1]))
 
 
 def test_classify_frames():
-    frame_list1 = [[1, 0], [0, 1]]  # example_job2.classify_frames()
-    frame_list = [[0, 1], [1, 0]]  # example_job1.classify_frames()
+    frame_list1 = example_job2.classify_frames()
+    frame_list = example_job1.classify_frames()
     check.equal(frame_list1[0][0], 0)
     check.is_greater(frame_list1[0][1], 0.7)
     check.equal(frame_list1[1][0], 5)
@@ -100,6 +111,15 @@ def test_classify_frames():
     check.is_less(frame_list[0][1], 0.7)
     check.equal(frame_list[1][0], 4)
     check.is_less(frame_list[1][1], 0.7)
+
+def test_score():
+    j = Job(example_parameters1)
+    api_results1 = {'dog': 0.9, 'cat': 0.7}
+    api_results2 = {'cat': 0.7}
+    check.equal(j.score(api_results1), 0.9)
+    check.equal(j.score(api_results2), 0)
+    with pytest.raises(Exception):
+        j.score('a string')
 
 
 def test_job_constructor():
