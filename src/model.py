@@ -51,12 +51,18 @@ class Job:
         return frms
 
     def classify_frames(self):
-        '''
         frames = self.get_frames()
-        # use multiprocessing on loop in list comprehension below
-        return [Worker.classify_img(frame) for frame in frames]
-        '''
-        return [(6.66, 0.6)]
+        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        norm = 100
+        results = [(val / norm, t) for (val, t) in results]
+        return list(sorted(results, key=lambda x: x[1]))
+
+    def score(self, confidence_dict):
+        search_terms = self.settings['search']
+        max_score = 0
+        for term in search_terms:
+            max_score = max(max_score, confidence_dict.get(term, 0))
+        return max_score
 
     def has_valid_args_interpret_results(self, results, cutoff):
         # This is a very simple helper function which throws an exception
@@ -82,7 +88,6 @@ class Job:
                 this probably means something is funky with whatever process produced this.")
             if cutoff < 0:
                 raise ValueError("Cutoff parameter less than zero. Got: {}".format(cutoff))
-
 
     def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
