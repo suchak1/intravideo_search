@@ -1,5 +1,6 @@
 from controller import Worker
 import os
+import sys
 import cv2
 from PIL import Image
 #from multiprocessing import Pool
@@ -12,7 +13,7 @@ class Job:
         if not isinstance(settings, type(None)):
             self.video_path = settings['video']
             self.settings = settings['settings']
-            self.do_the_job()
+            # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
@@ -169,4 +170,4 @@ class Job:
 
 
     def kill(self):
-        quit()
+        del self
