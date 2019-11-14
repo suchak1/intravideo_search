@@ -21,6 +21,11 @@ class Job:
         self.save_clips(results)
 
     def get_frames(self):
+        # Given video and poll setting, returns list of Images of
+        # frames from the video at every timestamp designated by
+        # poll setting. For example, if poll is 5, get_frames()
+        # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
+        # seconds
         vidPath = self.video_path
         poll = self.settings['poll']
         count = 0
