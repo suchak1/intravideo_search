@@ -5,7 +5,6 @@ import os
 import sys
 import pytest
 import pytest_check as check
-import imageai
 sys.path.append('src')
 from controller import *  # nopep8
 
