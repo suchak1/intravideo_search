@@ -44,7 +44,7 @@ def test_classify_img():
     # Changes to tests:
     # wrong_names is a rotation of original image_names
     # as it is unlikely that basketball
-    # will be in the classification dict for basketball and so on
+    # will be in the classification dict for banana and so on
     wrong_names = image_names[1:] + image_names[:1]
     img_ext = '.jpg'
 
