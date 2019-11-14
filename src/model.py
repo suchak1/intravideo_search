@@ -20,12 +20,16 @@ class Job:
         return []  # do whatever to get frames from vid as specific times using self.settings
 
     def classify_frames(self):
-        '''
         frames = self.get_frames()
-        # use multiprocessing on loop in list comprehension below
-        return [Worker.classify_img(frame) for frame in frames]
-        '''
-        pass
+        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        return list(sorted(results, key=lambda x: x[1]))
+
+    def score(self, confidence_dict):
+        search_terms = self.settings['search']
+        max_score = 0
+        for term in search_terms:
+            max_score = max(max_score, confidence_dict.get(term, 0))
+        return max_score
 
     def interpret_results(self, results, cutoff=0.5):
         # Assuming arg: results is something like a list of tuples
