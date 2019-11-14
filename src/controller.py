@@ -36,7 +36,7 @@ class Worker:
         else:
             clipPath = outputPath
 
-        numFrames, fps, framH, frameW, fourcc = self.getVideoInfo(path)
+        numFrames, fps, framH, frameW, fourcc = self.get_video_info(path)
         if timestamp[1] > int(numFrames/fps):
             timestamp = (timestamp[0], int(numFrames/fps))
         delta = timestamp[1] - timestamp[0]
@@ -53,7 +53,7 @@ class Worker:
         clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
         return clipPath  # clip path
 
-    def getVideoInfo(self, path):
+    def get_video_info(self, path):
         video = cv2.VideoCapture(path)
         numFrames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
         fps = int(video.get(cv2.CAP_PROP_FPS))
