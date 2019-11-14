@@ -95,6 +95,10 @@ def test_make_clip_no_frames():
     check.equal(outVidPath, '')
 
 
+#   For the following test cases, for make_clip(), they now produce the
+#   ground truth comparison video clip in a better way. That is the only
+#   change.
+
 def test_make_clip_full_video():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     clipPath = "test/sampleVideo/testFull.mp4"
