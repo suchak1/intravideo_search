@@ -21,7 +21,7 @@ class Job:
     def do_the_job(self):
         data = self.classify_frames()
         results = self.interpret_results(data)
-        #self.save_clips(results)
+        self.save_clips(results)
 
     def get_frames(self):
         # Given video and poll setting, returns list of tuples

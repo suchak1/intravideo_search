@@ -15,7 +15,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime': 100
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -71,22 +71,22 @@ def test_save_clips():
 
     check.is_false(example_job1.save_clips([]))
 
-    #with pytest.raises(Exception):
-    #    example_job1.save_clips([timestamps3])
-    #    example_job1.save_clips([timestamps4])
-    #    example_job1.save_clips([timestamps5])
-    #    example_job1.save_clips([timestamps6])
+    with pytest.raises(Exception):
+        example_job1.save_clips([timestamps3])
+        example_job1.save_clips([timestamps4])
+        example_job1.save_clips([timestamps5])
+        example_job1.save_clips([timestamps6])
 
-    #check.is_true(example_job1.save_clips([timestamps1]))
-    #check.is_true(example_job1.save_clips([timestamps1, timestamps2]))
-    #path = os.path.splitext(example_job1.video_path)
-    # form of filenames updated to match implementation
-    #check.is_true(
-    #    os.path.isfile(
-    #        path[0] + '_subclip(' + str(timestamps1[0]) + ',' + str(timestamps1[1]) + ')' + path[1]))
-    #check.is_true(
-    #    os.path.isfile(
-    #        path[0] + '_subclip(' + str(timestamps2[0]) + ',' + str(timestamps2[1]) + ')' + path[1]))
+    check.is_true(example_job1.save_clips([timestamps1]))
+    check.is_true(example_job1.save_clips([timestamps1, timestamps2]))
+    path = os.path.splitext(example_job1.video_path)
+     form of filenames updated to match implementation
+    check.is_true(
+        os.path.isfile(
+            path[0] + '_subclip(' + str(timestamps1[0]) + ',' + str(timestamps1[1]) + ')' + path[1]))
+    check.is_true(
+        os.path.isfile(
+            path[0] + '_subclip(' + str(timestamps2[0]) + ',' + str(timestamps2[1]) + ')' + path[1]))
 
 
 def test_classify_frames():
