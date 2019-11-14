@@ -55,12 +55,13 @@ def test_save_clips():
     check.is_true(example_job1.save_clips([timestamps1]))
     check.is_true(example_job1.save_clips([timestamps1, timestamps2]))
     path = os.path.splitext(example_job1.video_path)
+    # form of filenames updated to match implementation
     check.is_true(
         os.path.isfile(
-            path[0] + '_' + str(timestamps1[0]) + '_' + str(timestamps1[1]) + path[1]))
+            path[0] + '_subclip(' + str(timestamps1[0]) + ',' + str(timestamps1[1]) + ')' + path[1]))
     check.is_true(
         os.path.isfile(
-            path[0] + '_' + str(timestamps2[0]) + '_' + str(timestamps2[1]) + path[1]))
+            path[0] + '_subclip(' + str(timestamps2[0]) + ',' + str(timestamps2[1]) + ')' + path[1]))
 
 
 def test_classify_frames():
