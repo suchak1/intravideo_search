@@ -40,18 +40,9 @@ example_parameters3 = {
         'conf': .9,
         'poll': 1,
         'anti': 3,
-<<<<<<< HEAD
-<<<<<<< HEAD
         'runtime': 10,
-        'search': ["rock"]
-=======
         'search': ["rock"],
-        'runtime':100.0
->>>>>>> d29685d2a017fc55479a0f0c18a914857c5264fd
-=======
-        'search': ["rock"],
-        'runtime':100.0
->>>>>>> a7fdb367df6d09b48471b5786d612475db975038
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -63,18 +54,9 @@ example_parameters4 = {
         'conf': .9,
         'poll': 8,
         'anti': 6,
-<<<<<<< HEAD
-<<<<<<< HEAD
-        'runtime': 10, 
-        'search': ["water"]
-=======
+        'runtime': 10,
         'search': ["water"],
         'runtime':100.0
->>>>>>> d29685d2a017fc55479a0f0c18a914857c5264fd
-=======
-        'search': ["water"],
-        'runtime':100.0
->>>>>>> a7fdb367df6d09b48471b5786d612475db975038
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
