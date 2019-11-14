@@ -18,6 +18,11 @@ def test_constructor():
 
 def test_classify_img():
     image_dir = '/sampleImage/'
+    # Changes to tests:
+    # we changed the images classified due to the limitations of our ML model
+    # since the model is only trained on 1000 object categories
+    # we will create a helper function in the next iteration
+    # to test for semantic simularity and get better search results
     image_names = [
         'banana',
         'basketball',
@@ -25,15 +30,20 @@ def test_classify_img():
         'cucumber',
         'fountain',
         'golden_retriever',
-        # 'rainbow',
-        # 'soda',
+        'goldfish',
         'passenger_car',
+        'pop_bottle',
         'seashore',
+        'space_shuttle',
         'sports_car',
         'suit',
-        'tabby'
-        # 'sun',
+        'tabby',
+        'volcano'
     ]
+    # Changes to tests:
+    # wrong_names is a rotation of original image_names
+    # as it is unlikely that basketball
+    # will be in the classification dict for basketball and so on
     wrong_names = image_names[1:] + image_names[:1]
     img_ext = '.jpg'
 
@@ -54,7 +64,7 @@ def test_classify_img():
         check.is_in(name, w.classify_img(img))
 
         # now let's try assertions that should definitely be wrong
-        # (that 'waterfall' is in the classification dict for 'banana.jpg')
+        # (that 'volcano' is in the classification dict for 'banana.jpg')
         check.is_not_in(wrong_names[idx], w.classify_img(img))
 
 
