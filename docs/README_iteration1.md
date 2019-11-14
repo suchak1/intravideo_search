@@ -46,7 +46,7 @@ Rachel: Job constructor and get_frames, work with Ralph
 Ralph: Job classify_frames, work with Rachel, Krish, David
 David: Job interpret_results and Worker make_clip, work with Krish and Ralph
 for interpret_results, work with Ralph for make_clip
-Krish: Worker classify_img, work with Ralph, David
+Krish: Worker classify_img and last min various bug fixes, work with Ralph, David
 Michael: Worker constructor, reviewed majority of PRs
 
 ### (7) Design/Unit Test Changes
