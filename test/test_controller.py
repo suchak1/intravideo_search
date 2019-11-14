@@ -5,6 +5,7 @@ import os
 import sys
 import pytest
 import pytest_check as check
+import imageai
 sys.path.append('src')
 from controller import *  # nopep8
 
@@ -18,9 +19,22 @@ def test_constructor():
 
 def test_classify_img():
     image_dir = '/sampleImage/'
-    image_names = ['banana', 'basketball', 'beach', 'box',
-                   'car', 'cat', 'cucumber', 'dog', 'person',
-                   'rainbow', 'soda', 'sun', 'train', 'waterfall']
+    image_names = [
+        'banana',
+        'basketball',
+        # 'beach',
+        'box',
+        # 'car',
+        # 'cat',
+        'cucumber',
+        # 'dog',
+        # 'person',
+        # 'rainbow',
+        # 'soda',
+        # 'sun',
+        # 'train',
+        # # 'waterfall'
+    ]
     wrong_names = image_names[::-1]
     img_ext = '.jpg'
 
@@ -42,7 +56,7 @@ def test_classify_img():
 
         # now let's try assertions that should definitely be wrong
         # (that 'waterfall' is in the classification dict for 'banana.jpg')
-        check.is_not_in(wrong_names[idx] not in w.classify(img))
+        check.is_not_in(wrong_names[idx], w.classify_img(img))
 
 
 def test_make_clip_negative_time():

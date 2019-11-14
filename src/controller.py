@@ -12,6 +12,9 @@ class Worker:
         return
 
     def classify_img(self, img):
+        if not isinstance(img, Image.Image):
+            return None
+
         prediction = ImagePrediction()
         prediction.setModelTypeAsSqueezeNet()
         prediction.setModelPath('src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5')
@@ -24,10 +27,3 @@ class Worker:
     def make_clip(self, timestamp, path):
         # using timestamp[0] (start time) and timestamp[1] (end time)
         return path  # clip path
-
-# path = 'test/sampleImage/rainbow.jpg'
-# img = Image.open(path)
-# arr = np.array(img)
-# print(img)
-# result = Worker().classify_img(img)
-# print(result)
