@@ -1,3 +1,4 @@
+from model import Job
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 import os
