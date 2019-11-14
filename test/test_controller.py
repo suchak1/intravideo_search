@@ -23,7 +23,7 @@ def test_classify_img():
         'banana',
         'basketball',
         # 'beach',
-        'box',
+        # 'box',
         # 'car',
         # 'cat',
         'cucumber',
@@ -35,7 +35,7 @@ def test_classify_img():
         # 'train',
         # # 'waterfall'
     ]
-    wrong_names = image_names[::-1]
+    wrong_names = image_names[1:] + image_names[:1]
     img_ext = '.jpg'
 
     # instead of simply using os.getcwd(), we use full_path so that pytest will
