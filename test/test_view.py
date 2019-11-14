@@ -395,7 +395,7 @@ def test_render():
     test_gui.set_settings({'conf': 0.2, 'poll': 1, 'anti': 1, 'search': [
                           "child, kid, ball"]}, test_gui.video_path)
     # create a test job object to use as the test_gui.job parameter
-    test_job1 = Job({'settings': test_gui.settings, 'video': test_gui.video_path})
+    test_job1 = Job(test_gui.get_settings())
     test_gui.job = test_job1
     # assert that these changes have gone through
     check.equal(test_gui.video_path, '../folder2/video.mp4')
