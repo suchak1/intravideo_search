@@ -40,7 +40,8 @@ example_parameters3 = {
         'conf': .9,
         'poll': 1,
         'anti': 3,
-        'search': ["rock"]
+        'search': ["rock"],
+        'runtime':100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -52,7 +53,8 @@ example_parameters4 = {
         'conf': .9,
         'poll': 8,
         'anti': 6,
-        'search': ["water"]
+        'search': ["water"],
+        'runtime':100.0
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
