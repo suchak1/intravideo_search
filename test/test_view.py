@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import tkinter as tk
 import sys
 import pytest
@@ -359,6 +360,10 @@ def test_render():
     # I will be creating a GUI object, rendering it, leaving it on the screen,
     # then killing it. Then, I will change the underlying paramters
     # then re-render another window.
+
+    # In reality, render() cannot be called or else it messes with the
+    # travis build. We will have to figure out a better solution
+    # in iteration 2.
 
     # Another side note is that by the point of rendering the window,
     # all the inputs will be valid. This is because the GUI technically
