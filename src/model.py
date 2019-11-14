@@ -1,6 +1,8 @@
+from controller import Worker
 import os
 import cv2
 from PIL import Image
+#from multiprocessing import Pool
 
 class Job:
 
@@ -150,12 +152,16 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        # use multiprocessing here
-        '''
-        [Worker.make_clip(timestamp, self.video_path)
-         for timestamp in timestamps]
-        '''
-        pass
+        #with Pool() as pool:
+        #    v = self.video_path
+        #    args_list = [(t, v) for t in timestamps]
+        #    map_results = pool.starmap(Worker().make_clip, args_list)
+
+        #return map_results
+        # multiprocessing is running into issues with shared resources
+        v = self.video_path
+        return [Worker().make_clip(t, v) for t in timestamps]
+
 
     def kill(self):
         quit()
