@@ -21,11 +21,12 @@ class Job:
         self.save_clips(results)
 
     def get_frames(self):
-        # Given video and poll setting, returns list of Images of
-        # frames from the video at every timestamp designated by
-        # poll setting. For example, if poll is 5, get_frames()
+        # Given video and poll setting, returns list of tuples
+        # where the first element is an Image of the frame from the video
+        # at each timestamp designated by poll setting, and the second
+        # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
-        # seconds
+        # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
         vidPath = self.video_path
         poll = self.settings['poll']
         count = 0
@@ -33,14 +34,15 @@ class Job:
         video = cv2.VideoCapture(vidPath)
         success = True
         while success:
-            video.set(cv2.CAP_PROP_POS_MSEC, (count*1000*poll))
+            timestamp = (count*poll)
+            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
             success,frame = video.read()
             if success:
                 cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
                 try:
                     f = Image.open('frame%d.jpg' % count) # make frame Image
                     os.remove('frame%d.jpg' % count) # delete frame.jpg
-                    frms.append(f)
+                    frms.append((f,timestamp))
                 except:
                     raise NameError('getFrameError')
             count += 1

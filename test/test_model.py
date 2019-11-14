@@ -235,12 +235,14 @@ def stampListsAreEqual(times1, times2):
 
     return True
 
-
+# helper function to test get_frames()
 def areImagesSame(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
 
 # add tests for get_frames() based on comments from milestone 3a
 # now test with different videos and different settings
+# also test was changed to reflect change in get_frames() return value
+# from list of Images to list of tuples of Images and timestamps
 def test_get_frames_poll_5():
     frames = example_job1.get_frames()
     check.equal(len(frames), 2)
@@ -248,23 +250,29 @@ def test_get_frames_poll_5():
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
-    check.is_true(areImagesSame(frames[0], frame1))
-    check.is_true(areImagesSame(frames[1], frame2))
+    check.is_true(areImagesSame(frames[0][0], frame1))
+    check.is_true(areImagesSame(frames[1][0], frame2))
+    check.equal(frames[0][1], 0)
+    check.equal(frames[1][1], 5)
 
 def test_get_frames_poll_1():
     frames = example_job3.get_frames()
+    poll = example_job3.settings['poll']
     check.equal(len(frames), 6)
     # check frames against expected frame at each second (because poll = 1)
     for i in range(6):
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
-        check.is_true(areImagesSame(frames[i], compare_img))
+        check.is_true(areImagesSame(frames[i][0], compare_img))
+        check.equal(frames[i][1],i*poll)
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
+    poll = example_job4.settings['poll']
     check.equal(len(frames), 4)
     # check frames against frame at 0,8,16,24 seconds (because poll = 8)
     for i in range(4):
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
-        check.is_true(areImagesSame(frames[i], compare_img))
+        check.is_true(areImagesSame(frames[i][0], compare_img))
+        check.equal(frames[i][1],i*poll)
