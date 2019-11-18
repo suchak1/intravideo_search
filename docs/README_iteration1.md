@@ -53,7 +53,7 @@ Simply run `jupyter notebook` (make sure you have it installed, not a Python pac
         - "anti": the amount of time in seconds where we do not accept a frame classification (giving us the bounds of the clip). It must be an integer value greater than 0
         - "runtime": the runtime of the video in seconds. Must be an integer greater than 0
         - "search": an array of search terms to use. It must be an array of strings
-    - "path" is an OS path to the video to import. Pyhton must be able to open the path.
+    - "path" is an OS path to the video to import. Python must be able to open the path.
     - If any of these conditions are false, then the default values will automatically be registered (the default values are: conf: 0.9, poll: 5, anti: 5, runtime: 1, search: [], path: ''. Not all of these are valid inputs, but this is intended to be the case to force the user to properly upload a video and specify search terms) and False will be returned.
     - In test_set_settings(), 24 different sets of settings with two paths (so 48 different test cases) are used. This is intended to test each separate element being invalid and testing whether the code breaks or not.
     - For example, set10 ({'conf': 0.9, 'poll': 5.2, 'anti': 5, 'runtime': 10, 'search': ['dog', 'pet']}) has an invalid parameter for "poll", so set_settings(set10, video_path) would return False
