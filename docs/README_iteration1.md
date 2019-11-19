@@ -77,7 +77,7 @@ exception should be raised.
 test_interpret_results_negative_time gives a list containing a result with a 
 negative time signature. An exception should be raised.
 
-tetest_interpret_results_negative_score gives a list containing a result with a
+test_interpret_results_negative_score gives a list containing a result with a
 negative score. An exception should be raised.
 
 test_interpret_results_unnormalized_score gives a list containing a result with 
@@ -224,7 +224,7 @@ identical to the sample video staring 3 seconds in.
     - The GUI allows the user to change the video path as well as the settings using the slider and the text box. 
     - test_render() also contains some invalid settings in order to make sure the GUI does not render these invalid settings.
     - test_render() currently has the render() function calls commented out in order to allow the tests to pass the travis build and pytest because it opens up a window and that will cause both to automatically fail. When actually implementing, these statements are not commented out.
-    - Because the front end has not yet connected to the backend, the Job parameter of the GUI is also commented out for now. Once connected, the GUI will be able to start a job. This will be implemented in iteration 2.
+    - Because the frontend has not yet connected to the backend, the Job parameter of the GUI is also commented out for now. Once connected, the GUI will be able to start a job. This will be implemented in iteration 2.
     - In test_render(), 12 total tests are used, varying the settings, the video path, and the job (not yet connected). Invalid settings are tested, even though these will be filtered out by the tests for set_settings(). Invalid video paths are tested for in test_model.py, so they are not included in test_render(). 
     - In practice the GUI will not have to render any invalid values, as the GUI only allows the user to change their settings and path to valid ones.
 
