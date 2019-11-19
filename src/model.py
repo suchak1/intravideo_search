@@ -171,3 +171,31 @@ class Job:
 
     def kill(self):
         del self
+
+
+class Seer():
+    def __init__(self,  encoder_path='models/encoder-5-3000.pkl',
+                        decoder_path='models/decoder-5-3000.pkl',
+                        vocab_path='data/vocab.pkl',
+                        embed_size=256, hidden_size=128, num_layers=1):
+
+        # Device configuration. Uses the GPU if one is available.
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        pass
+
+    def prepare_model(self):
+        # This is a utility to load and otherwise prepare the pytorch model.
+        # It is only used in initialization of the Seer class.
+        pass
+
+    def tell_us_oh_wise_one(self, pilImage):
+        # This is the method which produces a caption given an image (path.)
+        # The argument type is str and the return type is str.
+        img = prepare_data(pilImage)
+        caption = ""
+        return caption
+
+    def prepare_data(self, pilImage):
+        # This is a private utility for the tell_us_oh_wise_one method.
+        # This loads and preproceses the image, normalizing, resizing etc.
+        return pilImage

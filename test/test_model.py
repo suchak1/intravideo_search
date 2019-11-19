@@ -281,3 +281,11 @@ def test_get_frames_poll_8():
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
         check.equal(frames[i][1],i*poll)
+
+
+def test_seer_init():
+    assert 1 == 1
+
+
+def test_seer_tell_us_oh_wise_one():
+    assert 1 == 1
