@@ -189,7 +189,7 @@ class Seer():
         pass
 
     def tell_us_oh_wise_one(self, pilImage):
-        # This is the method which produces a caption given an image (path.)
+        # This is the method which produces a caption given an image (PIL Image)
         # The argument type is str and the return type is str.
         img = prepare_data(pilImage)
         caption = ""
