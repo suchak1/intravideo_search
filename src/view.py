@@ -205,3 +205,17 @@ class GUI:
 
         win.mainloop()
         return 0
+
+    def run_job(self):
+        """
+        Validates the settings of the GUI and makes sure that they are valid
+        Ensures that the video path given is a valid video and can be opened by the application
+        Returns a tuple: (bool, msg) where bool is True if everything is valid and a Job was started and False otherwise,
+        and msg is a success or error message
+        """
+        settings = self.settings
+        path = self.video_path
+
+        return (True, "Success")
+
+
