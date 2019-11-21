@@ -21,6 +21,16 @@
 
 ### (3) Unit Test Cases
 Note: Running the test cases is the same as for previous milestones. We have provided the same instructions below for convenience.
+- To install the necessary packages, run
+    ```
+    pip install -r requirements.txt
+    ```
+    Note:
+      - Python 3.7 is required
+      - For a system with multiple python versions, run
+      ```
+      python3.7 -m pip install -r requirements.txt
+      ```
 - To run all tests, run
     ```
     pytest -vv
