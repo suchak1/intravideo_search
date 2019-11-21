@@ -342,7 +342,6 @@ def get_vid_duration(path):
     duration = int(frame_count/fps)
     return duration
 
-
 def test_get_from_yt():
     parameters = {
     'settings': {
