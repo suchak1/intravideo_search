@@ -1,5 +1,6 @@
 from controller import Worker
 import os
+import torch
 import sys
 import cv2
 from PIL import Image
@@ -190,10 +191,8 @@ class Job:
 
 
 class Seer():
-    def __init__(self,  encoder_path='models/encoder-5-3000.pkl',
-                        decoder_path='models/decoder-5-3000.pkl',
-                        vocab_path='data/vocab.pkl',
-                        embed_size=256, hidden_size=128, num_layers=1):
+    def __init__(self):
+        self.encoder, self.decoder = self.prepare_model()
 
         # Device configuration. Uses the GPU if one is available.
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -202,12 +201,12 @@ class Seer():
     def prepare_model(self):
         # This is a utility to load and otherwise prepare the pytorch model.
         # It is only used in initialization of the Seer class.
-        pass
+        return None, None
 
     def tell_us_oh_wise_one(self, pilImage):
         # This is the method which produces a caption given an image (PIL Image)
         # The argument type is str and the return type is str.
-        img = prepare_data(pilImage)
+        img = self.prepare_data(pilImage)
         caption = ""
         return caption
 
