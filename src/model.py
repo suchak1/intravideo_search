@@ -4,6 +4,7 @@ import torch
 import sys
 import cv2
 from PIL import Image
+import my_pytube
 #from multiprocessing import Pool
 
 class Job:
@@ -186,7 +187,14 @@ class Job:
     def get_from_yt(self, url):
         # input YouTube video URL
         # output string of path to downloaded video
-        return ['todo']
+        folder_path = './test'
+        try:
+            yt = my_pytube.YouTube(url)
+            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+            vid_path = vid.download(output_path=folder_path)
+        except:
+            vid_path = ''
+        return vid_path
 
 class Seer():
     def __init__(self):
