@@ -5,7 +5,7 @@
 - For the GUI and Input/Output, and local data processing:
     We are focusing on making sure that the frontend connects to the backend. We will also be updating the GUI to have a cleaner and easier-to-use interface. Previously, we intended to include a way for the clips to be displayed in a helpful way and to implement an option for the user to download the individual clips from the GUI. We will not be doing this anymore because after Iteration 1, we decided that it is not reasonable to display a potentially large number of clips on screen, so the implementation for Iteration 2 will simply save clips without giving the user any other option.
 - For API interaction and Post-API Data Processing:
-    We are planning to implement a semantic similarity graph that will allow users to set a recursion depth for how many “similar” results semantically to the search term they want to search for. This feature is described in detail in the previously submitted design document.
+    We are planning to implement a semantic similarity (matching search terms with related words) to improve/bolster the relevancy of outputted clips.
 - New Features:
     We will also be implementing two new features. First, we will implement a new feature that returns a sentence caption that describes what is occurring in each clip. Second, we will implement an option for the user to input a URL link to a YouTube video instead of uploading a video file.
 
