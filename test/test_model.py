@@ -296,7 +296,7 @@ def test_get_frames_poll_8():
 #
 # As for the captioning method (tell_us_oh_wise_one,) multiple image types
 # and invalid inputs are tested, as is usual for a unit test.
-def test_seer_init():
+def test_seer_init(): 
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
@@ -322,10 +322,14 @@ def test_seer_tell_us_oh_wise_one_jpg():
 
 def test_seer_tell_us_oh_wise_one_png():
     delphi = Seer()
-    img = Image.open("test/sampleImage/golden_retriever.jpg")
+    img = Image.open("test/sampleImage/blindside.png")
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a living room with a couch and a television"
     check.is_true(caption == true_caption)
 
 def test_seer_tell_us_oh_wise_one_black_and_white():
-    pass
+    delphi = Seer()
+    img = Image.open("test/sampleImage/bandw.jpg")
+    caption = delphi.tell_us_oh_wise_one(img)
+    true_caption = "a black and white photo of a train station"
+    check.is_true(caption == true_caption)
