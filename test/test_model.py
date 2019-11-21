@@ -301,6 +301,18 @@ def test_seer_init():
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
 
+def test_seer_tell_us_oh_wise_one_non_image():
+    delphi = Seer()
+    notanimg = 5
+    with pytest.raises(Exception):
+        caption = delphi.tell_us_oh_wise_one(notanimg)
+
+def test_seer_tell_us_oh_wise_one_nonetype():
+    delphi = Seer()
+    nonetype = None
+    with pytest.raises(Exception):
+        caption = delphi.tell_us_oh_wise_one(nonetype)
+
 def test_seer_tell_us_oh_wise_one_jpg():
     delphi = Seer()
     img = Image.open("test/sampleImage/golden_retriever.jpg")
@@ -309,13 +321,11 @@ def test_seer_tell_us_oh_wise_one_jpg():
     check.is_true(caption == true_caption)
 
 def test_seer_tell_us_oh_wise_one_png():
-    pass
-
-def test_seer_tell_us_oh_wise_one_invalid_file():
-    pass
-
-def test_seer_tell_us_oh_wise_one_nonetype():
-    pass
+    delphi = Seer()
+    img = Image.open("test/sampleImage/golden_retriever.jpg")
+    caption = delphi.tell_us_oh_wise_one(img)
+    true_caption = "a living room with a couch and a television"
+    check.is_true(caption == true_caption)
 
 def test_seer_tell_us_oh_wise_one_black_and_white():
     pass
