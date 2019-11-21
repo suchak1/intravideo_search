@@ -117,19 +117,23 @@ class GUI:
 
         win.title("Intravideo Search")
         win.geometry("960x540")
+        win_header = Frame(win)
+        win_header.pack()
+        win_content = Frame(win)
+        win_content.pack()
 
-        lbl1 = Label(win, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
-        lbl1.grid(column=0, row=0)
+        lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
+        lbl1.grid(column=0, row=0, columnspan=3)
 
-        lbl2 = Label(win, text="Upload a video file.", justify=LEFT)
+        lbl2 = Label(win_content, text="Upload a video file.", justify=LEFT)
         lbl2.grid(sticky = W, column=0,row=1)
 
         def open_file():
             filename = askopenfilename()
             self.video_path = str(filename)
 
-        button1 = Button(win, text="Upload", anchor="w", command=open_file)
-        button1.grid(column=0, row=1)
+        button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
+        button1.grid(column=1, row=1)
 
         def change_confidence(val):
             self.settings['conf'] = float(val)/100
@@ -140,33 +144,33 @@ class GUI:
         def change_anti(val):
             self.settings['anti'] = int(val)
 
-        lbl3 = Label(win, text="Confidence:", justify=LEFT)
-        lbl3.grid(sticky = W, column=0, row=2)
+        lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
+        lbl3.grid(sticky = E, column=0, row=2, padx=10)
 
-        slider1 = Scale(win, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
+        slider1 = Scale(win_content, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
         slider1.set(self.settings['conf']*100)
         slider1.grid(sticky = W, column=1, row=2)
 
-        lbl4 = Label(win, text="Polling Rate:", justify=LEFT)
-        lbl4.grid(sticky = W, column=0, row=3)
+        lbl4 = Label(win_content, text="Polling Rate:", justify=LEFT)
+        lbl4.grid(sticky = E, column=0, row=3, padx=10)
 
-        slider2 = Scale(win, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
+        slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
         slider2.set(self.settings['poll'])
         slider2.grid(sticky = W, column=1, row=3)
 
-        lbl5 = Label(win, text="Anti:", justify=LEFT)
-        lbl5.grid(sticky = W, column=0, row=4)
+        lbl5 = Label(win_content, text="Anti:", justify=LEFT)
+        lbl5.grid(sticky = E, column=0, row=4, padx=10)
 
-        slider3 = Scale(win, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
+        slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
         slider3.set(self.settings['anti'])
         slider3.grid(sticky = W, column=1, row=4)
 
 
-        lbl6 = Label(win, text="Search Terms:", justify=LEFT)
-        lbl6.grid(sticky=W, column=0, row=6)
+        lbl6 = Label(win_content, text="Search Terms:", justify=LEFT)
+        lbl6.grid(sticky=E, column=0, row=6, padx=10)
 
-        entry1 = Entry(win)
-        entry1.grid(sticky=W, column=1, row=6)
+        entry1 = Entry(win_content, width=30)
+        entry1.grid(sticky=W, column=1, row=6, pady=10)
 
         def entry1_delete():
             entry1.delete(first=0, last=100)
@@ -174,16 +178,16 @@ class GUI:
         def add_search_term():
             self.settings['search'].append(entry1.get())
 
-        button2 = Button(win, text="Add", anchor='w', command=add_search_term)
-        button2.grid(sticky=W, column=2, row=5)
+        button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
+        button2.grid(sticky=W, column=3, row=6)
 
-        button3 = Button(win, text="Clear", anchor='w', command=entry1_delete)
-        button3.grid(sticky=W, column=3, row=5)
+        button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
+        button3.grid(sticky=W, column=4, row=6)
 
         def display_settings():
-            temp_lbl1 = Label(win, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+            temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
-            temp_lbl2 = Label(win, text="Search: ")
+            temp_lbl2 = Label(win_content, text="Search: ")
             temp_lbl2.grid(sticky=W, column=0, row=96)
 
             str1 = ''
@@ -191,16 +195,16 @@ class GUI:
                 str1 += ', '
                 str1 += ele
 
-            temp_lbl4 = Label(win, text=str1)
+            temp_lbl4 = Label(win_content, text=str1)
             temp_lbl4.grid(sticky=W, column=1, row=96)
-            temp_lbl3 = Label(win, text= "Video path: " + self.video_path)
-            temp_lbl3.grid(sticky=W, column=0, row=97)
+            temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
+            temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
 
 
-        display_settings_button = Button(win,text="Display Settings", command=display_settings)
-        display_settings_button.grid(column=0, row=99)
+        display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
+        display_settings_button.grid(column=0, row=99, pady=10)
 
-        kill_button = Button(win,text="Kill this window", command= win.destroy)
+        kill_button = Button(win_content,text="Kill this window", command= win.destroy)
         kill_button.grid(column=0, row=100)
 
         win.mainloop()
