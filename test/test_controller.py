@@ -69,6 +69,27 @@ def test_classify_img():
         check.is_not_in(wrong_names[idx], w.classify_img(img))
 
 
+def test_get_related_words():
+    w = Worker()
+    check.equal({}, w.get_related_words(''))
+    check.is_in('plantain', w.get_related_words("banana"))
+    check.is_in('nba', w.get_related_words("basketball"))
+    'carton',
+    check.is_in('zucchini', w.get_related_words("cucumber"))
+    'fountain',
+    check.is_in('dog', w.get_related_words("golden retriever"))
+    'goldfish',
+    'passenger_car',
+    'pop_bottle',
+    'seashore',
+    check.is_in('spaceship', w.get_related_words("space shuttle"))
+    check.is_in('roadster', w.get_related_words("sports car"))
+    'suit',
+    'tabby',
+    'volcano'
+
+
+
 def test_make_clip_negative_time():
     w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
