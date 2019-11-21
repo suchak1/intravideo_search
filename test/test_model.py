@@ -296,7 +296,7 @@ def test_get_frames_poll_8():
 #
 # As for the captioning method (tell_us_oh_wise_one,) multiple image types
 # and invalid inputs are tested, as is usual for a unit test.
-def test_seer_init(): 
+def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
@@ -333,3 +333,62 @@ def test_seer_tell_us_oh_wise_one_black_and_white():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a black and white photo of a train station"
     check.is_true(caption == true_caption)
+
+# helper function to test get_from_yt()
+def get_vid_duration(path):
+    v=cv2.VideoCapture(path)
+    fps = v.get(cv2.CAP_PROP_FPS)
+    frame_count = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
+    duration = int(frame_count/fps)
+    return duration
+
+def test_get_from_yt():
+    parameters = {
+    'settings': {
+        'conf': .9,'poll': 5,'anti': 5,'search': [''],'runtime':100.0},
+        'video': ''
+    }
+    invalid_url1 = 'https://www.youtube.com/watch?v=sVuG2i93notvalid'
+    invalid_url2 = 'www.youtube.com'
+    invalid_url3 = ''
+    invalid_url4 = 'https://vimeo.com/66457941'
+    invalid_url5 = 'www.yutub.com/watch?v=dQw4w9WgXcQ'
+    url1 = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    url2 = 'www.youtube.com/watch?v=fJ9rUzIMcZQ'
+    url3 = 'youtube.com/watch?v=VuNIsY6JdUw'
+    expected_path1 = 'test/YouTube_vids/Rick Astley - Never Gonna Give You Up (Video)'
+    expected_path2 = 'test/YouTube_vids/Queen – Bohemian Rhapsody (Official Video Remastered)'
+    expected_path3 = 'test/YouTube_vids/Taylor Swift - You Belong With Me'
+    expected_duration1 = 212 # durations in seconds
+    expected_duration2 = 359
+    expected_duration3 = 272
+
+    # test valid url1
+    parameters['video'] = url1
+    job1 = Job(parameters)
+    # get_from_yet is called in the initialization of job
+    # if parameter video is a YouTube URL
+    url1_path = job1.video_path
+    check.equal(url1_path,expected_path1)
+    check.equal(expected_duration1, get_vid_duration(url1_path))
+
+    # test valid url2
+    parameters['video'] = url2
+    job2 = Job(parameters)
+    url2_path = job2.video_path
+    check.equal(url2_path,expected_path2)
+    check.equal(expected_duration2, get_vid_duration(url2_path))
+
+    # test valid url3
+    parameters['video'] = url3
+    job3 = Job(parameters)
+    url3_path = job3.video_path
+    check.equal(url3_path,expected_path3)
+    check.equal(expected_duration3, get_vid_duration(url3_path))
+
+    # test invalid inputs using arbitrary job to access get_from_yt() function
+    check.equal('', job3.get_from_yt(invalid_url1))
+    check.equal('', job3.get_from_yt(invalid_url2))
+    check.equal('', job3.get_from_yt(invalid_url3))
+    check.equal('', job3.get_from_yt(invalid_url4))
+    check.equal('', job3.get_from_yt(invalid_url5))
