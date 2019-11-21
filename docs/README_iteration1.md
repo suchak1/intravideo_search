@@ -77,7 +77,7 @@ exception should be raised.
 test_interpret_results_negative_time gives a list containing a result with a 
 negative time signature. An exception should be raised.
 
-tetest_interpret_results_negative_score gives a list containing a result with a
+test_interpret_results_negative_score gives a list containing a result with a
 negative score. An exception should be raised.
 
 test_interpret_results_unnormalized_score gives a list containing a result with 
@@ -196,7 +196,6 @@ end of the sample video, and a destination path. Namely:
 This should return "test/sampleVideo/testEnd.mp4" and testEnd.mp4 should be 
 identical to the sample video staring 3 seconds in.
 
-
 - test_set_settings()
     - set_settings(self, values, path) takes in two parameters: a dictionary of settings and a file path to the video. It will validate the settings and the validity of the path and return True if the settings are valid (as well as actually set the settings so the Job class can work) or False otherwise.
     - "values" is a dictionary path containing the following elements:
@@ -215,8 +214,7 @@ identical to the sample video staring 3 seconds in.
     - If a previous call to set_settings() was successful, then get_settings() will return all of the parameters specified by set_settings() (since the settings were set properly). If this call to set_settings() was unsuccessful, then get_settings() will return the default settings and default video path. This would ensure that the user cannot initiate a Job without specifying the correct settings
     - In test_get_settings(), 24 different sets of settings with two paths (so 48 different test cases) are used. This is intended to test whether variations of incorrect settings will be considered in setting the default test cases.
     - For example, set 10 ({'conf': 0.9, 'poll': 5.2, 'anti': 5, 'runtime': 10, 'search': ['dog', 'pet']}) has an invalid parameter for "poll", so get_settings() would return the default settings.
-
-
+    
 - test_render()
     - render() takes in no parameters and returns 0 at the end to signify that the GUI has opened and closed. 
     - render() takes the current settings of the GUI object, specifically the contents of the 'values' dictionary described above as well as the video file path.
@@ -224,7 +222,7 @@ identical to the sample video staring 3 seconds in.
     - The GUI allows the user to change the video path as well as the settings using the slider and the text box. 
     - test_render() also contains some invalid settings in order to make sure the GUI does not render these invalid settings.
     - test_render() currently has the render() function calls commented out in order to allow the tests to pass the travis build and pytest because it opens up a window and that will cause both to automatically fail. When actually implementing, these statements are not commented out.
-    - Because the front end has not yet connected to the backend, the Job parameter of the GUI is also commented out for now. Once connected, the GUI will be able to start a job. This will be implemented in iteration 2.
+    - Because the frontend has not yet connected to the backend, the Job parameter of the GUI is also commented out for now. Once connected, the GUI will be able to start a job. This will be implemented in iteration 2.
     - In test_render(), 12 total tests are used, varying the settings, the video path, and the job (not yet connected). Invalid settings are tested, even though these will be filtered out by the tests for set_settings(). Invalid video paths are tested for in test_model.py, so they are not included in test_render(). 
     - In practice the GUI will not have to render any invalid values, as the GUI only allows the user to change their settings and path to valid ones.
 

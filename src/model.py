@@ -1,5 +1,6 @@
 from controller import Worker
 import os
+import torch
 import sys
 import cv2
 from PIL import Image
@@ -171,3 +172,29 @@ class Job:
 
     def kill(self):
         del self
+
+
+class Seer():
+    def __init__(self):
+        self.encoder, self.decoder = self.prepare_model()
+
+        # Device configuration. Uses the GPU if one is available.
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        pass
+
+    def prepare_model(self):
+        # This is a utility to load and otherwise prepare the pytorch model.
+        # It is only used in initialization of the Seer class.
+        return None, None
+
+    def tell_us_oh_wise_one(self, pilImage):
+        # This is the method which produces a caption given an image (PIL Image)
+        # The argument type is str and the return type is str.
+        img = self.prepare_data(pilImage)
+        caption = ""
+        return caption
+
+    def prepare_data(self, pilImage):
+        # This is a private utility for the tell_us_oh_wise_one method.
+        # This loads and preproceses the image, normalizing, resizing etc.
+        return pilImage

@@ -4,10 +4,12 @@ from PIL import Image, ImageChops
 import os
 import sys
 import pytest
+import torch
 import pytest_check as check
 sys.path.append('src')
 from view import *  # nopep8
 from model import *  # nopep8
+from seer_model import *
 
 example_parameters1 = {
     'settings': {
@@ -281,3 +283,53 @@ def test_get_frames_poll_8():
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
         check.equal(frames[i][1],i*poll)
+
+# The following are tests for Seer.
+# There are a total of 4 methods in the Seer class, however two are entirley
+# internal and are incorporated into the initialization and the captioning
+# function, both of which are tested below.
+#
+# The initialization merely loads up the proper models (sourced from an
+# open source repository, so equivalent to an API) and so the only check
+# required is to ensure that the relevant attributes were initialized, and
+# that they are of the correct API type.
+#
+# As for the captioning method (tell_us_oh_wise_one,) multiple image types
+# and invalid inputs are tested, as is usual for a unit test.
+def test_seer_init(): 
+    delphi = Seer()
+    check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
+    check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
+
+def test_seer_tell_us_oh_wise_one_non_image():
+    delphi = Seer()
+    notanimg = 5
+    with pytest.raises(Exception):
+        caption = delphi.tell_us_oh_wise_one(notanimg)
+
+def test_seer_tell_us_oh_wise_one_nonetype():
+    delphi = Seer()
+    nonetype = None
+    with pytest.raises(Exception):
+        caption = delphi.tell_us_oh_wise_one(nonetype)
+
+def test_seer_tell_us_oh_wise_one_jpg():
+    delphi = Seer()
+    img = Image.open("test/sampleImage/golden_retriever.jpg")
+    caption = delphi.tell_us_oh_wise_one(img)
+    true_caption = "a dog is sitting on a couch with a frisbee"
+    check.is_true(caption == true_caption)
+
+def test_seer_tell_us_oh_wise_one_png():
+    delphi = Seer()
+    img = Image.open("test/sampleImage/blindside.png")
+    caption = delphi.tell_us_oh_wise_one(img)
+    true_caption = "a living room with a couch and a television"
+    check.is_true(caption == true_caption)
+
+def test_seer_tell_us_oh_wise_one_black_and_white():
+    delphi = Seer()
+    img = Image.open("test/sampleImage/bandw.jpg")
+    caption = delphi.tell_us_oh_wise_one(img)
+    true_caption = "a black and white photo of a train station"
+    check.is_true(caption == true_caption)
