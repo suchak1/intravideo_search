@@ -79,7 +79,7 @@ def test_get_related_words():
     check.is_in('waterfall', w.get_related_words("fountain"))
     check.is_in('dog', w.get_related_words("golden retriever"))
     check.is_in('carp', w.get_related_words("goldfish"))
-    check.is_in('cpach', w.get_related_words("passenger car"))
+    check.is_in('coach', w.get_related_words("passenger car"))
     check.is_in('soda', w.get_related_words("pop bottle"))
     check.is_in('beach', w.get_related_words("seashore"))
     check.is_in('spaceship', w.get_related_words("space shuttle"))
