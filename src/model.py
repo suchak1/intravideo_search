@@ -11,6 +11,16 @@ class Job:
 
     def __init__(self, settings):
         if not isinstance(settings, type(None)):
+            '''
+            if 'youtube.com' in settings['video']: # if given YouTube URL
+                yt_vid_path = self.get_from_yt(settings['video'])
+                if not yt_vid_path: # if empty string
+                    self.video_path = settings['video']
+                else: # if YouTube video successfully downloaded
+                    self.video_path = yt_vid_path
+            else: # if given string was not a YouTube URL
+                self.video_path = settings['video']
+            '''
             self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
@@ -171,6 +181,12 @@ class Job:
 
     def kill(self):
         del self
+
+
+    def get_from_yt(self, urlString):
+        # input: string YouTube video URL
+        # output: path to mp4 file for settings
+        return 'todo'
 
 
 class Seer():
