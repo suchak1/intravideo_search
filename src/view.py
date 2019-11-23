@@ -221,6 +221,7 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
+            start_button.config(state="disabled")
             bl, msg = self.run_job()
 
             if bl is False:
@@ -228,11 +229,15 @@ class GUI:
 
             else:
                 msg2 = "Job cancelled"
-                cancel_button = Button(win_content,text="Cancel", command=lambda:[self.job.kill,display_errors("Cancelled", msg2)])
+                func = lambda:[self.job.kill, cancel_button.config(state="disabled"),display_errors("Cancelled", msg2)]
+                cancel_button = Button(win_content,text="Cancel", command=func)
                 cancel_button.grid(column=2,row=93) #kill this button once pressed?
+                start_button.config(state="normal")
 
                 try:
                     self.job.do_the_job() #We need to parallelize with the progress bar
+                    display_errors("Success", "Processed Successfully")
+                    cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
 
