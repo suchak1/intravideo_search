@@ -353,6 +353,8 @@ def get_vid_duration(path):
     duration = int(frame_count/fps)
     return duration
 
+@pytest.mark.skipif(os.environ.get('CI') == 'true',
+                    reason="Travis' IP is prob on a blocklist.")
 def test_get_from_yt():
     parameters = {
     'settings': {
