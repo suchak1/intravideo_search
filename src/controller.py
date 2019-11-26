@@ -44,7 +44,10 @@ class Worker:
         if not word:
             return {}
 
-        num = 10
+        # arbitrary number of related words to fetch
+        # the higher the number, the more tolerant the classification results
+        num = 20
+        
         words = word.split('_')
         extra = words + [' '.join(words)] if len(words) > 1 else words
         query = '+'.join(words)

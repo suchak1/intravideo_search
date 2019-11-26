@@ -76,7 +76,7 @@ def test_get_related_words():
     check.is_in('nba', w.get_related_words("basketball"))
     check.is_in('box', w.get_related_words("carton"))
     check.is_in('zucchini', w.get_related_words("cucumber"))
-    check.is_in('waterfall', w.get_related_words("fountain"))
+    check.is_in('spring', w.get_related_words("fountain"))
     check.is_in('dog', w.get_related_words("golden retriever"))
     check.is_in('carp', w.get_related_words("goldfish"))
     check.is_in('coach', w.get_related_words("passenger car"))
