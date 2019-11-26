@@ -199,12 +199,6 @@ class GUI:
             result = [x.strip() for x in my_string.split(',')]
             self.settings['search'] = result
 
-        #button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
-        #button2.grid(sticky=W, column=3, row=7)
-
-        #button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
-        #button3.grid(sticky=W, column=4, row=7)
-
         def display_settings(): #Or maybe display settings dynamically?
             temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
