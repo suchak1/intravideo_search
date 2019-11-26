@@ -69,7 +69,7 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        results = [(t, self.score(Worker().classify_img(f))) for (f, t) in frames]
         norm = 100
         results = [(val / norm, t) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[1]))
@@ -169,7 +169,7 @@ class Job:
                 endTime = (finalTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
-
+        #print('interpret_results')
         return adjustedEndpoints
 
 
@@ -182,7 +182,16 @@ class Job:
         #return map_results
         # multiprocessing is running into issues with shared resources
         v = self.video_path
-        return [Worker().make_clip(t, v) for t in timestamps]
+        #print(self.video_path)
+        #if(len(timestamps) == 0):
+        #    print('this is empty our api is bad')
+        #    print('I wasted a lot of time')
+
+        list_of_clips = []
+        for t in timestamps:
+            list_of_clips.append(Worker().make_clip(t,v))
+        #print('save_clips is called')
+        return list_of_clips
 
 
     def kill(self):

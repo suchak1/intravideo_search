@@ -11,13 +11,15 @@ class Worker:
     "Controller - data requests"
 
     def __init__(self):
-        return
+        #print('constructor')
+        pass
 
     def classify_img(self, img):
         # input: Image object to classify
         # output: classification results in dictionary
         # where key is object as a string
         # and value is confidence level scaled 0-100
+        #print('classify_img')
         if not isinstance(img, Image.Image):
             return None
 
@@ -40,7 +42,7 @@ class Worker:
         # Args: timestamp:((int)t0, (int)t1)
         #       path: (string)"path/to/input/video.mp4"
         #       outputPath: (string) "path/to/destination/video.mp4"
-
+        #print('make_clip')
         # Check for valid args
         if isinstance(timestamp, type(None)) or isinstance(path, type(None)) \
                                              or isinstance(timestamp[0], type(None)) \
@@ -75,6 +77,7 @@ class Worker:
 
         # Make that subclip.
         clip = VideoFileClip(path).subclip(timestamp[0], timestamp[1])
+        #print(clipPath)
         clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
 
         # Return the path to the newly minted clip.

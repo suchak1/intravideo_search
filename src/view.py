@@ -1,6 +1,7 @@
 from model import Job
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+from playsound import playsound
 import os
 # -*- coding: utf-8 -*-
 
@@ -121,6 +122,8 @@ class GUI:
         win_header.pack()
         win_content = Frame(win)
         win_content.pack()
+
+        #playsound('utils/TTFATF.mp3')
 
         lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
@@ -261,6 +264,11 @@ class GUI:
 
         start_button = Button(win_content,text="Start", command=run_the_job)
         start_button.grid(column=1, row = 93)
+
+        ## Stuff to do: create a list of subclips, create a Seer Class
+        def give_captions():
+
+            return True
 
         win.mainloop()
         return 0
