@@ -30,6 +30,12 @@ class Worker:
         results = {prediction : probabilities[idx] for idx, prediction in enumerate(predictions)}
         return results
 
+    def get_related_words(self, word):
+        # input: string / term
+        # output: dictionary of related words
+        # to be used in classify_img to help classify objs
+        return
+
     def make_clip(self, timestamp, path, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
         #       path: (string)"path/to/input/video.mp4"

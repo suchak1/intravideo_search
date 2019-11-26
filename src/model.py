@@ -2,8 +2,14 @@ from controller import Worker
 import os
 import torch
 import sys
+sys.path.append('utils')
 import cv2
+import pickle
 from PIL import Image
+import my_pytube
+from torchvision import transforms
+from seer_model import EncoderCNN, DecoderRNN
+
 #from multiprocessing import Pool
 
 class Job:
@@ -12,7 +18,16 @@ class Job:
 
     def __init__(self, settings):
         if not isinstance(settings, type(None)):
-            self.video_path = settings['video']
+            if 'youtube.com' in settings['video']: # if given YouTube URL
+                yt_vid_path = self.get_from_yt(settings['video'])
+                if not yt_vid_path: # if empty string
+                    self.video_path = settings['video']
+                else: # if YouTube video successfully downloaded
+                    self.video_path = yt_vid_path
+            else: # if given string was not a YouTube URL
+                self.video_path = settings['video']
+
+            #self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:
@@ -174,27 +189,113 @@ class Job:
         del self
 
 
+    def get_from_yt(self, url):
+        # input YouTube video URL
+        # output string of path to downloaded video
+        folder_path = './test'
+        vid_path = ''
+        try:
+            yt = my_pytube.YouTube(url)
+            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+            vid_path = vid.download(output_path=folder_path)
+        except Exception as e:
+            for i in range(3):
+                try:
+                    yt = my_pytube.YouTube(url)
+                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                    vid_path = vid.download(output_path=folder_path)
+                except:
+                    continue
+            if vid_path=='':
+                raise ValueError("Your video could not be downloaded: %s" % e)
+        return vid_path
+
 class Seer():
     def __init__(self):
+        # Device Config. Use GPU if available.
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        # Default Paths
+        self.vocab_path = 'torchdata/vocab.pkl'
+        self.encoder_path = 'torchdata/encoder-5-3000.pkl'
+        self.decoder_path = 'torchdata/decoder-5-3000.pkl'
+
+        # Default Model Parameters
+        self.embed_size = 256
+        self.hidden_size = 512
+        self.num_layers = 1
+        with open(self.vocab_path, 'rb') as f:
+            self.vocab = CustomUnpickler(open(self.vocab_path, 'rb')).load()
+
+        # The Model
         self.encoder, self.decoder = self.prepare_model()
 
-        # Device configuration. Uses the GPU if one is available.
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        pass
 
     def prepare_model(self):
         # This is a utility to load and otherwise prepare the pytorch model.
         # It is only used in initialization of the Seer class.
-        return None, None
+        # Create a new destination file
+        if not os.path.isfile(self.encoder_path):
+            whole_encoder = open(self.encoder_path, 'wb')
+            parts = [os.path.join('torchdata',file) for file in os.listdir('torchdata/') if 'part' in file]
+            parts.sort()
+            for file in parts:
+                input_file = open(file, 'rb')
+                while True:
+                    bytes = input_file.read()
+                    if not bytes:
+                        break
+                    whole_encoder.write(bytes)
+                input_file.close()
+            whole_encoder.close()
+
+
+        encoder = EncoderCNN(self.embed_size).eval()  # eval mode (batchnorm uses moving mean/variance)
+        decoder = DecoderRNN(self.embed_size, self.hidden_size, len(self.vocab), self.num_layers)
+        encoder = encoder.to(self.device)
+        decoder = decoder.to(self.device)
+        # Load the trained model parameters
+        encoder.load_state_dict(torch.load(self.encoder_path))
+        decoder.load_state_dict(torch.load(self.decoder_path))
+
+        return encoder, decoder
 
     def tell_us_oh_wise_one(self, pilImage):
         # This is the method which produces a caption given an image (PIL Image)
         # The argument type is str and the return type is str.
         img = self.prepare_data(pilImage)
-        caption = ""
+        features = self.encoder(img)
+        sampled_ids = self.decoder.sample(features)
+        sampled_ids = sampled_ids[0].cpu().numpy()
+
+        # Convert word_ids to words
+        sampled_caption = []
+        for word_id in sampled_ids:
+            word = self.vocab.idx2word[word_id]
+            if word == '<end>':
+                break
+            sampled_caption.append(word)
+        if sampled_caption[-1] == ".":
+            sampled_caption = sampled_caption[:-1]
+        caption = ' '.join(sampled_caption[1:])
         return caption
 
     def prepare_data(self, pilImage):
         # This is a private utility for the tell_us_oh_wise_one method.
         # This loads and preproceses the image, normalizing, resizing etc.
-        return pilImage
+        # Image preprocessing
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize((0.485, 0.456, 0.406),
+                                                             (0.229, 0.224, 0.225))])
+        image = pilImage.resize([224, 224], Image.LANCZOS)
+        image = transform(image).unsqueeze(0)
+        image_tensor = image.to(self.device)
+
+        return image_tensor
+
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if name == 'Vocabulary':
+            from build_vocab import Vocabulary
+            return Vocabulary
+        return super().find_class(module, name)
