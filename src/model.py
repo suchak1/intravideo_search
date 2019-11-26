@@ -190,15 +190,36 @@ class Job:
 
 class Seer():
     def __init__(self):
+        # Device Config. Use GPU if available.
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        # Default Paths
+        self.vocab_path = 'data/vocab.pkl'
+        self.encoder_path = 'models/encoder-5-3000.pkl'
+        self.decoder_path = 'models/decoder-5-3000.pkl'
+
+        # Default Model Parameters
+        self.embed_size = 256
+        self.hidden_size = 512
+        self.num_layers = 1
+        with open(args.vocab_path, 'rb') as f:
+            self.vocab = pickle.load(f)
+
+        # The Model
         self.encoder, self.decoder = self.prepare_model()
 
-        # Device configuration. Uses the GPU if one is available.
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        pass
 
     def prepare_model(self):
         # This is a utility to load and otherwise prepare the pytorch model.
         # It is only used in initialization of the Seer class.
+        encoder = EncoderCNN(self.embed_size).eval()  # eval mode (batchnorm uses moving mean/variance)
+        decoder = DecoderRNN(self.embed_size, self.hidden_size, len(self.vocab), self.num_layers)
+        encoder = encoder.to(device)
+        decoder = decoder.to(device)
+        # Load the trained model parameters
+        encoder.load_state_dict(torch.load(self.encoder_path))
+        decoder.load_state_dict(torch.load(self.decoder_path))
+
         return None, None
 
     def tell_us_oh_wise_one(self, pilImage):
@@ -211,4 +232,21 @@ class Seer():
     def prepare_data(self, pilImage):
         # This is a private utility for the tell_us_oh_wise_one method.
         # This loads and preproceses the image, normalizing, resizing etc.
-        return pilImage
+        # Image preprocessing
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize((0.485, 0.456, 0.406),
+                                                             (0.229, 0.224, 0.225))])
+        image = image.resize([224, 224], Image.LANCZOS)
+        image = transform(image).unsqueeze(0)
+        image_tensor = image.to(self.device)
+
+        return image_tensor
+
+
+
+
+
+
+
+
+        
