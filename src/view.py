@@ -125,81 +125,122 @@ class GUI:
         lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
 
-        lbl2 = Label(win_content, text="Upload a video file.", justify=LEFT)
+        lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
         lbl2.grid(sticky = W, column=0,row=1)
 
         def open_file():
             filename = askopenfilename()
             self.video_path = str(filename)
+            temp_lbl3.configure(text="Video path: " + str(filename))
 
         button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
         button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
 
+        lbl0 = Label(win_content, text="or enter a YouTube link:", justify=LEFT)
+        lbl0.grid(sticky = W, column=0,row=2)
+
+        entry0 = Entry(win_content, width=30)
+        entry0.grid(sticky=W, column=1, row=2, pady=10)
+
+        def add_youtube_link():
+            self.video_path = entry0.get()
+            entry0.delete(first=0, last=100)
+
+        def del_youtube_link():
+            entry0.delete(first=0, last=100)
+
+        button0 = Button(win_content, text="Add", anchor='w', command=add_youtube_link)
+        button0.grid(sticky=W, column=3, row=2)
+
+        button00 = Button(win_content, text="Clear", anchor='w', command=del_youtube_link)
+        button00.grid(sticky=W, column=4, row=2)
+
         def change_confidence(val):
             self.settings['conf'] = float(val)/100
+            settings_display_update()
 
         def change_polling(val):
             self.settings['poll'] = int(val)
+            settings_display_update()
 
         def change_anti(val):
             self.settings['anti'] = int(val)
+            settings_display_update()
 
         lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
-        lbl3.grid(sticky = E, column=0, row=2, padx=10)
+        lbl3.grid(sticky = E, column=0, row=3, padx=10)
 
         slider1 = Scale(win_content, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
         slider1.set(self.settings['conf']*100)
-        slider1.grid(sticky = W, column=1, row=2)
+        slider1.grid(sticky = W, column=1, row=3)
 
         lbl4 = Label(win_content, text="Polling Rate:", justify=LEFT)
-        lbl4.grid(sticky = E, column=0, row=3, padx=10)
+        lbl4.grid(sticky = E, column=0, row=4, padx=10)
 
         slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
         slider2.set(self.settings['poll'])
-        slider2.grid(sticky = W, column=1, row=3)
+        slider2.grid(sticky = W, column=1, row=4)
 
         lbl5 = Label(win_content, text="Anti:", justify=LEFT)
-        lbl5.grid(sticky = E, column=0, row=4, padx=10)
+        lbl5.grid(sticky = E, column=0, row=5, padx=10)
 
         slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
         slider3.set(self.settings['anti'])
-        slider3.grid(sticky = W, column=1, row=4)
+        slider3.grid(sticky = W, column=1, row=5)
 
 
         lbl6 = Label(win_content, text="Search Terms:", justify=LEFT)
-        lbl6.grid(sticky=E, column=0, row=6, padx=10)
+        lbl6.grid(sticky=E, column=0, row=7, padx=10)
 
         entry1 = Entry(win_content, width=30)
-        entry1.grid(sticky=W, column=1, row=6, pady=10)
+        entry1.grid(sticky=W, column=1, row=7, pady=10)
+
+        def update_search_display():
+            temp_lbl2.configure(text="Search: " + search_display_terms())
+
+        def search_display_terms():
+            str1 = ''
+            for ele in self.settings['search']:
+                if ele and not ele.isspace():
+                    str1 += ele
+                    str1 += ', '
+            return str1
+
+        def settings_display_update():
+            temp_lbl1.configure(text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+
+        temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+        temp_lbl1.grid(sticky=W, column=0, row=95)
+        temp_lbl1.grid_remove()
+
+        str1 = search_display_terms()
+        temp_lbl2 = Label(win_content, text="Search: " + str1)
+        temp_lbl2.grid(sticky=W, column=0, row=96)
+        temp_lbl2.grid_remove()
+
+        temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
+        temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
+        temp_lbl3.grid_remove()
 
         def entry1_delete():
             entry1.delete(first=0, last=100)
 
-        def add_search_term():
-            self.settings['search'].append(entry1.get())
+        def get_search_term():
+            my_string = entry1.get()
+            result = [x.strip() for x in my_string.split(',')]
+            self.settings['search'] = result
 
-        button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
-        button2.grid(sticky=W, column=3, row=6)
+        def hide_settings():
+            temp_lbl1.grid_remove()
+            temp_lbl2.grid_remove()
+            temp_lbl3.grid_remove()
+            display_settings_button.configure(text="Display Settings", command=display_settings)
 
-        button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
-        button3.grid(sticky=W, column=4, row=6)
-
-        def display_settings(): #Or maybe display settings dynamically?
-            temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-            temp_lbl1.grid(sticky=W, column=0, row=95)
-            temp_lbl2 = Label(win_content, text="Search: ")
-            temp_lbl2.grid(sticky=W, column=0, row=96)
-
-            str1 = ''
-            for ele in self.settings['search']:
-                str1 += ', '
-                str1 += ele
-
-            temp_lbl4 = Label(win_content, text=str1)
-            temp_lbl4.grid(sticky=W, column=1, row=96)
-            temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
-            temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
-
+        def display_settings():
+            display_settings_button.configure(text="Hide Settings", command=hide_settings)
+            temp_lbl1.grid()
+            temp_lbl2.grid()
+            temp_lbl3.grid()
 
         display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
         display_settings_button.grid(column=0, row=99, pady=10)
@@ -221,11 +262,14 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
+            update_search_display()
+            get_search_term()
             start_button.config(state="disabled")
             bl, msg = self.run_job()
 
             if bl is False:
                 display_errors(str(bl), msg)
+                start_button.config(state="normal")
 
             else:
                 msg2 = "Job cancelled"
@@ -237,6 +281,7 @@ class GUI:
                 try:
                     self.job.do_the_job() #We need to parallelize with the progress bar
                     display_errors("Success", "Processed Successfully")
+                    ## add something about saving clips maybe
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
@@ -274,5 +319,3 @@ class GUI:
 
         self.job = Job(self.get_settings())
         return (True, "Success")
-
-
