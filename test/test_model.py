@@ -363,16 +363,17 @@ def test_get_from_yt():
     invalid_url2 = 'www.youtube.com'
     invalid_url3 = ''
     invalid_url4 = 'https://vimeo.com/66457941'
-    invalid_url5 = 'www.yutub.com/watch?v=dQw4w9WgXcQ'
+    invalid_url5 = 'www.yutub.com/watch?v=dQw4w9WgXQ'
     url1 = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
     url2 = 'www.youtube.com/watch?v=fJ9rUzIMcZQ'
     url3 = 'youtube.com/watch?v=VuNIsY6JdUw'
-    expected_path1 = 'test/YouTube_vids/Rick Astley - Never Gonna Give You Up (Video)'
-    expected_path2 = 'test/YouTube_vids/Queen – Bohemian Rhapsody (Official Video Remastered)'
-    expected_path3 = 'test/YouTube_vids/Taylor Swift - You Belong With Me'
+    expected_path1 = './test/Rick Astley - Never Gonna Give You Up (Video).mp4'
+    expected_path2 = './test/Queen – Bohemian Rhapsody (Official Video Remastered).mp4'
+    expected_path3 = './test/Taylor Swift - You Belong With Me.mp4'
     expected_duration1 = 212 # durations in seconds
     expected_duration2 = 359
-    expected_duration3 = 272
+    expected_duration3 = 228
+    job0 = Job(parameters)
 
     # test valid url1
     parameters['video'] = url1
@@ -398,8 +399,13 @@ def test_get_from_yt():
     check.equal(expected_duration3, get_vid_duration(url3_path))
 
     # test invalid inputs using arbitrary job to access get_from_yt() function
-    check.equal('', job3.get_from_yt(invalid_url1))
-    check.equal('', job3.get_from_yt(invalid_url2))
-    check.equal('', job3.get_from_yt(invalid_url3))
-    check.equal('', job3.get_from_yt(invalid_url4))
-    check.equal('', job3.get_from_yt(invalid_url5))
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url1)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url2)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url3)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url4)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url5)
