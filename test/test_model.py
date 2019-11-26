@@ -388,8 +388,13 @@ def test_get_from_yt():
     check.equal(expected_duration3, get_vid_duration(url3_path))
 
     # test invalid inputs using arbitrary job to access get_from_yt() function
-    check.equal('', job0.get_from_yt(invalid_url1))
-    check.equal('', job0.get_from_yt(invalid_url2))
-    check.equal('', job0.get_from_yt(invalid_url3))
-    check.equal('', job0.get_from_yt(invalid_url4))
-    check.equal('', job0.get_from_yt(invalid_url5))
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url1)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url2)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url3)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url4)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url5)

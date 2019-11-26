@@ -188,12 +188,21 @@ class Job:
         # input YouTube video URL
         # output string of path to downloaded video
         folder_path = './test'
+        vid_path = ''
         try:
             yt = my_pytube.YouTube(url)
             vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
             vid_path = vid.download(output_path=folder_path)
-        except:
-            vid_path = ''
+        except Exception as e:
+            for i in range(3):
+                try:
+                    yt = my_pytube.YouTube(url)
+                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                    vid_path = vid.download(output_path=folder_path)
+                except:
+                    continue
+            if vid_path=='':
+                raise ValueError("Your video could not be downloaded: %s" % e)
         return vid_path
 
 class Seer():
