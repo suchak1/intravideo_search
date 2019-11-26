@@ -31,13 +31,17 @@ class Worker:
         results = {prediction: probabilities[idx] for idx, prediction in enumerate(predictions)}
         return results
 
-    def get_related_words(self, word):
+    def get_related_words(word):
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
+        num = 10
         words = word.split('_')
+        extra = words + [' '.join(words)] if len(words) > 1 else words
         query = '+'.join(words)
-        related = requests.get('https://api.datamuse.com/words?ml=' + query)
+        response = requests.get('https://api.datamuse.com/words?ml=' + query).json()
+        related = set([word['word'] for word in response if 'tags' in word and 'n' in word['tags']][:num])
+        related.update(extra)
         return related
 
     def make_clip(self, timestamp, path, outputPath=None):
