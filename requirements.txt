@@ -14,5 +14,4 @@ nltk==3.4.5
 numpy==1.17.4
 pickle-mixin==1.0.2
 setuptools==42.0.1
-cython>=0.29.14
-pycocotools==2.0.0
+cython==0.29.14
