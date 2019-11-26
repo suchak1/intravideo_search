@@ -226,7 +226,20 @@ class Seer():
         # This is the method which produces a caption given an image (PIL Image)
         # The argument type is str and the return type is str.
         img = self.prepare_data(pilImage)
-        caption = ""
+        features = self.encoder(img)
+        sampled_ids = self.decoder.sample(features)
+        sampled_ids = sampled_ids[0].cpu().numpy()
+
+        # Convert word_ids to words
+        sampled_caption = []
+        for word_id in sampled_ids:
+            word = self.vocab.idx2word[word_id]
+            sampled_caption.append(word)
+            if word == '<end>':
+                break
+        caption = ' '.join(sampled_caption[1:-1])
+        if caption[-1] == ".":
+            caption = caption[:-1]
         return caption
 
     def prepare_data(self, pilImage):
@@ -241,12 +254,3 @@ class Seer():
         image_tensor = image.to(self.device)
 
         return image_tensor
-
-
-
-
-
-
-
-
-        
