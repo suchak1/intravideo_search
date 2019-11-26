@@ -7,6 +7,8 @@ import pytest
 import torch
 import pytest_check as check
 sys.path.append('src')
+sys.path.append('utils')
+from build_vocab import Vocabulary
 from view import *  # nopep8
 from model import *  # nopep8
 from seer_model import *
@@ -296,10 +298,19 @@ def test_get_frames_poll_8():
 #
 # As for the captioning method (tell_us_oh_wise_one,) multiple image types
 # and invalid inputs are tested, as is usual for a unit test.
+
+# Device Config. Use GPU if available.
 def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
+    check.is_true(delphi.vocab_path == 'torchdata/vocab.pkl')
+    check.is_true(delphi.encoder_path == 'torchdata/encoder-5-3000.pkl')
+    check.is_true(delphi.decoder_path == 'torchdata/decoder-5-3000.pkl')
+    check.is_true(delphi.embed_size == 256)
+    check.is_true(delphi.hidden_size == 512)
+    check.is_true(delphi.num_layers == 1)
+    check.is_true(isinstance(delphi.vocab, type(Vocabulary())))
 
 def test_seer_tell_us_oh_wise_one_non_image():
     delphi = Seer()
