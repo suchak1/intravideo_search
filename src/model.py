@@ -69,7 +69,7 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        results = [(t, self.score(Worker().classify_img(f))) for (f, t) in frames]
         norm = 100
         results = [(val / norm, t) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[1]))
