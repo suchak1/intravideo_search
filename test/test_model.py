@@ -300,6 +300,10 @@ def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
+    if not isinstance(delphi.encoder, type(EncoderCNN(1))):
+        print("DelphiEnc: {}, Comparison: {}".format(type(delphi.encoder), type(EncoderCNN(1))))
+    if not isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))):
+        print("DelphiDe: {}, Comparison: {}".format(type(delphi.decoder), type(DecoderRNN(1,1,1,1,1))))
 
 def test_seer_tell_us_oh_wise_one_non_image():
     delphi = Seer()
@@ -319,6 +323,8 @@ def test_seer_tell_us_oh_wise_one_jpg():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a dog is sitting on a couch with a frisbee"
     check.is_true(caption == true_caption)
+    if not caption == true_caption:
+        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 def test_seer_tell_us_oh_wise_one_png():
     delphi = Seer()
@@ -326,6 +332,8 @@ def test_seer_tell_us_oh_wise_one_png():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a living room with a couch and a television"
     check.is_true(caption == true_caption)
+    if not caption == true_caption:
+        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 def test_seer_tell_us_oh_wise_one_black_and_white():
     delphi = Seer()
@@ -333,6 +341,8 @@ def test_seer_tell_us_oh_wise_one_black_and_white():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a black and white photo of a train station"
     check.is_true(caption == true_caption)
+    if not caption == true_caption:
+        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 # helper function to test get_from_yt()
 def get_vid_duration(path):
