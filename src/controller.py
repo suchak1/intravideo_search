@@ -27,8 +27,13 @@ class Worker:
         prediction.setModelPath('src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5')
         prediction.loadModel()
 
-        predictions, probabilities = prediction.predictImage(img, input_type = 'array')
-        results = {prediction: probabilities[idx] for idx, prediction in enumerate(predictions)}
+        predictions, probabilities = [elem[::-1] for elem in prediction.predictImage(img, input_type = 'array')]
+        results = {}
+
+        for idx, prediction in predictions:
+            related_words = self.get_related_words(prediction)
+            results.update({word: probabilities[idx] for word in related_words})
+
         return results
 
     def get_related_words(word):
