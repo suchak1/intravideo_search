@@ -4,6 +4,7 @@ import os
 from moviepy.editor import VideoFileClip
 from PIL import Image
 from imageai.Prediction import ImagePrediction
+import requests
 
 
 class Worker:
@@ -27,14 +28,17 @@ class Worker:
         prediction.loadModel()
 
         predictions, probabilities = prediction.predictImage(img, input_type = 'array')
-        results = {prediction : probabilities[idx] for idx, prediction in enumerate(predictions)}
+        results = {prediction: probabilities[idx] for idx, prediction in enumerate(predictions)}
         return results
 
     def get_related_words(self, word):
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
-        return
+        words = word.split('_')
+        query = '+'.join(words)
+        related = requests.get('https://api.datamuse.com/words?ml=' + query)
+        return related
 
     def make_clip(self, timestamp, path, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
