@@ -47,24 +47,21 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+
         vidPath = self.video_path
         poll = self.settings['poll']
         count = 0
         frms = []
         video = cv2.VideoCapture(vidPath)
         success = True
+
         while success:
-            timestamp = (count*poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
+            timestamp = (count * poll)
+            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
             success,frame = video.read()
             if success:
-                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
-                try:
-                    f = Image.open('frame%d.jpg' % count) # make frame Image
-                    os.remove('frame%d.jpg' % count) # delete frame.jpg
-                    frms.append((f,timestamp))
-                except:
-                    raise NameError('getFrameError')
+                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                frms.append((img, timestamp))
             count += 1
         return frms
 
