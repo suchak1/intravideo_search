@@ -247,6 +247,7 @@ class GUI:
 
             if bl is False:
                 display_errors(str(bl), msg)
+                start_button.config(state="normal")
 
             else:
                 msg2 = "Job cancelled"
