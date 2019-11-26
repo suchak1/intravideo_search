@@ -194,21 +194,14 @@ class GUI:
         def entry1_delete():
             entry1.delete(first=0, last=100)
 
-        def add_search_term():
-            self.settings['search'].append(entry1.get())
-            entry1.delete(first=0, last=100)
-
-        button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
-        button2.grid(sticky=W, column=3, row=7)
-
-        button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
-        button3.grid(sticky=W, column=4, row=7)
+        def get_search_term():
+            my_string = entry1.get()
+            result = [x.strip() for x in my_string.split(',')]
+            self.settings['search'] = result
 
         def display_settings(): #Or maybe display settings dynamically?
             temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
-            temp_lbl2 = Label(win_content, text="Search: ")
-            temp_lbl2.grid(sticky=W, column=0, row=96)
 
             str1 = ''
             for ele in self.settings['search']:
@@ -216,8 +209,8 @@ class GUI:
                     str1 += ele
                     str1 += ', '
 
-            temp_lbl4 = Label(win_content, text=str1)
-            temp_lbl4.grid(sticky=W, column=1, row=96)
+            temp_lbl2 = Label(win_content, text="Search: " + str1)
+            temp_lbl2.grid(sticky=W, column=0, row=96)
             temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
             temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
 
@@ -242,6 +235,7 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
+            get_search_term()
             start_button.config(state="disabled")
             bl, msg = self.run_job()
 
@@ -259,6 +253,7 @@ class GUI:
                 try:
                     self.job.do_the_job() #We need to parallelize with the progress bar
                     display_errors("Success", "Processed Successfully")
+                    ## add something about saving clips maybe
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
