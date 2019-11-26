@@ -133,7 +133,7 @@ class GUI:
             self.video_path = str(filename)
 
         button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
-        button1.grid(column=1, row=1)
+        button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
 
         lbl0 = Label(win_content, text="or enter a YouTube link:", justify=LEFT)
         lbl0.grid(sticky = W, column=0,row=2)
@@ -204,7 +204,7 @@ class GUI:
         button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
         button3.grid(sticky=W, column=4, row=7)
 
-        def display_settings():
+        def display_settings(): #Or maybe display settings dynamically?
             temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
             temp_lbl2 = Label(win_content, text="Search: ")
@@ -228,6 +228,44 @@ class GUI:
         kill_button = Button(win_content,text="Kill this window", command= win.destroy)
         kill_button.grid(column=0, row=100)
 
+        def display_errors(title, message):
+            w = Tk()
+            w.title(title)
+            w.geometry("800x170")
+            content = Frame(w)
+            content.pack()
+
+            lbl = Label(content, text=message, font=("Times New Roman", 14), justify=LEFT)
+            lbl.grid(column = 0, row = 0, columnspan=5)
+
+            kill_button = Button(content,text="Ok", command= w.destroy)
+            kill_button.grid(column=2, row=2)
+
+        def run_the_job():
+            start_button.config(state="disabled")
+            bl, msg = self.run_job()
+
+            if bl is False:
+                display_errors(str(bl), msg)
+
+            else:
+                msg2 = "Job cancelled"
+                func = lambda:[self.job.kill, cancel_button.config(state="disabled"),display_errors("Cancelled", msg2)]
+                cancel_button = Button(win_content,text="Cancel", command=func)
+                cancel_button.grid(column=2,row=93) #kill this button once pressed?
+                start_button.config(state="normal")
+
+                try:
+                    self.job.do_the_job() #We need to parallelize with the progress bar
+                    display_errors("Success", "Processed Successfully")
+                    cancel_button.config(state="disabled")
+                except e: #capture any errors that may occur
+                    display_errors("Error", e)
+
+
+        start_button = Button(win_content,text="Start", command=run_the_job)
+        start_button.grid(column=1, row = 93)
+
         win.mainloop()
         return 0
 
@@ -241,4 +279,19 @@ class GUI:
         settings = self.settings
         path = self.video_path
 
+        msg = ""
+
+        condition1 = self.set_settings(settings, path)
+        if condition1 is False:
+            msg += "One or more of your settings parameters are invalid. Please double check your settings and try again\n"
+            #maybe which settings are off?
+
+        condition2 = os.path.isfile(path)
+        if condition2 is False and not  "youtube.com" in path:
+            msg += "You entered an invalid file path. Please double check your input video and try again\n"
+
+        if not condition1 or not condition2:
+            return(False, msg)
+
+        self.job = Job(self.get_settings())
         return (True, "Success")
