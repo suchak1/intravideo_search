@@ -236,7 +236,7 @@ class GUI:
             temp_lbl3.grid_remove()
             display_settings_button.configure(text="Display Settings", command=display_settings)
 
-        def display_settings(): #Or maybe display settings dynamically?
+        def display_settings():
             display_settings_button.configure(text="Hide Settings", command=hide_settings)
             temp_lbl1.grid()
             temp_lbl2.grid()
