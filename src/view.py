@@ -191,6 +191,23 @@ class GUI:
         entry1 = Entry(win_content, width=30)
         entry1.grid(sticky=W, column=1, row=7, pady=10)
 
+        # stuff below here
+        temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+        temp_lbl1.grid(sticky=W, column=0, row=95)
+        temp_lbl1.grid_remove()
+
+        # placeholder
+        str1 = ''
+        temp_lbl2 = Label(win_content, text="Search: " + str1)
+        temp_lbl2.grid(sticky=W, column=0, row=96)
+        temp_lbl2.grid_remove()
+
+        temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
+        temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
+        temp_lbl3.grid_remove()
+
+        # stuff above here
+
         def entry1_delete():
             entry1.delete(first=0, last=100)
 
@@ -199,20 +216,23 @@ class GUI:
             result = [x.strip() for x in my_string.split(',')]
             self.settings['search'] = result
 
-        def display_settings(): #Or maybe display settings dynamically?
-            temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-            temp_lbl1.grid(sticky=W, column=0, row=95)
+        def hide_settings():
+            temp_lbl1.grid_remove()
+            temp_lbl2.grid_remove()
+            temp_lbl3.grid_remove()
+            display_settings_button.configure(text="Display Settings", command=display_settings)
 
+        def display_settings(): #Or maybe display settings dynamically?
+            display_settings_button.configure(text="Hide Settings", command=hide_settings)
+            temp_lbl1.grid()
+            temp_lbl2.grid()
+            temp_lbl3.grid()
             str1 = ''
             for ele in self.settings['search']:
                 if ele and not ele.isspace():
                     str1 += ele
                     str1 += ', '
 
-            temp_lbl2 = Label(win_content, text="Search: " + str1)
-            temp_lbl2.grid(sticky=W, column=0, row=96)
-            temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
-            temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
 
 
         display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
