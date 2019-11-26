@@ -194,15 +194,16 @@ class GUI:
         def entry1_delete():
             entry1.delete(first=0, last=100)
 
-        def add_search_term():
-            self.settings['search'].append(entry1.get())
-            entry1.delete(first=0, last=100)
+        def get_search_term():
+            my_string = entry1.get()
+            result = [x.strip() for x in my_string.split(',')]
+            self.settings['search'] = result
 
-        button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
-        button2.grid(sticky=W, column=3, row=7)
+        #button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
+        #button2.grid(sticky=W, column=3, row=7)
 
-        button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
-        button3.grid(sticky=W, column=4, row=7)
+        #button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
+        #button3.grid(sticky=W, column=4, row=7)
 
         def display_settings(): #Or maybe display settings dynamically?
             temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
@@ -240,6 +241,7 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
+            get_search_term()
             start_button.config(state="disabled")
             bl, msg = self.run_job()
 
