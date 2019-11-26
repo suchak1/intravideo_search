@@ -131,6 +131,7 @@ class GUI:
         def open_file():
             filename = askopenfilename()
             self.video_path = str(filename)
+            temp_lbl3.configure(text="Video path: " + str(filename))
 
         button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
         button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
@@ -156,12 +157,15 @@ class GUI:
 
         def change_confidence(val):
             self.settings['conf'] = float(val)/100
+            settings_display_update()
 
         def change_polling(val):
             self.settings['poll'] = int(val)
+            settings_display_update()
 
         def change_anti(val):
             self.settings['anti'] = int(val)
+            settings_display_update()
 
         lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
         lbl3.grid(sticky = E, column=0, row=3, padx=10)
@@ -191,13 +195,25 @@ class GUI:
         entry1 = Entry(win_content, width=30)
         entry1.grid(sticky=W, column=1, row=7, pady=10)
 
-        # stuff below here
+        def update_search_display():
+            temp_lbl2.configure(text="Search: " + search_display_terms())
+
+        def search_display_terms():
+            str1 = ''
+            for ele in self.settings['search']:
+                if ele and not ele.isspace():
+                    str1 += ele
+                    str1 += ', '
+            return str1
+
+        def settings_display_update():
+            temp_lbl1.configure(text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+
         temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
         temp_lbl1.grid(sticky=W, column=0, row=95)
         temp_lbl1.grid_remove()
 
-        # placeholder
-        str1 = ''
+        str1 = search_display_terms()
         temp_lbl2 = Label(win_content, text="Search: " + str1)
         temp_lbl2.grid(sticky=W, column=0, row=96)
         temp_lbl2.grid_remove()
@@ -205,8 +221,6 @@ class GUI:
         temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
         temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
         temp_lbl3.grid_remove()
-
-        # stuff above here
 
         def entry1_delete():
             entry1.delete(first=0, last=100)
@@ -227,13 +241,6 @@ class GUI:
             temp_lbl1.grid()
             temp_lbl2.grid()
             temp_lbl3.grid()
-            str1 = ''
-            for ele in self.settings['search']:
-                if ele and not ele.isspace():
-                    str1 += ele
-                    str1 += ', '
-
-
 
         display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
         display_settings_button.grid(column=0, row=99, pady=10)
@@ -255,6 +262,7 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
+            update_search_display()
             get_search_term()
             start_button.config(state="disabled")
             bl, msg = self.run_job()
