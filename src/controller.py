@@ -30,16 +30,20 @@ class Worker:
         predictions, probabilities = [elem[::-1] for elem in prediction.predictImage(img, input_type = 'array')]
         results = {}
 
-        for idx, prediction in predictions:
+        for idx, prediction in enumerate(predictions):
             related_words = self.get_related_words(prediction)
             results.update({word: probabilities[idx] for word in related_words})
 
         return results
 
-    def get_related_words(word):
+    def get_related_words(self, word):
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
+
+        if not word:
+            return {}
+
         num = 10
         words = word.split('_')
         extra = words + [' '.join(words)] if len(words) > 1 else words
