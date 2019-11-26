@@ -7,6 +7,8 @@ import pytest
 import torch
 import pytest_check as check
 sys.path.append('src')
+sys.path.append('utils')
+from build_vocab import Vocabulary
 from view import *  # nopep8
 from model import *  # nopep8
 from seer_model import *
@@ -296,14 +298,19 @@ def test_get_frames_poll_8():
 #
 # As for the captioning method (tell_us_oh_wise_one,) multiple image types
 # and invalid inputs are tested, as is usual for a unit test.
+
+# Device Config. Use GPU if available.
 def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
-    if not isinstance(delphi.encoder, type(EncoderCNN(1))):
-        print("DelphiEnc: {}, Comparison: {}".format(type(delphi.encoder), type(EncoderCNN(1))))
-    if not isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))):
-        print("DelphiDe: {}, Comparison: {}".format(type(delphi.decoder), type(DecoderRNN(1,1,1,1,1))))
+    check.is_true(delphi.vocab_path == 'torchdata/vocab.pkl')
+    check.is_true(delphi.encoder_path == 'torchdata/encoder-5-3000.pkl')
+    check.is_true(delphi.decoder_path == 'torchdata/decoder-5-3000.pkl')
+    check.is_true(delphi.embed_size == 256)
+    check.is_true(delphi.hidden_size == 512)
+    check.is_true(delphi.num_layers == 1)
+    check.is_true(isinstance(delphi.vocab, type(Vocabulary())))
 
 def test_seer_tell_us_oh_wise_one_non_image():
     delphi = Seer()
@@ -323,8 +330,6 @@ def test_seer_tell_us_oh_wise_one_jpg():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a dog is sitting on a couch with a frisbee"
     check.is_true(caption == true_caption)
-    if not caption == true_caption:
-        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 def test_seer_tell_us_oh_wise_one_png():
     delphi = Seer()
@@ -332,8 +337,6 @@ def test_seer_tell_us_oh_wise_one_png():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a living room with a couch and a television"
     check.is_true(caption == true_caption)
-    if not caption == true_caption:
-        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 def test_seer_tell_us_oh_wise_one_black_and_white():
     delphi = Seer()
@@ -341,8 +344,6 @@ def test_seer_tell_us_oh_wise_one_black_and_white():
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a black and white photo of a train station"
     check.is_true(caption == true_caption)
-    if not caption == true_caption:
-        print("Wanted: {}\nGot: {}".format(true_caption, caption))
 
 # helper function to test get_from_yt()
 def get_vid_duration(path):

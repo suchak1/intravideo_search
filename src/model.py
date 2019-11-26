@@ -217,18 +217,19 @@ class Seer():
         # This is a utility to load and otherwise prepare the pytorch model.
         # It is only used in initialization of the Seer class.
         # Create a new destination file
-        whole_encoder = open(self.encoder_path, 'wb')
-        parts = [os.path.join('torchdata',file) for file in os.listdir('torchdata/') if 'part' in file]
-        parts.sort()
-        for file in parts:
-            input_file = open(file, 'rb')
-            while True:
-                bytes = input_file.read()
-                if not bytes:
-                    break
-                whole_encoder.write(bytes)
-            input_file.close()
-        whole_encoder.close()
+        if not os.path.isfile(self.encoder_path):
+            whole_encoder = open(self.encoder_path, 'wb')
+            parts = [os.path.join('torchdata',file) for file in os.listdir('torchdata/') if 'part' in file]
+            parts.sort()
+            for file in parts:
+                input_file = open(file, 'rb')
+                while True:
+                    bytes = input_file.read()
+                    if not bytes:
+                        break
+                    whole_encoder.write(bytes)
+                input_file.close()
+            whole_encoder.close()
 
 
         encoder = EncoderCNN(self.embed_size).eval()  # eval mode (batchnorm uses moving mean/variance)
