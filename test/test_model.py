@@ -96,15 +96,15 @@ def test_save_clips():
 def test_classify_frames():
     frame_list1 = example_job2.classify_frames()
     frame_list = example_job1.classify_frames()
-    check.equal(frame_list1[0][0], 0)
-    check.less(frame_list1[0][1], 0.7)
-    check.not_equal(frame_list1[1][0], 5)
-    check.greater(frame_list1[1][1], 0.7)
+    check.equal(frame_list1[0][1], 0)
+    check.less(frame_list1[0][0], 0.7)
+    check.not_equal(frame_list1[1][1], 5)
+    check.greater(frame_list1[1][0], 0.7)
 
-    check.equal(frame_list[0][0], 0)
-    check.less(frame_list[0][1], 0.7)
-    check.not_equal(frame_list[1][0], 4)
-    check.greater(frame_list[1][1], 0.7)
+    check.equal(frame_list[0][1], 0)
+    check.less(frame_list[0][0], 0.7)
+    check.not_equal(frame_list[1][1], 4)
+    check.greater(frame_list[1][0], 0.7)
 
 def test_score():
     j = Job(example_parameters1)
@@ -211,7 +211,7 @@ def test_interpret_results_from_end():
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings["runtime"] =  40.0
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                                     [(25.0, 40.0)]))
+                                     [(25.0, 10000000000)]))
 
 
 def test_interpret_results_zero_cutoff():
@@ -219,7 +219,7 @@ def test_interpret_results_zero_cutoff():
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
     job.settings["runtime"] =  40.0
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
-                                     [(0.0, 40.0)]))
+                                     [(0.0, 10000000000)]))
 
 
 def test_interpret_results_cutoff_morethan_1():
