@@ -187,16 +187,14 @@ class GUI:
         def display_settings(): #Or maybe display settings dynamically?
             temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
             temp_lbl1.grid(sticky=W, column=0, row=95)
-            temp_lbl2 = Label(win_content, text="Search: ")
-            temp_lbl2.grid(sticky=W, column=0, row=96)
 
             str1 = ''
             for ele in self.settings['search']:
-                str1 += ', '
                 str1 += ele
+                str1 += ', '
 
-            temp_lbl4 = Label(win_content, text=str1)
-            temp_lbl4.grid(sticky=W, column=1, row=96)
+            temp_lbl2 = Label(win_content, text="Search: " + str1)
+            temp_lbl2.grid(sticky=W, column=0, row=96)
             temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
             temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
 
@@ -237,6 +235,7 @@ class GUI:
                 try:
                     self.job.do_the_job() #We need to parallelize with the progress bar
                     display_errors("Success", "Processed Successfully")
+                    ## add something about saving clips maybe
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
@@ -274,5 +273,3 @@ class GUI:
 
         self.job = Job(self.get_settings())
         return (True, "Success")
-
-
