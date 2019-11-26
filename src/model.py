@@ -6,8 +6,10 @@ sys.path.append('utils')
 import cv2
 import pickle
 from PIL import Image
+import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+
 #from multiprocessing import Pool
 
 class Job:
@@ -190,7 +192,23 @@ class Job:
     def get_from_yt(self, url):
         # input YouTube video URL
         # output string of path to downloaded video
-        return ['todo']
+        folder_path = './test'
+        vid_path = ''
+        try:
+            yt = my_pytube.YouTube(url)
+            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+            vid_path = vid.download(output_path=folder_path)
+        except Exception as e:
+            for i in range(3):
+                try:
+                    yt = my_pytube.YouTube(url)
+                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                    vid_path = vid.download(output_path=folder_path)
+                except:
+                    continue
+            if vid_path=='':
+                raise ValueError("Your video could not be downloaded: %s" % e)
+        return vid_path
 
 class Seer():
     def __init__(self):
