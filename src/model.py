@@ -7,8 +7,9 @@ import cv2
 import pickle
 from PIL import Image
 import my_pytube
-rom torchvision import transforms
+from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+
 #from multiprocessing import Pool
 
 class Job:
