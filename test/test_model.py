@@ -326,7 +326,7 @@ def test_seer_tell_us_oh_wise_one_nonetype():
 
 def test_seer_tell_us_oh_wise_one_jpg():
     delphi = Seer()
-    img = Image.open("test/sampleImage/golden_retriever.jpg")
+    img = Image.open("test/sampleImage/golden retriever.jpg")
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a dog is sitting on a couch with a frisbee"
     check.is_true(caption == true_caption)
@@ -353,6 +353,8 @@ def get_vid_duration(path):
     duration = int(frame_count/fps)
     return duration
 
+@pytest.mark.skipif(os.environ.get('CI') == 'true',
+                    reason="Travis' IP is prob on a blocklist.")
 def test_get_from_yt():
     parameters = {
     'settings': {
