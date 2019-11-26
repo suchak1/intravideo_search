@@ -2,7 +2,9 @@ import nltk
 import pickle
 import argparse
 from collections import Counter
-from pycocotools.coco import COCO
+import sys
+sys.path.append('utils/pycocotools')
+from coco import COCO
 
 
 class Vocabulary(object):
