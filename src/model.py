@@ -2,8 +2,12 @@ from controller import Worker
 import os
 import torch
 import sys
+sys.path.append('utils')
 import cv2
+import pickle
 from PIL import Image
+from torchvision import transforms
+from seer_model import EncoderCNN, DecoderRNN
 #from multiprocessing import Pool
 
 class Job:
@@ -194,16 +198,16 @@ class Seer():
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # Default Paths
-        self.vocab_path = 'data/vocab.pkl'
-        self.encoder_path = 'models/encoder-5-3000.pkl'
-        self.decoder_path = 'models/decoder-5-3000.pkl'
+        self.vocab_path = 'torchdata/vocab.pkl'
+        self.encoder_path = 'torchdata/encoder-5-3000.pkl'
+        self.decoder_path = 'torchdata/decoder-5-3000.pkl'
 
         # Default Model Parameters
         self.embed_size = 256
         self.hidden_size = 512
         self.num_layers = 1
-        with open(args.vocab_path, 'rb') as f:
-            self.vocab = pickle.load(f)
+        with open(self.vocab_path, 'rb') as f:
+            self.vocab = CustomUnpickler(open(self.vocab_path, 'rb')).load()
 
         # The Model
         self.encoder, self.decoder = self.prepare_model()
@@ -214,7 +218,7 @@ class Seer():
         # It is only used in initialization of the Seer class.
         # Create a new destination file
         whole_encoder = open(self.encoder_path, 'wb')
-        parts = [os.path.joint('torchdata',file) for filr in os.listdir('torchdata/') if 'part' in file]
+        parts = [os.path.join('torchdata',file) for file in os.listdir('torchdata/') if 'part' in file]
         parts.sort()
         for file in parts:
             input_file = open(file, 'rb')
@@ -229,13 +233,13 @@ class Seer():
 
         encoder = EncoderCNN(self.embed_size).eval()  # eval mode (batchnorm uses moving mean/variance)
         decoder = DecoderRNN(self.embed_size, self.hidden_size, len(self.vocab), self.num_layers)
-        encoder = encoder.to(device)
-        decoder = decoder.to(device)
+        encoder = encoder.to(self.device)
+        decoder = decoder.to(self.device)
         # Load the trained model parameters
         encoder.load_state_dict(torch.load(self.encoder_path))
         decoder.load_state_dict(torch.load(self.decoder_path))
 
-        return None, None
+        return encoder, decoder
 
     def tell_us_oh_wise_one(self, pilImage):
         # This is the method which produces a caption given an image (PIL Image)
@@ -249,12 +253,12 @@ class Seer():
         sampled_caption = []
         for word_id in sampled_ids:
             word = self.vocab.idx2word[word_id]
-            sampled_caption.append(word)
             if word == '<end>':
                 break
-        caption = ' '.join(sampled_caption[1:-1])
-        if caption[-1] == ".":
-            caption = caption[:-1]
+            sampled_caption.append(word)
+        if sampled_caption[-1] == ".":
+            sampled_caption = sampled_caption[:-1]
+        caption = ' '.join(sampled_caption[1:])
         return caption
 
     def prepare_data(self, pilImage):
@@ -264,8 +268,15 @@ class Seer():
         transform = transforms.Compose([transforms.ToTensor(),
                                         transforms.Normalize((0.485, 0.456, 0.406),
                                                              (0.229, 0.224, 0.225))])
-        image = image.resize([224, 224], Image.LANCZOS)
+        image = pilImage.resize([224, 224], Image.LANCZOS)
         image = transform(image).unsqueeze(0)
         image_tensor = image.to(self.device)
 
         return image_tensor
+
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if name == 'Vocabulary':
+            from build_vocab import Vocabulary
+            return Vocabulary
+        return super().find_class(module, name)
