@@ -54,32 +54,27 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+
         vidPath = self.video_path
         poll = self.settings['poll']
         count = 0
         frms = []
         video = cv2.VideoCapture(vidPath)
         success = True
+
         while success:
-            timestamp = (count*poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
-            success,frame = video.read()
+            timestamp = (count * poll)
+            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+            success, frame = video.read()
             if success:
-                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
-                try:
-                    f = Image.open('frame%d.jpg' % count) # make frame Image
-                    os.remove('frame%d.jpg' % count) # delete frame.jpg
-                    frms.append((f,timestamp))
-                except:
-                    raise NameError('getFrameError')
+                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                frms.append((img, timestamp))
             count += 1
         return frms
 
     def classify_frames(self):
         frames = self.get_frames()
         results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        #print(self.tmpCollector)
-        #exit(0)
         norm = 100
         results = [(t, val / norm) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[0]))
@@ -123,11 +118,6 @@ class Job:
         # where APIScore_t is the score given by classify_frames()
         # to each frame_t fed through the API, normalized to be between [0,1].
         # Also assuming "runtime" is included in settings.
-
-        #print("\n\n\n")
-        #print(results)
-        #print(cutoff)
-        #print("\n\n\n")
 
         # Checking that the arguments are valid.
         self.has_valid_args_interpret_results(results, cutoff)
