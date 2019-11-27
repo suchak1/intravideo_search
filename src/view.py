@@ -56,57 +56,98 @@ class GUI:
         #print(path)
         #print(type(path))
 
-
+        valid = True
+        error_list = list([])
 
         #all possible errors
-        error_missing_keys = "ERROR: MISSING KEYS"
-        error_extra_keys = "ERROR: EXTRA KEYS"
-        error_type_error = "ERROR: TYPE ERROR"
-        error_conf_out_of_range = "ERROR: CONF OUT OF RANGE"
-        error_poll_less_than_0 = "ERROR: POLL LESS THAN 0"
-        error_anti_less_than_0 = "ERROR: ANTI LESS THAN 0"
-        error_runtime_less_than_0 = "ERROR: RUNTIME LESS THAN 0"
+        error_missing_keys = "ERROR: _ MISSING KEYS"
+        error_extra_keys = "ERROR: _ EXTRA KEYS"
+        error_no_conf = "ERROR: NO CONF"
+        error_no_poll = "ERROR: NO POLL"
+        error_no_anti = "ERROR: NO ANTI"
+        error_no_runtime = "ERROR: NO RUNTIME"
+        error_no_path = "ERROR: NO PATH"
+        error_no_term = "ERROR: NO TERM"
+        error_conf_out_of_range = "ERROR: YOUR CONF IS _, AND IT HAS TO BE BETWEEN 0 AND 1"
+        error_poll_less_than_0 = "ERROR: YOUR POLL IS _, AND IT HAS TO BE LESS THAN 0"
+        error_anti_less_than_0 = "ERROR: YOUR ANTI IS _, AND IT HAS TO BE LESS THAN 0"
+        error_runtime_less_than_0 = "ERROR: YOUR RUNTIME IS _, AND IT HAS TO BE LESS THAN 0"
         error_empty_search = "ERROR: EMPTY SEARCH"
 
         expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
         missing = [x for x in expected_keys if x not in values.keys()]
         if len(missing) > 0:
-            error_missing_keys = error_missing_keys[:7] + str(len(missing)) + " " + error_missing_keys[7:]
+            error_missing_keys = error_missing_keys.replace("_", str(len(missing)))
             self.set_default_settings()
-            return (False,)
+            valid = False
+            error_list.append(error_missing_keys)
+            outcome = (valid, error_list)
+            return outcome
 
         extra = [x for x in values.keys() if x not in expected_keys]
         if len(extra) > 0:
-            error_extra_keys = error_extra_keys[:7] + str(len(extra)) + " " + error_extra_keys[7:]
+            error_extra_keys = error_extra_keys.replace("_", str(len(extra)))
             self.set_default_settings()
-            return (False,)
+            valid = False
+            error_list.append(error_extra_keys)
+            outcome = (valid, error_list)
+            return outcome
 
         try:
-            if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
-                raise TypeError
-
+            if not (isinstance(values['conf'], (int,float))):
+                error_list.append(error_no_conf)
+            if not (isinstance(values['poll'], int)):
+                error_list.append(error_no_poll)
+            if not (isinstance(values['anti'], int)):
+                error_list.append(error_no_anti)
+            if not (isinstance(values['runtime'], int)):
+                error_list.append(error_no_runtime)
             if not isinstance(path, str):
-                raise TypeError
-
+                error_list.append(error_no_path)
             if len(values['search']) != 0:
                 for term in values['search']:
                     if not isinstance(term, str):
-                        raise TypeError
+                        error_list.append(error_no_term)
+
+            if len(error_list) > 0:
+                raise TypeError
 
         except TypeError:
             self.set_default_settings()
-            return (False,)
+            valid = False
+            outcome = (valid, error_list)
+            return outcome
 
-        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['runtime'] < 0 or values['search'] == []):
+        if (values['conf'] < 0 or values['conf'] > 1):
+            error_conf_out_of_range = error_conf_out_of_range.replace("_", str(values["conf"]))
+            error_list.append(error_conf_out_of_range)
+        if (values['poll'] < 0):
+            error_poll_less_than_0 = error_poll_less_than_0.replace("_", str(values["poll"]))
+            error_list.append(error_poll_less_than_0)
+        if (values['anti'] < 0):
+            error_anti_less_than_0 = error_anti_less_than_0.replace("_", str(values["anti"]))
+            error_list.append(error_anti_less_than_0)
+        if (values['runtime'] < 0):
+            error_runtime_less_than_0 = error_runtime_less_than_0.replace("_", str(values["runtime"]))
+            error_list.append(error_runtime_less_than_0)
+        if(values['search'] == []):
+            error_empty_search = error_empty_search.replace("_", str(values["search"]))
+            error_list.append(error_empty_search)
+
+        if len(error_list) > 0:
             self.set_default_settings()
-            return (False,)
+            valid = False
+            outcome = (valid, error_list)
+            return outcome
 
         #print('values: ' + str(values))
         self.settings = values  # be sure that values are always in the same order. Do validation
         #print('self.settings: ' + str(self.settings))
         self.video_path = path
         # where values is a dictionary
-        return (True,)
+
+        outcome = (valid, error_list)
+        return outcome
 
 
     def start_job(self):
@@ -322,15 +363,17 @@ class GUI:
         result = self.set_settings(settings, path)
         condition1 = result[0]
         if condition1 is False:
-            msg += "One or more of your settings parameters are invalid. Please double check your settings and try again\n"
+            msg += "Please double check your settings and try again.\n"
+            for m in result[1]:
+                msg += m + "\n"
             #maybe which settings are off?
 
         condition2 = os.path.isfile(path)
         if condition2 is False and not  "youtube.com" in path:
-            msg += "You entered an invalid file path. Please double check your input video and try again\n"
+            msg += "You entered an invalid file path. Please double check your input video and try again.\n"
 
         if not condition1 or not condition2:
-            return(False, msg)
+            return (False, msg)
 
         self.job = Job(self.get_settings())
         return (True, "Success")
