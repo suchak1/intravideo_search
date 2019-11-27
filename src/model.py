@@ -37,6 +37,11 @@ class Job:
         self.tmpCollector = set()
 
     def do_the_job(self):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
+        self.settings['runtime'] = mRuntime / 1000
+
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
@@ -125,9 +130,6 @@ class Job:
 
         # Checking that the arguments are valid.
         self.has_valid_args_interpret_results(results, cutoff)
-
-        # THIS IS A HACK.
-        self.settings['runtime'] = 10000000000
 
         # If there are no results, return an empty list.
         if len(results) == 0:
