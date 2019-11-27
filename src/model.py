@@ -12,16 +12,10 @@ from imageai.Prediction import ImagePrediction
 from multiprocessing import Pool
 sys.path.append('utils')
 import my_pytube
+from torchvision import transforms
+from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
 
-def classify_frame(img, time, model, settings):
-    return (time, score(Worker().classify_img(img, model), settings) / 100),
-
-def score(confidence_dict, settings):
-    search_terms = settings['search']
-    max_score = 0
-    for term in search_terms:
-        max_score = max(max_score, confidence_dict.get(term, 0))
-    return max_score
 
 class Job:
 
@@ -44,6 +38,7 @@ class Job:
         else:
             self.video_path = None
             self.settings = None
+
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
@@ -87,11 +82,10 @@ class Job:
             count += 1
         return frms
 
-    # def classify_frame(self, img, time):
-    #     return (time, self.score(Worker().classify_img(img, self.model)) / 100)
-
-    # def sorter(self, unsorted, key):
-    #     return list(sorted(unsorted, key = lambda x: x[key]))
+    def classify_frame(self, frame):
+        time = frame [1]
+        img = frame[0]
+        return (time, self.score(Worker().classify_img(img)) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
@@ -102,10 +96,16 @@ class Job:
 
         # multiprocessing
         with Pool() as pool:
-            results = pool.starmap(classify_frame, preprocessed)
+            results = pool.map(self.classify_frame, frames)
 
-        return list(sorted(results, key = lambda x: x[0]))
+        return list(sorted(results, key=lambda x: x[0]))
 
+    def score(self, confidence_dict):
+        search_terms = self.settings['search']
+        max_score = 0
+        for term in search_terms:
+            max_score = max(max_score, confidence_dict.get(term, 0))
+        return max_score
 
     def has_valid_args_interpret_results(self, results, cutoff):
         # This is a very simple helper function which throws an exception
