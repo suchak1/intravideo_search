@@ -256,6 +256,10 @@ class GUI:
         should be an attribute of GUI, and take the string it returns and print it to the GUI somewhere,
         '''
 
+        temp_lbl4 = Label(win_content, text="", wraplength="200px", justify=CENTER)
+        temp_lbl4.grid(column=3, row=100, columnspan=4)
+        temp_lbl4.grid_remove()
+            
         def get_caption():
             filename = askopenfilename()
             caption_videopath = str(filename)
@@ -265,8 +269,13 @@ class GUI:
             ret, frame = vid.read()
             frame = Image.fromarray(frame)
             caption = self.seer.tell_us_oh_wise_one(frame)
-            temp_lbl4 = Label(win_content, text= caption, wraplength="200px", justify=CENTER)
-            temp_lbl4.grid(column=3, row=100, columnspan=4)
+            temp_lbl4.configure(text=caption)
+            temp_lbl4.grid()
+            select_button.configure(text="Clear Caption", command=clear_caption)
+
+        def clear_caption():
+            temp_lbl4.grid_remove()
+            select_button.configure(text="Select Clip", command=get_caption)
 
         select_button = Button(win_content, text="Select Clip", anchor="w" , command=get_caption)
         select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
