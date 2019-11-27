@@ -300,7 +300,9 @@ def test_get_frames_poll_1():
     for i in range(6):
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
+        # comparing test image w previous frame, so should be false
         if i != 0:
             check.is_false(areImagesSame(frames[i-1][0], compare_img))
         check.equal(frames[i][1], i * poll)
@@ -313,7 +315,9 @@ def test_get_frames_poll_8():
     for i in range(4):
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
+        # comparing test image w previous frame, so should be false
         if i != 0:
             check.is_false(areImagesSame(frames[i-1][0], compare_img))
         check.equal(frames[i][1], i * poll)
