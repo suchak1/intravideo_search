@@ -5,8 +5,11 @@ import os
 import sys
 import pytest
 import torch
+import numpy as np
 import pytest_check as check
 sys.path.append('src')
+sys.path.append('utils')
+from build_vocab import Vocabulary
 from view import *  # nopep8
 from model import *  # nopep8
 from seer_model import *
@@ -94,15 +97,15 @@ def test_save_clips():
 def test_classify_frames():
     frame_list1 = example_job2.classify_frames()
     frame_list = example_job1.classify_frames()
-    check.equal(frame_list1[0][0], 0)
-    check.less(frame_list1[0][1], 0.7)
-    check.not_equal(frame_list1[1][0], 5)
-    check.greater(frame_list1[1][1], 0.7)
+    check.equal(frame_list1[0][1], 0)
+    check.less(frame_list1[0][0], 0.7)
+    check.not_equal(frame_list1[1][1], 5)
+    check.greater(frame_list1[1][0], 0.7)
 
-    check.equal(frame_list[0][0], 0)
-    check.less(frame_list[0][1], 0.7)
-    check.not_equal(frame_list[1][0], 4)
-    check.greater(frame_list[1][1], 0.7)
+    check.equal(frame_list[0][1], 0)
+    check.less(frame_list[0][0], 0.7)
+    check.not_equal(frame_list[1][1], 4)
+    check.greater(frame_list[1][0], 0.7)
 
 def test_score():
     j = Job(example_parameters1)
@@ -244,7 +247,28 @@ def stampListsAreEqual(times1, times2):
 
 # helper function to test get_frames()
 def areImagesSame(im1, im2):
-    return ImageChops.difference(im1, im2).getbbox() is None
+    arr1 = np.array(im1)
+    arr2 = np.array(im2)
+
+    if arr1.shape != arr2.shape:
+        return False
+
+    results = []
+
+    for i, x in enumerate(arr1):
+        for j, y in enumerate(x):
+            for k, z in enumerate(y):
+                px_val1 = int(arr1[i][j][k])
+                px_val2 = int(arr2[i][j][k])
+
+                # rgb val diff threshold +/-5
+                if abs(px_val1 - px_val2) > 10:
+                    results.append(0)
+                else:
+                    results.append(1)
+
+    # make sure 95% of pixels fall within threshold
+    return sum(results) / len(results) > 0.95
 
 # add tests for get_frames() based on comments from milestone 3a
 # now test with different videos and different settings
@@ -257,8 +281,14 @@ def test_get_frames_poll_5():
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
+    # these are same images, so should return true
     check.is_true(areImagesSame(frames[0][0], frame1))
     check.is_true(areImagesSame(frames[1][0], frame2))
+
+    # these are diff images, so should return false
+    check.is_false(areImagesSame(frames[1][0], frame1))
+    check.is_false(areImagesSame(frames[0][0], frame2))
+
     check.equal(frames[0][1], 0)
     check.equal(frames[1][1], 5)
 
@@ -270,8 +300,12 @@ def test_get_frames_poll_1():
     for i in range(6):
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        # comparing test image w previous frame, so should be false
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
+        check.equal(frames[i][1], i * poll)
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
@@ -281,8 +315,12 @@ def test_get_frames_poll_8():
     for i in range(4):
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        # comparing test image w previous frame, so should be false
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
+        check.equal(frames[i][1], i * poll)
 
 # The following are tests for Seer.
 # There are a total of 4 methods in the Seer class, however two are entirley
@@ -296,10 +334,19 @@ def test_get_frames_poll_8():
 #
 # As for the captioning method (tell_us_oh_wise_one,) multiple image types
 # and invalid inputs are tested, as is usual for a unit test.
+
+# Device Config. Use GPU if available.
 def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
     check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
+    check.is_true(delphi.vocab_path == 'torchdata/vocab.pkl')
+    check.is_true(delphi.encoder_path == 'torchdata/encoder-5-3000.pkl')
+    check.is_true(delphi.decoder_path == 'torchdata/decoder-5-3000.pkl')
+    check.is_true(delphi.embed_size == 256)
+    check.is_true(delphi.hidden_size == 512)
+    check.is_true(delphi.num_layers == 1)
+    check.is_true(isinstance(delphi.vocab, type(Vocabulary())))
 
 def test_seer_tell_us_oh_wise_one_non_image():
     delphi = Seer()
@@ -315,7 +362,7 @@ def test_seer_tell_us_oh_wise_one_nonetype():
 
 def test_seer_tell_us_oh_wise_one_jpg():
     delphi = Seer()
-    img = Image.open("test/sampleImage/golden_retriever.jpg")
+    img = Image.open("test/sampleImage/golden retriever.jpg")
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a dog is sitting on a couch with a frisbee"
     check.is_true(caption == true_caption)
@@ -342,6 +389,8 @@ def get_vid_duration(path):
     duration = int(frame_count/fps)
     return duration
 
+@pytest.mark.skipif(os.environ.get('CI') == 'true',
+                    reason="Travis' IP is prob on a blocklist.")
 def test_get_from_yt():
     parameters = {
     'settings': {
@@ -352,16 +401,17 @@ def test_get_from_yt():
     invalid_url2 = 'www.youtube.com'
     invalid_url3 = ''
     invalid_url4 = 'https://vimeo.com/66457941'
-    invalid_url5 = 'www.yutub.com/watch?v=dQw4w9WgXcQ'
+    invalid_url5 = 'www.yutub.com/watch?v=dQw4w9WgXQ'
     url1 = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
     url2 = 'www.youtube.com/watch?v=fJ9rUzIMcZQ'
     url3 = 'youtube.com/watch?v=VuNIsY6JdUw'
-    expected_path1 = 'test/YouTube_vids/Rick Astley - Never Gonna Give You Up (Video)'
-    expected_path2 = 'test/YouTube_vids/Queen – Bohemian Rhapsody (Official Video Remastered)'
-    expected_path3 = 'test/YouTube_vids/Taylor Swift - You Belong With Me'
+    expected_path1 = './test/Rick Astley - Never Gonna Give You Up (Video).mp4'
+    expected_path2 = './test/Queen – Bohemian Rhapsody (Official Video Remastered).mp4'
+    expected_path3 = './test/Taylor Swift - You Belong With Me.mp4'
     expected_duration1 = 212 # durations in seconds
     expected_duration2 = 359
-    expected_duration3 = 272
+    expected_duration3 = 228
+    job0 = Job(parameters)
 
     # test valid url1
     parameters['video'] = url1
@@ -387,8 +437,13 @@ def test_get_from_yt():
     check.equal(expected_duration3, get_vid_duration(url3_path))
 
     # test invalid inputs using arbitrary job to access get_from_yt() function
-    check.equal('', job3.get_from_yt(invalid_url1))
-    check.equal('', job3.get_from_yt(invalid_url2))
-    check.equal('', job3.get_from_yt(invalid_url3))
-    check.equal('', job3.get_from_yt(invalid_url4))
-    check.equal('', job3.get_from_yt(invalid_url5))
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url1)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url2)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url3)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url4)
+    with pytest.raises(Exception):
+        job0.get_from_yt(invalid_url5)
