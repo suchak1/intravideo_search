@@ -4,7 +4,7 @@
 ### (1) How to Compile
 - To install all necessary packages, run:
     ```
-    pip install -r requirements.txt
+    python -m pip install -r requirements.txt
     ```
     - Note: Python 3.7 is required
     - Troubleshooting: If you encounter the error *ERROR: Could not install packages due to an EnvironmentError*, try adding "sudo" to the command or installing in a fresh virtual environment.
@@ -20,17 +20,17 @@
 ### How to Run Unit Tests
 - To run all tests, run
     ```
-    pytest -vv
+    python -m pytest -vv
     ```
     - `-vv` ensure verbose output
     - if there is a module import error, run `python -m pytest -vv`
 - Note: to run a single test file, just append the test file path like so
     ```
-    pytest test/test_controller.py -vv
+    python -m pytest test/test_controller.py -vv
     ```
     and to run a single function, add the `-k` flag and the function name:
     ```
-    pytest test/test_controller.py -k "test_classify_img" -vv
+    python -m pytest test/test_controller.py -k "test_classify_img" -vv
     ```
     This might be necessary since functions like `classify_img` take a while because loading a ML model for the first time is expensive.
 
