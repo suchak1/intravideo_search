@@ -1,7 +1,8 @@
 from model import Job,Seer
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import os,cv2,base64
+from PIL import Image
+import os,cv2
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
@@ -16,6 +17,7 @@ class GUI:
 
         self.set_default_settings()
         self.job = None
+        self.seer = Seer()
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
@@ -261,11 +263,10 @@ class GUI:
             total_frames = vid.get(7)
             vid.set(1,total_frames/2)
             ret, frame = vid.read()
-            print(type(frame))
-            s = Seer()
-            caption = s.tell_us_oh_wise_one(frame)
-            temp_lbl4 = Label(win_content, text= "caption", wraplength="200px", justify=CENTER)
-            temp_lbl4.grid(column=3, row=100, columnspan=2)
+            frame = Image.fromarray(frame)
+            caption = self.seer.tell_us_oh_wise_one(frame)
+            temp_lbl4 = Label(win_content, text= caption, wraplength="200px", justify=CENTER)
+            temp_lbl4.grid(column=3, row=100, columnspan=4)
 
         select_button = Button(win_content, text="Select Clip", anchor="w" , command=get_caption)
         select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
