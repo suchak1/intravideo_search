@@ -81,6 +81,7 @@ class Job:
         pool = Pool()
         results = pool.map(self.classify_frame, frames)
         pool.close()
+        pool.terminate()
         pool.join()
 
         norm = 100
