@@ -1,7 +1,7 @@
-from model import Job
+from model import Job,Seer
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import os
+import os,cv2,base64
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
@@ -93,7 +93,6 @@ class GUI:
         self.video_path = path
         # where values is a dictionary
         return True
-
 
     def start_job(self):
         try:
@@ -247,6 +246,29 @@ class GUI:
 
         kill_button = Button(win_content,text="Kill this window", command= win.destroy)
         kill_button.grid(column=0, row=100)
+
+        '''
+        You would need to set up a way to select output clips and then hit a button which produces 
+        a caption for it. The process would be: get the path of the clip, extract a frame from the 
+        middle of the clip, call the tell_us_oh_wise_one(frame) method from the Seer object which 
+        should be an attribute of GUI, and take the string it returns and print it to the GUI somewhere,
+        '''
+
+        def get_caption():
+            filename = askopenfilename()
+            caption_videopath = str(filename)
+            vid = cv2.VideoCapture(caption_videopath)
+            total_frames = vid.get(7)
+            vid.set(1,total_frames/2)
+            ret, frame = vid.read()
+            print(type(frame))
+            s = Seer()
+            caption = s.tell_us_oh_wise_one(frame)
+            temp_lbl4 = Label(win_content, text= "caption", wraplength="200px", justify=CENTER)
+            temp_lbl4.grid(column=3, row=100, columnspan=2)
+
+        select_button = Button(win_content, text="Select Clip", anchor="w" , command=get_caption)
+        select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
 
         def display_errors(title, message):
             w = Tk()
