@@ -12,6 +12,7 @@ from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
 from multiprocessing import Pool
 
+
 class Job:
 
     "Model - data logic"
@@ -27,7 +28,7 @@ class Job:
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
 
-            #self.video_path = settings['video']
+            # self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:

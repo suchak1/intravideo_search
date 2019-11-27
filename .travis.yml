@@ -2,4 +2,9 @@ language: python
 python: 3.7
 cache: pip
 install: pip install -r requirements.txt
-script: python -m pytest -vv
+env:
+    - TEST_FILE=test_view.py
+    - TEST_FILE=test_model.py
+    - TEST_FILE=test_controller.py
+script:
+    - python -m pytest test/$TEST_FILE -vv
