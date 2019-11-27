@@ -60,8 +60,8 @@ class Job:
             video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
             success, frame = video.read()
             if success:
-                # img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                img = Image.fromarray(frame)
+                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                # img = Image.fromarray(frame)
                 frms.append((img, timestamp))
             count += 1
         return frms
