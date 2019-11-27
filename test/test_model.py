@@ -96,15 +96,15 @@ def test_save_clips():
 def test_classify_frames():
     frame_list1 = example_job2.classify_frames()
     frame_list = example_job1.classify_frames()
-    check.equal(frame_list1[0][0], 0)
-    check.less(frame_list1[0][1], 0.7)
-    check.not_equal(frame_list1[1][0], 5)
-    check.greater(frame_list1[1][1], 0.7)
+    check.equal(frame_list1[0][1], 0)
+    check.less(frame_list1[0][0], 0.7)
+    check.not_equal(frame_list1[1][1], 5)
+    check.greater(frame_list1[1][0], 0.7)
 
-    check.equal(frame_list[0][0], 0)
-    check.less(frame_list[0][1], 0.7)
-    check.not_equal(frame_list[1][0], 4)
-    check.greater(frame_list[1][1], 0.7)
+    check.equal(frame_list[0][1], 0)
+    check.less(frame_list[0][0], 0.7)
+    check.not_equal(frame_list[1][1], 4)
+    check.greater(frame_list[1][0], 0.7)
 
 def test_score():
     j = Job(example_parameters1)

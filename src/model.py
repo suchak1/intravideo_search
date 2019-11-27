@@ -35,9 +35,16 @@ class Job:
             self.video_path = None
             self.settings = None
 
+        self.tmpCollector = set()
+
     def do_the_job(self):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
+        self.settings['runtime'] = mRuntime / 1000
+
         data = self.classify_frames()
-        results = self.interpret_results(data)
+        results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
 
     def get_frames(self):
@@ -71,11 +78,14 @@ class Job:
     def classify_frames(self):
         frames = self.get_frames()
         results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        #print(self.tmpCollector)
+        #exit(0)
         norm = 100
-        results = [(val / norm, t) for (val, t) in results]
-        return list(sorted(results, key=lambda x: x[1]))
+        results = [(t, val / norm) for (val, t) in results]
+        return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
+        [self.tmpCollector.add(key) for key in confidence_dict.keys()]
         search_terms = self.settings['search']
         max_score = 0
         for term in search_terms:
@@ -113,6 +123,11 @@ class Job:
         # where APIScore_t is the score given by classify_frames()
         # to each frame_t fed through the API, normalized to be between [0,1].
         # Also assuming "runtime" is included in settings.
+
+        #print("\n\n\n")
+        #print(results)
+        #print(cutoff)
+        #print("\n\n\n")
 
         # Checking that the arguments are valid.
         self.has_valid_args_interpret_results(results, cutoff)
@@ -170,7 +185,6 @@ class Job:
                 endTime = (finalTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
-
         return adjustedEndpoints
 
 
