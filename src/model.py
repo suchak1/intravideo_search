@@ -61,7 +61,6 @@ class Job:
             success, frame = video.read()
             if success:
                 img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                # img = Image.fromarray(frame)
                 frms.append((img, timestamp))
             count += 1
         return frms
