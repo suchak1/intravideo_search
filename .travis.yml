@@ -7,7 +7,7 @@ env:
     - TEST_FILE=test_model.py
     - TEST_FILE=test_controller.py
 script:
-    - python -m pytest $TEST_FILE
+    - python -m pytest test/$TEST_FILE -vv
 # - python -m pytest test/test_model.py
 # - python -m pytest test/test_controller.py
 # python -m pytest test/test_model.py -k "test_classify" -vv
