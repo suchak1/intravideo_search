@@ -78,11 +78,8 @@ class Job:
         frames = self.get_frames()
 
         # multiprocessing
-        pool = Pool()
-        results = pool.map(self.classify_frame, frames)
-        pool.close()
-        pool.terminate()
-        pool.join()
+        with Pool() as pool:
+            results = pool.map(self.classify_frame, frames)
 
         norm = 100
         results = [(t, val / norm) for (val, t) in results]
