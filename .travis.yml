@@ -2,6 +2,9 @@ language: python
 python: 3.7
 cache: pip
 install: pip install -r requirements.txt
-script: python -m pytest test/test_model.py
+script:
+    - python -m pytest test/test_view.py
+    - python -m pytest test/test_model.py
+    - python -m pytest test/test_controller.py
 # python -m pytest test/test_model.py -k "test_classify" -vv
 # python -m pytest -vv
