@@ -38,10 +38,9 @@ pipreqs ./ --force
 
 - To run all tests, run
     ```
-    python -m pytest -vv
+    PYTHON=python ./test_suite
     ```
-    - `-vv` ensure verbose output
-    - if there is a module import error, run `python -m pytest -vv`
+    - where `python` is your python 3 installation (might be `python3` if you have more than one installation)
 - Note: to run a single test file, just append the test file path like so
     ```
     python -m pytest test/test_controller.py -vv
