@@ -78,7 +78,7 @@ class Job:
         frames = self.get_frames()
 
         # multiprocessing
-        pool = Pool()
+        pool = Pool(4)
         results = pool.map(self.classify_frame, frames)
 
         norm = 100
