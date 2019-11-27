@@ -261,10 +261,13 @@ def areImagesSame(im1, im2):
                 px_val1 = int(arr1[i][j][k])
                 px_val2 = int(arr2[i][j][k])
 
+                # rgb val diff threshold +/-5
                 if abs(px_val1 - px_val2) > 10:
                     results.append(0)
                 else:
                     results.append(1)
+
+    # make sure 95% of pixels fall within threshold
     return sum(results) / len(results) > 0.95
 
 # add tests for get_frames() based on comments from milestone 3a
