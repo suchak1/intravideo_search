@@ -8,6 +8,7 @@ import pytest_check as check
 import filecmp
 sys.path.append('src')
 from controller import *  # nopep8
+from model import *  # nopep8
 
 
 def test_constructor():
@@ -56,17 +57,18 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
-    check.is_none(w.classify_img(None))
+    model = Job().load_model()
+    check.is_none(w.classify_img(None, model))
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
         # should all be true
         # (that 'banana' is in classification dict for 'banana.jpg' and so on)
-        check.is_in(name, w.classify_img(img))
+        check.is_in(name, w.classify_img(img, model))
 
         # now let's try assertions that should definitely be wrong
         # (that 'volcano' is in the classification dict for 'banana.jpg')
-        check.is_not_in(wrong_names[idx], w.classify_img(img))
+        check.is_not_in(wrong_names[idx], w.classify_img(img, model))
 
 
 def test_get_related_words():
