@@ -74,7 +74,7 @@ class Job:
     def classify_frame(self, frame):
         time = frame [1]
         img = frame[0]
-        return (time, self.score(Worker().classify_img(img)))
+        return (time, self.score(Worker().classify_img(img)) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
@@ -90,7 +90,7 @@ class Job:
         max_score = 0
         for term in search_terms:
             max_score = max(max_score, confidence_dict.get(term, 0))
-        return max_score / 100
+        return max_score
 
     def has_valid_args_interpret_results(self, results, cutoff):
         # This is a very simple helper function which throws an exception
