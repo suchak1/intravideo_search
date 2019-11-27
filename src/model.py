@@ -10,8 +10,7 @@ from PIL import Image
 import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
-
-#from multiprocessing import Pool
+from multiprocessing import Pool
 
 class Job:
 
@@ -72,15 +71,21 @@ class Job:
             count += 1
         return frms
 
+    def classify_frame(self, frame):
+        return (self.score(Worker().classify_img(frame[0])), frame[1])
+
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+
+        # multiprocessing
+        pool = Pool()
+        results = pool.map(self.classify_frame, frames)
+
         norm = 100
         results = [(t, val / norm) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
-        [self.tmpCollector.add(key) for key in confidence_dict.keys()]
         search_terms = self.settings['search']
         max_score = 0
         for term in search_terms:
