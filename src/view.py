@@ -56,16 +56,30 @@ class GUI:
         #print(path)
         #print(type(path))
 
+
+
+        #all possible errors
+        error_missing_keys = "ERROR: MISSING KEYS"
+        error_extra_keys = "ERROR: EXTRA KEYS"
+        error_type_error = "ERROR: TYPE ERROR"
+        error_conf_out_of_range = "ERROR: CONF OUT OF RANGE"
+        error_poll_less_than_0 = "ERROR: POLL LESS THAN 0"
+        error_anti_less_than_0 = "ERROR: ANTI LESS THAN 0"
+        error_runtime_less_than_0 = "ERROR: RUNTIME LESS THAN 0"
+        error_empty_search = "ERROR: EMPTY SEARCH"
+
         expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
         missing = [x for x in expected_keys if x not in values.keys()]
         if len(missing) > 0:
+            error_missing_keys = error_missing_keys[:7] + str(len(missing)) + " " + error_missing_keys[7:]
             self.set_default_settings()
-            return False
+            return (False,)
 
         extra = [x for x in values.keys() if x not in expected_keys]
         if len(extra) > 0:
+            error_extra_keys = error_extra_keys[:7] + str(len(extra)) + " " + error_extra_keys[7:]
             self.set_default_settings()
-            return False
+            return (False,)
 
         try:
             if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
@@ -81,18 +95,18 @@ class GUI:
 
         except TypeError:
             self.set_default_settings()
-            return False
+            return (False,)
 
         if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['runtime'] < 0 or values['search'] == []):
             self.set_default_settings()
-            return False
+            return (False,)
 
         #print('values: ' + str(values))
         self.settings = values  # be sure that values are always in the same order. Do validation
         #print('self.settings: ' + str(self.settings))
         self.video_path = path
         # where values is a dictionary
-        return True
+        return (True,)
 
 
     def start_job(self):
@@ -305,7 +319,8 @@ class GUI:
 
         msg = ""
 
-        condition1 = self.set_settings(settings, path)
+        result = self.set_settings(settings, path)
+        condition1 = result[0]
         if condition1 is False:
             msg += "One or more of your settings parameters are invalid. Please double check your settings and try again\n"
             #maybe which settings are off?
