@@ -71,15 +71,15 @@ class Job:
             count += 1
         return frms
 
-    def classify_frame(self, frame):
-        return (self.score(Worker().classify_img(frame[0])), frame[1])
+    def classify_frame(self, val, time):
+        return (self.score(Worker().classify_img(val)), time)
 
     def classify_frames(self):
         frames = self.get_frames()
 
         # multiprocessing
         with Pool() as pool:
-            results = pool.map(self.classify_frame, frames)
+            results = pool.starmap(self.classify_frame, frames)
 
         norm = 100
         results = [(t, val / norm) for (val, t) in results]
