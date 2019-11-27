@@ -366,7 +366,6 @@ class GUI:
             msg += "Please double check your settings and try again.\n"
             for m in result[1]:
                 msg += m + "\n"
-            #maybe which settings are off?
 
         condition2 = os.path.isfile(path)
         if condition2 is False and not  "youtube.com" in path:
