@@ -281,8 +281,14 @@ def test_get_frames_poll_5():
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
+    # these are same images, so should return true
     check.is_true(areImagesSame(frames[0][0], frame1))
     check.is_true(areImagesSame(frames[1][0], frame2))
+
+    # these are diff images, so should return false
+    check.is_false(areImagesSame(frames[1][0], frame1))
+    check.is_false(areImagesSame(frames[0][0], frame2))
+
     check.equal(frames[0][1], 0)
     check.equal(frames[1][1], 5)
 
@@ -295,6 +301,8 @@ def test_get_frames_poll_1():
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
         check.equal(frames[i][1], i * poll)
 
 def test_get_frames_poll_8():
@@ -306,6 +314,8 @@ def test_get_frames_poll_8():
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
         check.equal(frames[i][1], i * poll)
 
 # The following are tests for Seer.
