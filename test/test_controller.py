@@ -148,7 +148,8 @@ def test_make_clip_full_video():
     w = Worker()
     timestamp = (0.0, 100000000000.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], 5.0)
-    clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+    clip.write_videofile(clipPath, codec='libx264',
+                         temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
     outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
 
@@ -158,7 +159,8 @@ def test_make_clip_from_mid():
     clipPath = "test/sampleVideo/testMid.mp4"
     timestamp = (1.0, 3.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], timestamp[1])
-    clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+    clip.write_videofile(clipPath, codec='libx264',
+                         temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
@@ -169,7 +171,8 @@ def test_make_clip_from_start():
     clipPath = "test/sampleVideo/testStart.mp4"
     timestamp = (0.0, 3.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], timestamp[1])
-    clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+    clip.write_videofile(clipPath, codec='libx264',
+                         temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
@@ -180,11 +183,11 @@ def test_make_clip_from_end():
     clipPath = "test/sampleVideo/testEnd.mp4"
     timestamp = (3.0, 1000000.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], 5.0)
-    clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+    clip.write_videofile(clipPath, codec='libx264',
+                         temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
     w = Worker()
     outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
-
 
 
 def areVideosAndAreEqual(vidPath1, vidPath2):

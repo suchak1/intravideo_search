@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from seer_model import *
+from build_vocab import Vocabulary
 import cv2
 from PIL import Image, ImageChops
 import os
@@ -8,10 +10,8 @@ import torch
 import pytest_check as check
 sys.path.append('src')
 sys.path.append('utils')
-from build_vocab import Vocabulary
 from view import *  # nopep8
 from model import *  # nopep8
-from seer_model import *
 
 example_parameters1 = {
     'settings': {
@@ -19,7 +19,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime':100.0
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -32,7 +32,7 @@ example_parameters2 = {
         'poll': 4,
         'anti': 5,
         'search': ["rabbit"],
-        'runtime':100.0
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -45,7 +45,7 @@ example_parameters3 = {
         'poll': 1,
         'anti': 3,
         'search': ["rock"],
-        'runtime':100.0
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -58,12 +58,13 @@ example_parameters4 = {
         'poll': 8,
         'anti': 6,
         'search': ["water"],
-        'runtime':100.0
+        'runtime': 100.0
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
 
 example_job4 = Job(example_parameters4)
+
 
 def test_save_clips():
     timestamps1 = [0, 5]
@@ -106,6 +107,7 @@ def test_classify_frames():
     check.not_equal(frame_list[1][1], 4)
     check.greater(frame_list[1][0], 0.7)
 
+
 def test_score():
     j = Job(example_parameters1)
     api_results1 = {'dog': 0.9, 'cat': 0.7}
@@ -120,9 +122,11 @@ def test_job_constructor():
     j = Job({'settings': {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog'], 'runtime': 100.0},
              'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'})
     check.equal(j.video_path, 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4')
-    check.equal(j.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'search': ['dog'], 'runtime': 100.0})
+    check.equal(j.settings, {'conf': .9, 'poll': 5,
+                             'anti': 5, 'search': ['dog'], 'runtime': 100.0})
     # redundant tests removed from milestone 3a comments
     # runtime key added to test dict as per new specs of settings
+
 
 def test_interpret_results_null_input():
     job = Job(example_parameters1)
@@ -173,6 +177,7 @@ def test_interpret_results_out_of_order():
     with pytest.raises(Exception):
         job.interpret_results(results)
 
+
 def test_interpret_results_mid_clip():
     job = Job(example_parameters1)
     results = [(0.0, 0.1), (10.0, 0.6), (20.0, 0.3), (30.0, 0.2)]
@@ -184,7 +189,7 @@ def test_interpret_results_spanning_clip():
     results = [(0.0, 0.2), (10.0, 0.6), (20.0, 0.5), (30.0, 0.01)]
 
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
-                                    [(5.0, 25.0)]))
+                                     [(5.0, 25.0)]))
 
 
 def test_interpret_results_multiple_seperate_clips():
@@ -201,15 +206,15 @@ def test_interpret_results_from_start():
     job = Job(example_parameters1)
     results = [(1.0, 0.6), (10.0, 0.2), (20.0, 0.1), (30.0, 0.08)]
     #print(job.interpret_results(results, cutoff=0.5))
-    #exit(0)
+    # exit(0)
     output = job.interpret_results(results, cutoff=0.5)
-    check.is_true(stampListsAreEqual(output,[(0.0, 5.5)]))
+    check.is_true(stampListsAreEqual(output, [(0.0, 5.5)]))
 
 
 def test_interpret_results_from_end():
     job = Job(example_parameters1)
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
-    job.settings["runtime"] =  40.0
+    job.settings["runtime"] = 40.0
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.5),
                                      [(25.0, 40.0)]))
 
@@ -217,7 +222,7 @@ def test_interpret_results_from_end():
 def test_interpret_results_zero_cutoff():
     job = Job(example_parameters1)
     results = [(1.0, 0.2), (10.0, 0.2), (20.0, 0.1), (30.0, 0.8)]
-    job.settings["runtime"] =  40.0
+    job.settings["runtime"] = 40.0
     check.is_true(stampListsAreEqual(job.interpret_results(results, cutoff=0.0),
                                      [(0.0, 40.0)]))
 
@@ -245,6 +250,8 @@ def stampListsAreEqual(times1, times2):
     return True
 
 # helper function to test get_frames()
+
+
 def areImagesSame(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
 
@@ -252,6 +259,8 @@ def areImagesSame(im1, im2):
 # now test with different videos and different settings
 # also test was changed to reflect change in get_frames() return value
 # from list of Images to list of tuples of Images and timestamps
+
+
 def test_get_frames_poll_5():
     frames = example_job1.get_frames()
     check.equal(len(frames), 2)
@@ -264,6 +273,7 @@ def test_get_frames_poll_5():
     check.equal(frames[0][1], 0)
     check.equal(frames[1][1], 5)
 
+
 def test_get_frames_poll_1():
     frames = example_job3.get_frames()
     poll = example_job3.settings['poll']
@@ -273,7 +283,8 @@ def test_get_frames_poll_1():
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        check.equal(frames[i][1], i*poll)
+
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
@@ -284,7 +295,7 @@ def test_get_frames_poll_8():
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        check.equal(frames[i][1], i*poll)
 
 # The following are tests for Seer.
 # There are a total of 4 methods in the Seer class, however two are entirley
@@ -300,10 +311,12 @@ def test_get_frames_poll_8():
 # and invalid inputs are tested, as is usual for a unit test.
 
 # Device Config. Use GPU if available.
+
+
 def test_seer_init():
     delphi = Seer()
     check.is_true(isinstance(delphi.encoder, type(EncoderCNN(1))))
-    check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1,1,1,1,1))))
+    check.is_true(isinstance(delphi.decoder, type(DecoderRNN(1, 1, 1, 1, 1))))
     check.is_true(delphi.vocab_path == 'torchdata/vocab.pkl')
     check.is_true(delphi.encoder_path == 'torchdata/encoder-5-3000.pkl')
     check.is_true(delphi.decoder_path == 'torchdata/decoder-5-3000.pkl')
@@ -312,17 +325,20 @@ def test_seer_init():
     check.is_true(delphi.num_layers == 1)
     check.is_true(isinstance(delphi.vocab, type(Vocabulary())))
 
+
 def test_seer_tell_us_oh_wise_one_non_image():
     delphi = Seer()
     notanimg = 5
     with pytest.raises(Exception):
         caption = delphi.tell_us_oh_wise_one(notanimg)
 
+
 def test_seer_tell_us_oh_wise_one_nonetype():
     delphi = Seer()
     nonetype = None
     with pytest.raises(Exception):
         caption = delphi.tell_us_oh_wise_one(nonetype)
+
 
 def test_seer_tell_us_oh_wise_one_jpg():
     delphi = Seer()
@@ -331,12 +347,14 @@ def test_seer_tell_us_oh_wise_one_jpg():
     true_caption = "a dog is sitting on a couch with a frisbee"
     check.is_true(caption == true_caption)
 
+
 def test_seer_tell_us_oh_wise_one_png():
     delphi = Seer()
     img = Image.open("test/sampleImage/blindside.png")
     caption = delphi.tell_us_oh_wise_one(img)
     true_caption = "a living room with a couch and a television"
     check.is_true(caption == true_caption)
+
 
 def test_seer_tell_us_oh_wise_one_black_and_white():
     delphi = Seer()
@@ -346,8 +364,10 @@ def test_seer_tell_us_oh_wise_one_black_and_white():
     check.is_true(caption == true_caption)
 
 # helper function to test get_from_yt()
+
+
 def get_vid_duration(path):
-    v=cv2.VideoCapture(path)
+    v = cv2.VideoCapture(path)
     fps = v.get(cv2.CAP_PROP_FPS)
     frame_count = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
     duration = int(frame_count/fps)
@@ -357,8 +377,8 @@ def get_vid_duration(path):
                     reason="Travis' IP is prob on a blocklist.")
 def test_get_from_yt():
     parameters = {
-    'settings': {
-        'conf': .9,'poll': 5,'anti': 5,'search': [''],'runtime':100.0},
+        'settings': {
+            'conf': .9, 'poll': 5, 'anti': 5, 'search': [''], 'runtime': 100.0},
         'video': ''
     }
     invalid_url1 = 'https://www.youtube.com/watch?v=sVuG2i93notvalid'
@@ -372,7 +392,7 @@ def test_get_from_yt():
     expected_path1 = './test/Rick Astley - Never Gonna Give You Up (Video).mp4'
     expected_path2 = './test/Queen – Bohemian Rhapsody (Official Video Remastered).mp4'
     expected_path3 = './test/Taylor Swift - You Belong With Me.mp4'
-    expected_duration1 = 212 # durations in seconds
+    expected_duration1 = 212  # durations in seconds
     expected_duration2 = 359
     expected_duration3 = 228
     job0 = Job(parameters)
@@ -383,21 +403,21 @@ def test_get_from_yt():
     # get_from_yet is called in the initialization of job
     # if parameter video is a YouTube URL
     url1_path = job1.video_path
-    check.equal(url1_path,expected_path1)
+    check.equal(url1_path, expected_path1)
     check.equal(expected_duration1, get_vid_duration(url1_path))
 
     # test valid url2
     parameters['video'] = url2
     job2 = Job(parameters)
     url2_path = job2.video_path
-    check.equal(url2_path,expected_path2)
+    check.equal(url2_path, expected_path2)
     check.equal(expected_duration2, get_vid_duration(url2_path))
 
     # test valid url3
     parameters['video'] = url3
     job3 = Job(parameters)
     url3_path = job3.video_path
-    check.equal(url3_path,expected_path3)
+    check.equal(url3_path, expected_path3)
     check.equal(expected_duration3, get_vid_duration(url3_path))
 
     # test invalid inputs using arbitrary job to access get_from_yt() function
