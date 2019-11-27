@@ -5,6 +5,7 @@ import os
 import sys
 import pytest
 import torch
+import numpy as np
 import pytest_check as check
 sys.path.append('src')
 sys.path.append('utils')
@@ -246,7 +247,28 @@ def stampListsAreEqual(times1, times2):
 
 # helper function to test get_frames()
 def areImagesSame(im1, im2):
-    return ImageChops.difference(im1, im2).getbbox() is None
+    arr1 = np.array(im1)
+    arr2 = np.array(im2)
+
+    if arr1.shape != arr2.shape:
+        return False
+
+    results = []
+
+    for i, x in enumerate(arr1):
+        for j, y in enumerate(x):
+            for k, z in enumerate(y):
+                px_val1 = int(arr1[i][j][k])
+                px_val2 = int(arr2[i][j][k])
+
+                # rgb val diff threshold +/-5
+                if abs(px_val1 - px_val2) > 10:
+                    results.append(0)
+                else:
+                    results.append(1)
+
+    # make sure 95% of pixels fall within threshold
+    return sum(results) / len(results) > 0.95
 
 # add tests for get_frames() based on comments from milestone 3a
 # now test with different videos and different settings
@@ -259,8 +281,14 @@ def test_get_frames_poll_5():
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
     # frame at 5 seconds of sample video
     frame2 = Image.open('test/sampleVideo/settings_poll_5/frame1.jpg')
+    # these are same images, so should return true
     check.is_true(areImagesSame(frames[0][0], frame1))
     check.is_true(areImagesSame(frames[1][0], frame2))
+
+    # these are diff images, so should return false
+    check.is_false(areImagesSame(frames[1][0], frame1))
+    check.is_false(areImagesSame(frames[0][0], frame2))
+
     check.equal(frames[0][1], 0)
     check.equal(frames[1][1], 5)
 
@@ -272,8 +300,12 @@ def test_get_frames_poll_1():
     for i in range(6):
         path = 'test/sampleVideo/settings_poll_1/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        # comparing test image w previous frame, so should be false
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
+        check.equal(frames[i][1], i * poll)
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
@@ -283,8 +315,12 @@ def test_get_frames_poll_8():
     for i in range(4):
         path = 'test/sampleVideo/settings_poll_8/frame%d.jpg' % i
         compare_img = Image.open(path)
+        # same image, so should return true
         check.is_true(areImagesSame(frames[i][0], compare_img))
-        check.equal(frames[i][1],i*poll)
+        # comparing test image w previous frame, so should be false
+        if i != 0:
+            check.is_false(areImagesSame(frames[i-1][0], compare_img))
+        check.equal(frames[i][1], i * poll)
 
 # The following are tests for Seer.
 # There are a total of 4 methods in the Seer class, however two are entirley
