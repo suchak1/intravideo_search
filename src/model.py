@@ -1,5 +1,6 @@
 from controller import Worker
 import os
+import time
 import torch
 import sys
 sys.path.append('utils')
@@ -219,7 +220,7 @@ class Job:
                     vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
                     vid_path = vid.download(output_path=folder_path)
                 except:
-                    continue
+                    time.sleep(5)
             if vid_path=='':
                 raise ValueError("Your video could not be downloaded: %s" % e)
         return vid_path

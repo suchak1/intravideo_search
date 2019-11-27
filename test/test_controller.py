@@ -30,13 +30,13 @@ def test_classify_img():
         'carton',
         'cucumber',
         'fountain',
-        'golden_retriever',
+        'golden retriever',
         'goldfish',
-        'passenger_car',
-        'pop_bottle',
+        'passenger car',
+        'pop bottle',
         'seashore',
-        'space_shuttle',
-        'sports_car',
+        'space shuttle',
+        'sports car',
         'suit',
         'tabby',
         'volcano'
@@ -76,14 +76,14 @@ def test_get_related_words():
     check.is_in('nba', w.get_related_words("basketball"))
     check.is_in('box', w.get_related_words("carton"))
     check.is_in('zucchini', w.get_related_words("cucumber"))
-    check.is_in('waterfall', w.get_related_words("fountain"))
-    check.is_in('dog', w.get_related_words("golden retriever"))
+    check.is_in('spring', w.get_related_words("fountain"))
+    check.is_in('dog', w.get_related_words("golden_retriever"))
     check.is_in('carp', w.get_related_words("goldfish"))
-    check.is_in('coach', w.get_related_words("passenger car"))
-    check.is_in('soda', w.get_related_words("pop bottle"))
+    check.is_in('coach', w.get_related_words("passenger_car"))
+    check.is_in('soda', w.get_related_words("pop_bottle"))
     check.is_in('beach', w.get_related_words("seashore"))
-    check.is_in('spaceship', w.get_related_words("space shuttle"))
-    check.is_in('roadster', w.get_related_words("sports car"))
+    check.is_in('spaceship', w.get_related_words("space_shuttle"))
+    check.is_in('roadster', w.get_related_words("sports_car"))
     check.is_in('tuxedo', w.get_related_words("suit"))
     check.is_in('cat', w.get_related_words("tabby"))
     check.is_in('lava', w.get_related_words("volcano"))

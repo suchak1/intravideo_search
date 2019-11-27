@@ -4,6 +4,7 @@ import os
 from moviepy.editor import VideoFileClip
 from PIL import Image
 from imageai.Prediction import ImagePrediction
+import requests
 
 
 class Worker:
@@ -26,15 +27,36 @@ class Worker:
         prediction.setModelPath('src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5')
         prediction.loadModel()
 
-        predictions, probabilities = prediction.predictImage(img, input_type = 'array')
-        results = {prediction : probabilities[idx] for idx, prediction in enumerate(predictions)}
+        predictions, probabilities = [elem[::-1] for elem in prediction.predictImage(img, input_type = 'array')]
+        results = {}
+
+        for idx, prediction in enumerate(predictions):
+            related_words = self.get_related_words(prediction)
+            results.update({word: probabilities[idx] for word in related_words})
+
         return results
 
     def get_related_words(self, word):
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
-        return
+
+
+        # arbitrary number of related words to fetch
+        # the higher the number, the more tolerant the classification results
+        num = 20
+
+        words = word.split('_')
+        extra = words + [' '.join(words)] if len(words) > 1 else words
+        query = '+'.join(words)
+        response = requests.get('https://api.datamuse.com/words?ml=' + query)
+        if not word or not response:
+            return {}
+        else:
+            data = response.json()
+        related = set([word['word'] for word in data if 'tags' in word and 'n' in word['tags']][:num])
+        related.update(extra)
+        return related
 
     def make_clip(self, timestamp, path, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
