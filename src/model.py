@@ -27,18 +27,16 @@ class Job:
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
 
-            #self.video_path = settings['video']
+            # self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
 
-        self.tmpCollector = set()
-
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
-        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = mRuntime / 1000
 
@@ -72,7 +70,10 @@ class Job:
         return frms
 
     def classify_frame(self, val, time):
-        return (self.score(Worker().classify_img(val)), time)
+        return (time, self.score(Worker().classify_img(val)) / 100)
+
+    # def sorter(self, unsorted, key):
+    #     return list(sorted(unsorted, key = lambda x: x[key]))
 
     def classify_frames(self):
         frames = self.get_frames()
@@ -81,9 +82,7 @@ class Job:
         with Pool() as pool:
             results = pool.starmap(self.classify_frame, frames)
 
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
-        return list(sorted(results, key=lambda x: x[0]))
+        return list(sorted(results, key = lambda x: x[0]))
 
     def score(self, confidence_dict):
         search_terms = self.settings['search']
