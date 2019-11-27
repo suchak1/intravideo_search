@@ -34,7 +34,6 @@ class Job:
             self.video_path = None
             self.settings = None
 
-        self.tmpCollector = set()
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
@@ -72,7 +71,9 @@ class Job:
         return frms
 
     def classify_frame(self, frame):
-        return (self.score(Worker().classify_img(frame[0])), frame[1])
+        time = frame [1]
+        img = frame[0]
+        return (time, self.score(Worker().classify_img(img)))
 
     def classify_frames(self):
         frames = self.get_frames()
@@ -81,8 +82,6 @@ class Job:
         with Pool() as pool:
             results = pool.map(self.classify_frame, frames)
 
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
@@ -90,7 +89,7 @@ class Job:
         max_score = 0
         for term in search_terms:
             max_score = max(max_score, confidence_dict.get(term, 0))
-        return max_score
+        return max_score / 100
 
     def has_valid_args_interpret_results(self, results, cutoff):
         # This is a very simple helper function which throws an exception
