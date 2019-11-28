@@ -5,6 +5,7 @@ import torch
 import sys
 import cv2
 import pickle
+import warnings
 from PIL import Image
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
@@ -65,8 +66,9 @@ class Job:
         video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
         success, frame = video.read()
         if not success:
-            raise ValueError(
+            warnings.warn(
                 f'This time ({timestamp} sec) does not exist in the video.')
+            return None
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         return (img, timestamp)
 
@@ -82,6 +84,7 @@ class Job:
         poll_times = list(range(0, runtime + poll, poll))
         timestamps = [time for time in poll_times if time <= runtime]
         frames = self.multi_map(self.get_frame, timestamps)
+        frames = [frame for frame in frames if frame]
         return frames
 
     def classify_frame(self, frame):
