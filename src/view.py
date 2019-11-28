@@ -3,6 +3,11 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 from playsound import playsound
 import os
+import subprocess
+import time
+import cv2
+from PIL import Image
+from model import Seer
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
@@ -118,12 +123,15 @@ class GUI:
 
         win.title("Intravideo Search")
         win.geometry("960x540")
+        win.resizable(0,0)
         win_header = Frame(win)
         win_header.pack()
         win_content = Frame(win)
         win_content.pack()
 
+
         #playsound('utils/TTFATF.mp3')
+        #subprocess.call(["afplay", "TTFATF.mp3"])
 
         lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
@@ -198,22 +206,9 @@ class GUI:
         entry1 = Entry(win_content, width=30)
         entry1.grid(sticky=W, column=1, row=7, pady=10)
 
-<<<<<<< HEAD
-        def entry1_delete():
-            entry1.delete(first=0, last=100)
 
-        def get_search_term():
-            my_string = entry1.get()
-            result = [x.strip() for x in my_string.split(',')]
-            self.settings['search'] = result
-
-        def display_settings(): #Or maybe display settings dynamically?
-            temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-            temp_lbl1.grid(sticky=W, column=0, row=95)
-=======
         def update_search_display():
             temp_lbl2.configure(text="Search: " + search_display_terms())
->>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
 
         def search_display_terms():
             str1 = ''
@@ -247,18 +242,11 @@ class GUI:
             result = [x.strip() for x in my_string.split(',')]
             self.settings['search'] = result
 
-<<<<<<< HEAD
-            temp_lbl2 = Label(win_content, text="Search: " + str1)
-            temp_lbl2.grid(sticky=W, column=0, row=96)
-            temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
-            temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
-=======
         def hide_settings():
             temp_lbl1.grid_remove()
             temp_lbl2.grid_remove()
             temp_lbl3.grid_remove()
             display_settings_button.configure(text="Display Settings", command=display_settings)
->>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
 
         def display_settings():
             display_settings_button.configure(text="Hide Settings", command=hide_settings)
@@ -286,13 +274,11 @@ class GUI:
             kill_button.grid(column=2, row=2)
 
         def run_the_job():
-<<<<<<< HEAD
-=======
             update_search_display()
->>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
             get_search_term()
             start_button.config(state="disabled")
             bl, msg = self.run_job()
+            display_captions(create_captions(create_frames()))
 
             if bl is False:
                 display_errors(str(bl), msg)
@@ -318,9 +304,58 @@ class GUI:
         start_button.grid(column=1, row = 93)
 
         ## Stuff to do: create a list of subclips, create a Seer Class
-        def give_captions():
+        def create_frames():
+            vidPath = self.video_path
+            poll = self.settings['poll']
+            count = 0
+            frms = []
+            video = cv2.VideoCapture(vidPath)
+            success = True
 
-            return True
+            while success:
+                timestamp = (count * poll)
+                video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+                success, frame = video.read()
+                if success:
+                    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                    frms.append((img, timestamp))
+                count += 1
+            return frms
+
+        def create_captions(frames):
+            captions = []
+            for frm in frames:
+                s = Seer()
+                caption = s.tell_us_oh_wise_one(frm[0])
+                captions.append((caption, frm[1]))
+            return captions
+
+        def display_captions(captions):
+            win2 = Tk()
+
+            win2.title("Possible Video Captions")
+            win2.geometry("480x270")
+            win2.resizable(0,0)
+            win2_header = Frame(win2)
+            win2_header.pack()
+            win2_content = Frame(win2)
+            win2_content.pack()
+
+            lbl1 = Label(win2_header, text= "What's in this video?", font=("Times New Roman", 25), anchor="w")
+            lbl1.grid(column=0, row=0, columnspan=3)
+
+            lbl2 = Label(win2_content, text="Below are some possible captions to describe the video.", justify=LEFT)
+            lbl2.grid(sticky = W, column=0,row=1)
+
+            count = 2
+            for c in captions:
+                temp_lbl = Label(win2_content, text = c[0], justify=LEFT)
+                temp_lbl.grid(sticky = W, column=0, row=count)
+                count = count + 1
+
+            win2.mainloop()
+            return 0
+
 
         win.mainloop()
         return 0
