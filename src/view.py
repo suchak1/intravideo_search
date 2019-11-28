@@ -145,10 +145,11 @@ class GUI:
 
         def add_youtube_link():
             self.video_path = entry0.get()
-            entry0.delete(first=0, last=100)
+            entry0.delete(first=0, last=1000)
+            temp_lbl3.configure(text="Video path: " + self.video_path)
 
         def del_youtube_link():
-            entry0.delete(first=0, last=100)
+            entry0.delete(first=0, last=1000)
 
         button0 = Button(win_content, text="Add", anchor='w', command=add_youtube_link)
         button0.grid(sticky=W, column=3, row=2)
@@ -343,8 +344,10 @@ class GUI:
             #maybe which settings are off?
 
         condition2 = os.path.isfile(path)
-        if condition2 is False and not  "youtube.com" in path:
+        if condition2 is False and not "youtube.com" in path:
             msg += "You entered an invalid file path. Please double check your input video and try again\n"
+        else:
+            condition2 = True
 
         if not condition1 or not condition2:
             return(False, msg)
