@@ -18,7 +18,7 @@
 - Within the GUI, upload a video file, or a valid YouTube link, select settings, and enter search terms. Display your video path, settings, and search terms by clicking "Display Settings". Start the search process by clicking the "Start" button. Close the window by clicking the x in the top left corner or by clicking "Kill this Window".
 
 ### How to Run Unit Tests
-- To run all tests, run
+- To run all tests, run:
     ```
     python -m pytest -vv
     ```
@@ -46,7 +46,7 @@
 
 ### (6) Who Did What
 - **Mahmoud:**
-    - Added a start and cancel button to the GUI and added the functions to connect the front end and the back end.
+    - Added a start and cancel button to the GUI and added the functions to connect the frontend and the backend.
     - Introduced functions to capture any errors from the code and display them to the user.
     - Worked with Jeremy to optimize the GUI and its features and worked with AK to make set_settings() produce robust error messages for the user.
 - **Rachel:**
@@ -55,7 +55,7 @@
 - **Jeremy:**
     - Fixed errors and optimized the GUI in order to improve testing and user experience, e.g. removing add/clear buttons (implementing comma separated search terms instead). Has also made the GUI look as good as possible with current knowledge of the GUI package.
     - Added the Seer class sentence caption to the GUI after the process has been started.
-    - Worked with Mahmoud to round out the front-end development and David and Krish to connect the front end with the backend.
+    - Worked with Mahmoud to round out the frontend development and David and Krish to connect the frontend with the backend.
 - **David:**
     - Implemented the Seer class. This is the captioning feature of the project (see New Features in Section (4) for more information).
 - **AK:**
