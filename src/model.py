@@ -76,13 +76,6 @@ class Job:
         return (time, self.score(Worker().classify_img(img)) / 100)
 
     def classify_frames(self):
-<<<<<<< HEAD
-        frames = self.get_frames()
-        results = [(t, self.score(Worker().classify_img(f))) for (f, t) in frames]
-        norm = 100
-        results = [(val / norm, t) for (val, t) in results]
-        return list(sorted(results, key=lambda x: x[1]))
-=======
         frames = self.get_frames()
 
         # multiprocessing
@@ -90,7 +83,6 @@ class Job:
             results = pool.map(self.classify_frame, frames)
 
         return list(sorted(results, key=lambda x: x[0]))
->>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
 
     def score(self, confidence_dict):
         search_terms = self.settings['search']
@@ -187,10 +179,6 @@ class Job:
                 endTime = (finalTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
-<<<<<<< HEAD
-        #print('interpret_results')
-=======
->>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
         return adjustedEndpoints
 
 
