@@ -73,15 +73,28 @@ class Job:
     def classify_frame(self, frame):
         time = frame [1]
         img = frame[0]
-        return (time, self.score(Worker().classify_img(img)) / 100)
+        classifications = Worker().classify_img(img)
+        for term in self.settings['search']:
+            if term in classifications:
+                print(f'{term} at {time}')
+        return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
 
         # multiprocessing
-        with Pool() as pool:
-            results = pool.map(self.classify_frame, frames)
-
+        # with Pool() as pool:
+        #     results = pool.map(self.classify_frame, frames)
+        results = []
+        for (f, t) in frames:
+            classifications = Worker().classify_img(f)
+            for term in self.settings['search']:
+                if term in classifications:
+                    print(f'{term} at {t} sec')
+            results.append(self.score(classifications))
+        # results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
+        norm = 100
+        results = [(t, val / norm) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):

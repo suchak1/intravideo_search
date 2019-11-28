@@ -119,7 +119,7 @@ class GUI:
         width = win.winfo_screenwidth()
         height = win.winfo_screenheight()
 
-        win.title("Intravideo Search")
+        win.title("IntraVideo Search")
         # set relative window size
         win_width = int(width // 2.5)
         win_height = int(height // 2)
@@ -131,7 +131,10 @@ class GUI:
         win_content = Frame(win)
         win_content.pack()
 
-        lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
+        # print(win.theme_names())
+        # ttk.theme_use('alt')
+
+        lbl1 = Label(win_header, text= "IntraVideo Search", font=("Times New Roman", 50), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
 
         lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
