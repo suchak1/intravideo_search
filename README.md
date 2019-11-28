@@ -38,7 +38,7 @@ pipreqs ./ --force
 
 - To run all tests, run
     ```
-    PYTHON=python ./test_suite
+    PYTHON=python ./test_suite.sh
     ```
     - where `python` is your python 3 installation (might be `python3` if you have more than one installation)
 - Note: to run a single test file, just append the test file path like so
