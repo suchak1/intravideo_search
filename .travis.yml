@@ -1,13 +1,12 @@
 language: python
 os:
     - linux
-    - osx
+    # - osx
+    - windows
 python: 3.7
 cache: pip
 install: pip install -r requirements.txt
-env:
-    - TEST_FILE=test_view.py
-    - TEST_FILE=test_model.py
-    - TEST_FILE=test_controller.py
 script:
-    - python -m pytest test/$TEST_FILE -vv
+    - python -m pytest test/test_view.py -vv
+    - python -m pytest test/test_model.py -vv
+    - python -m pytest test/test_controller.py -vv
