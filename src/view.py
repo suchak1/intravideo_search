@@ -68,7 +68,7 @@ class GUI:
         if len(extra) > 0:
             self.set_default_settings()
             return False
-
+        # values['runtime'] = int(values['runtime'])
         try:
             if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
                 raise TypeError
@@ -116,14 +116,26 @@ class GUI:
 
         win = Tk()
 
-        win.title("Intravideo Search")
-        win.geometry("960x540")
+        # get user screen size
+        width = win.winfo_screenwidth()
+        height = win.winfo_screenheight()
+
+        win.title("IntraVideo Search")
+        # set relative window size
+        win_width = int(width // 2.5)
+        win_height = int(height // 2)
+        win.geometry(f'{win_width}x{win_height}')
+        win.minsize(win_width, win_height)
+
         win_header = Frame(win)
         win_header.pack()
         win_content = Frame(win)
         win_content.pack()
 
-        lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
+        # print(win.theme_names())
+        # ttk.theme_use('alt')
+
+        lbl1 = Label(win_header, text= "IntraVideo Search", font=("Times New Roman", 50), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
 
         lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
@@ -318,7 +330,6 @@ class GUI:
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
-
 
         start_button = Button(win_content,text="Start", command=run_the_job)
         start_button.grid(column=1, row = 93)
