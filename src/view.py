@@ -115,8 +115,14 @@ class GUI:
 
         win = Tk()
 
+        # get user screen size
+        width = win.winfo_screenwidth()
+        height = win.winfo_screenheight()
+
         win.title("Intravideo Search")
-        win.geometry("960x540")
+        # set relative window size
+        win.geometry(f'{int(width // 2.5)}x{height // 2}')
+
         win_header = Frame(win)
         win_header.pack()
         win_content = Frame(win)
