@@ -1,16 +1,17 @@
 from controller import Worker
 import os
+import time
 import torch
 import sys
-sys.path.append('utils')
 import cv2
 import pickle
 from PIL import Image
-import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
+sys.path.append('utils')
+import my_pytube
 
-#from multiprocessing import Pool
 
 class Job:
 
@@ -27,16 +28,21 @@ class Job:
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
 
-            #self.video_path = settings['video']
+            # self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
 
+
     def do_the_job(self):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
+        mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
+        self.settings['runtime'] = mRuntime / 1000
         data = self.classify_frames()
-        results = self.interpret_results(data)
+        results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
 
     def get_frames(self):
@@ -46,33 +52,45 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+
         vidPath = self.video_path
         poll = self.settings['poll']
         count = 0
         frms = []
         video = cv2.VideoCapture(vidPath)
         success = True
+
         while success:
-            timestamp = (count*poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
-            success,frame = video.read()
+            timestamp = (count * poll)
+            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+            success, frame = video.read()
             if success:
-                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
-                try:
-                    f = Image.open('frame%d.jpg' % count) # make frame Image
-                    os.remove('frame%d.jpg' % count) # delete frame.jpg
-                    frms.append((f,timestamp))
-                except:
-                    raise NameError('getFrameError')
+                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                frms.append((img, timestamp))
             count += 1
         return frms
 
+    def classify_frame(self, frame):
+        time = frame [1]
+        img = frame[0]
+        return (time, self.score(Worker().classify_img(img)) / 100)
+
     def classify_frames(self):
+<<<<<<< HEAD
         frames = self.get_frames()
         results = [(t, self.score(Worker().classify_img(f))) for (f, t) in frames]
         norm = 100
         results = [(val / norm, t) for (val, t) in results]
         return list(sorted(results, key=lambda x: x[1]))
+=======
+        frames = self.get_frames()
+
+        # multiprocessing
+        with Pool() as pool:
+            results = pool.map(self.classify_frame, frames)
+
+        return list(sorted(results, key=lambda x: x[0]))
+>>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
 
     def score(self, confidence_dict):
         search_terms = self.settings['search']
@@ -169,7 +187,10 @@ class Job:
                 endTime = (finalTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
+<<<<<<< HEAD
         #print('interpret_results')
+=======
+>>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
         return adjustedEndpoints
 
 
@@ -214,7 +235,7 @@ class Job:
                     vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
                     vid_path = vid.download(output_path=folder_path)
                 except:
-                    continue
+                    time.sleep(5)
             if vid_path=='':
                 raise ValueError("Your video could not be downloaded: %s" % e)
         return vid_path

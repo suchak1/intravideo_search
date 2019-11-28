@@ -13,4 +13,9 @@ torchvision==0.4.2
 nltk==3.4.5
 numpy==1.17.4
 pickle-mixin==1.0.2
+<<<<<<< HEAD
 playsound
+=======
+setuptools==42.0.1
+cython==0.29.14
+>>>>>>> f2c7014d98ed12ef951262cf1fe4686901a00787
