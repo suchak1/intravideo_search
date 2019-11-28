@@ -73,7 +73,7 @@
 ### (7) Design/Unit Test Changes
 - **Rachel:** Changed get_from_yt() tests to check that program raises exception when given invalid youtube url.
 - **David:** Added some checks to Seer_init tests to check for new attributes added in implementation.
-- **AK*:** Changed the output of set_settings() to a tuple where the first value was the original return value, i.e. changed all the tests to check to see if the first item of the returned tuple was True or False, not the whole tuple.
+- **AK:** Changed the output of set_settings() to a tuple where the first value was the original return value, i.e. changed all the tests to check to see if the first item of the returned tuple was True or False, not the whole tuple.
 - **Krish:** For test_get_frames(), turned strict pixel equivalence test into a test making sure 95% of the pixels between 2 images have RGB values +/- 5 of each other. For test_get_related_words(), changed spaces in filenames and changed “waterfall” to “spring” for a single test because “waterfall” was not within the related words for the term “fountain.” All other tests cases were unchanged however, verifying the effectiveness of get_related_words().
 
 ### (8) Notes for TA
