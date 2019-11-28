@@ -34,6 +34,8 @@ class Job:
         else:
             self.video_path = None
             self.settings = None
+        # disable multiprocessing on mac os
+        self.multi = sys.platform == 'darwin'
 
 
     def do_the_job(self):
@@ -82,9 +84,12 @@ class Job:
     def classify_frames(self):
         frames = self.get_frames()
 
-        # multiprocessing
-        with Pool() as pool:
-            results = pool.map(self.classify_frame, frames)
+        if self.multi:
+            # multiprocessing
+            with Pool() as pool:
+                results = pool.map(self.classify_frame, frames)
+        else:
+            results = [(t, self.score(Worker().classify_img(f)) / 100) for (f, t) in frames]
 
         return list(sorted(results, key=lambda x: x[0]))
 
