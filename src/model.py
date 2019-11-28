@@ -3,15 +3,15 @@ import os
 import time
 import torch
 import sys
-sys.path.append('utils')
 import cv2
 import pickle
 from PIL import Image
-import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
+sys.path.append('utils')
+import my_pytube
 
-#from multiprocessing import Pool
 
 class Job:
 
@@ -28,21 +28,19 @@ class Job:
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
 
-            #self.video_path = settings['video']
+            # self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
 
-        self.tmpCollector = set()
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
-        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = mRuntime / 1000
-
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
@@ -72,15 +70,21 @@ class Job:
             count += 1
         return frms
 
+    def classify_frame(self, frame):
+        time = frame [1]
+        img = frame[0]
+        return (time, self.score(Worker().classify_img(img)) / 100)
+
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
+
+        # multiprocessing
+        with Pool() as pool:
+            results = pool.map(self.classify_frame, frames)
+
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
-        [self.tmpCollector.add(key) for key in confidence_dict.keys()]
         search_terms = self.settings['search']
         max_score = 0
         for term in search_terms:
