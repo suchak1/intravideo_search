@@ -276,6 +276,7 @@ def areImagesSame(im1, im2):
 # from list of Images to list of tuples of Images and timestamps
 def test_get_frames_poll_5():
     frames = example_job1.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     check.equal(len(frames), 2)
     # frame at 0 seconds of sample video
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
@@ -294,6 +295,7 @@ def test_get_frames_poll_5():
 
 def test_get_frames_poll_1():
     frames = example_job3.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     poll = example_job3.settings['poll']
     check.equal(len(frames), 6)
     # check frames against expected frame at each second (because poll = 1)
@@ -309,6 +311,7 @@ def test_get_frames_poll_1():
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     poll = example_job4.settings['poll']
     check.equal(len(frames), 4)
     # check frames against frame at 0,8,16,24 seconds (because poll = 8)

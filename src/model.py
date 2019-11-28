@@ -42,22 +42,20 @@ class Job:
         # to leverage multiprocessing to speed up the operation.
         # If unsuccessful, will default to nonconcurrent method (slow).
 
-        # if self.multi:
-        #     with Pool() as pool:
-        #         results = pool.map(fxn, arr)
-        #         pool.close()
-        #         pool.join()
-        #         return results
-        # else:
-        return [fxn(elem) for elem in arr if elem]
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+            return results
+        else:
+            return [fxn(elem) for elem in arr]
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = int(mRuntime // 1000)
-        print(mRuntime)
-        quit()
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
@@ -67,7 +65,8 @@ class Job:
         video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
         success, frame = video.read()
         if not success:
-            return None
+            raise ValueError(
+                f'This time ({timestamp} sec) does not exist in the video.')
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         return (img, timestamp)
 
@@ -80,9 +79,9 @@ class Job:
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
         poll = int(self.settings['poll'])
         runtime = int(self.settings['runtime'])
-        timestamps = list(range(0, runtime + poll + 1, poll))
+        poll_times = list(range(0, runtime + poll, poll))
+        timestamps = [time for time in poll_times if time <= runtime]
         frames = self.multi_map(self.get_frame, timestamps)
-        # return list(sorted(frames, key=lambda x: x[1]))
         return frames
 
     def classify_frame(self, frame):
