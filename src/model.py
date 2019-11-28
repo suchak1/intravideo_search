@@ -42,14 +42,14 @@ class Job:
         # to leverage multiprocessing to speed up the operation.
         # If unsuccessful, will default to nonconcurrent method (slow).
 
-        if self.multi:
-            with Pool() as pool:
-                results = pool.map(fxn, arr)
-                pool.close()
-                pool.join()
-                return results
-        else:
-            return [fxn(elem) for elem in arr]
+        # if self.multi:
+        #     with Pool() as pool:
+        #         results = pool.map(fxn, arr)
+        #         pool.close()
+        #         pool.join()
+        #         return results
+        # else:
+        return [fxn(elem) for elem in arr if elem]
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
@@ -66,6 +66,8 @@ class Job:
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
         success, frame = video.read()
+        if not success:
+            return None
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         return (img, timestamp)
 
@@ -76,10 +78,11 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
-        poll = self.settings['poll']
-        runtime = self.settings['runtime']
-        timestamps = list(range(0, runtime + poll, poll))
+        poll = int(self.settings['poll'])
+        runtime = int(self.settings['runtime'])
+        timestamps = list(range(0, runtime + poll + 1, poll))
         frames = self.multi_map(self.get_frame, timestamps)
+        # return list(sorted(frames, key=lambda x: x[1]))
         return frames
 
     def classify_frame(self, frame):

@@ -20,7 +20,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -33,7 +33,7 @@ example_parameters2 = {
         'poll': 4,
         'anti': 5,
         'search': ["rabbit"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -46,7 +46,7 @@ example_parameters3 = {
         'poll': 1,
         'anti': 3,
         'search': ["rock"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -59,7 +59,7 @@ example_parameters4 = {
         'poll': 8,
         'anti': 6,
         'search': ["water"],
-        'runtime':100.0
+        'runtime': 25.0
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
