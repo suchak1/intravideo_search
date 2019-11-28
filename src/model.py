@@ -71,7 +71,7 @@ class Job:
         return frms
 
     def classify_frame(self, frame):
-        time = frame [1]
+        time = frame[1]
         img = frame[0]
         return (time, self.score(Worker().classify_img(img)) / 100)
 
