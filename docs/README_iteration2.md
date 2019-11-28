@@ -70,7 +70,7 @@ Note: Make sure you specify the right python version when you make these command
     - Updated `get_frames()` implementation and testing from Iteration 1. Our previous implementation wrote opencv images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the opencv images straight to PIL images and store them in memory directly, without writing to the user’s disk.
     - Discussed with Rachel on handling updating `get_frames()` tests.
 - **Ralph:**
-    - Updated GUI
+    - Updated GUI by reorganizing the grid layout to be more intuitive, visually appealing, and easy to program, added toggling functionality to the `Display settings` button (now offering `Hide settings` when clicked), and made the displayed settings dynamically update when any constituent setting is changed (instead of only when `Display settings` is clicked). Worked alone on these changes, but collaborated with others (Jeremy, Krish, David) while hunting bugs and formulating details of backend implementation and frontend design.
 
 ### (7) Design/Unit Test Changes
 - **Rachel:** Changed `get_from_yt()` tests to check that program raises exception when given invalid youtube url.
