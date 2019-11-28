@@ -8,6 +8,7 @@ import pytest_check as check
 import filecmp
 sys.path.append('src')
 from controller import *  # nopep8
+from model import *  # nopep8
 
 
 def test_constructor():
@@ -56,6 +57,7 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
+    # model = Job().load_model()
     check.is_none(w.classify_img(None))
 
     for idx, name in enumerate(image_names):
