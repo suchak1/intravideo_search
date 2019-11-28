@@ -55,7 +55,7 @@ Note: Make sure you specify the right python version when you make these command
     - Discussed with Krish on handling updating `get_frames()` tests.
 - **Jeremy:**
     - Fixed errors and optimized the GUI in order to improve testing and user experience, e.g. removing add/clear buttons (implementing comma separated search terms instead). Has also made the GUI look as good as possible with current knowledge of the GUI package.
-    - Added the Seer class sentence caption to the GUI after the process has been started.
+    - Added the Seer class sentence caption to the GUI after the process has been started. Created a new window that gets the frames, sends them through the Seer model to get a caption for each polled frame, then displays them in a separate window.
     - Worked with Mahmoud to round out the frontend development and David and Krish to connect the frontend with the backend.
 - **David:**
     - Implemented the Seer class. This is the captioning feature of the project (see New Features in Section (4) for more information).
