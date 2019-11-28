@@ -37,15 +37,28 @@ class Job:
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
 
-
+    def try_multi(self, fxn, arr):
+        # Given a function and a list to iterate over, try_multi will attempt
+        # to leverage multiprocessing to speed up the operation.
+        # If unsuccessful, will default to nonconcurrent method (slow).
+        
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = int(mRuntime // 1000)
+        print(mRuntime)
+        quit()
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
+
+    def get_frame(self, timestamp):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+        success, frame = video.read()
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return (img, timestamp)
 
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
