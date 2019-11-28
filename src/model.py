@@ -62,12 +62,10 @@ class Job:
 
         while success:
             timestamp = (count * poll)
-            print(timestamp)
             video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
             success, frame = video.read()
             if success:
                 img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                # img.save(f'test/test{timestamp}.jpg')
                 frms.append((img, timestamp))
             count += 1
         return frms
@@ -78,7 +76,7 @@ class Job:
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
-                print(f'{term} at {time}')
+                print(f'{term} at {time} sec')
         return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
