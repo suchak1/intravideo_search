@@ -18,6 +18,42 @@ def test_constructor():
     check.is_true("make_clip" in dir(w))
 
 
+image_names = [
+    'banana',
+    'basketball',
+    'carton',
+    'cucumber',
+    'fountain',
+    'golden retriever',
+    'goldfish',
+    'passenger car',
+    'pop bottle',
+    'seashore',
+    'space shuttle',
+    'sports car',
+    'suit',
+    'tabby',
+    'volcano'
+]
+
+related = [
+    'plantain',
+    'nba',
+    'box',
+    'zucchini',
+    'spring',
+    'dog',
+    'carp',
+    'coach',
+    'soda',
+    'beach',
+    'spaceship',
+    'roadster',
+    'tuxedo',
+    'cat',
+    'lava'
+]
+
 def test_classify_img():
     image_dir = '/sampleImage/'
     # Changes to tests:
@@ -25,23 +61,7 @@ def test_classify_img():
     # since the model is only trained on 1000 object categories
     # we will create a helper function in the next iteration
     # to test for semantic simularity and get better search results
-    image_names = [
-        'banana',
-        'basketball',
-        'carton',
-        'cucumber',
-        'fountain',
-        'golden retriever',
-        'goldfish',
-        'passenger car',
-        'pop bottle',
-        'seashore',
-        'space shuttle',
-        'sports car',
-        'suit',
-        'tabby',
-        'volcano'
-    ]
+
     # Changes to tests:
     # wrong_names is a rotation of original image_names
     # as it is unlikely that basketball
@@ -62,33 +82,34 @@ def test_classify_img():
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
+        classifications = w.classify_img(img)
         # should all be true
         # (that 'banana' is in classification dict for 'banana.jpg' and so on)
-        check.is_in(name, w.classify_img(img))
+        check.is_in(name, classifications)
 
         # now let's try assertions that should definitely be wrong
         # (that 'volcano' is in the classification dict for 'banana.jpg')
-        check.is_not_in(wrong_names[idx], w.classify_img(img))
+        check.is_not_in(wrong_names[idx], classifications)
 
 
 def test_get_related_words():
     w = Worker()
+
+    originals = [name.replace(' ', '_') for name in image_names]
+    wrong_names = originals[1:] + originals[:1]
+
     check.equal({}, w.get_related_words(''))
-    check.is_in('plantain', w.get_related_words("banana"))
-    check.is_in('nba', w.get_related_words("basketball"))
-    check.is_in('box', w.get_related_words("carton"))
-    check.is_in('zucchini', w.get_related_words("cucumber"))
-    check.is_in('spring', w.get_related_words("fountain"))
-    check.is_in('dog', w.get_related_words("golden_retriever"))
-    check.is_in('carp', w.get_related_words("goldfish"))
-    check.is_in('coach', w.get_related_words("passenger_car"))
-    check.is_in('soda', w.get_related_words("pop_bottle"))
-    check.is_in('beach', w.get_related_words("seashore"))
-    check.is_in('spaceship', w.get_related_words("space_shuttle"))
-    check.is_in('roadster', w.get_related_words("sports_car"))
-    check.is_in('tuxedo', w.get_related_words("suit"))
-    check.is_in('cat', w.get_related_words("tabby"))
-    check.is_in('lava', w.get_related_words("volcano"))
+
+    for idx, name in enumerate(originals):
+        related_set = w.get_related_words(name)
+        # should all be true
+        # (that 'plantain' is in related words set for 'banana' and so on)
+
+        check.is_in(related[idx], related_set)
+
+        # now let's try assertions that should definitely be wrong
+        # (that 'lava' is in the related words set for 'banana')
+        check.is_not_in(wrong_names[idx], related_set)
 
 
 def test_make_clip_negative_time():
