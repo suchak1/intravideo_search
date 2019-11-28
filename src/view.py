@@ -66,7 +66,7 @@ class GUI:
         if len(extra) > 0:
             self.set_default_settings()
             return False
-
+        # values['runtime'] = int(values['runtime'])
         try:
             if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
                 raise TypeError
@@ -281,7 +281,7 @@ class GUI:
 
             if bl is False:
                 display_errors(str(bl), msg)
-
+                start_button.config(state="normal")
 
             else:
                 msg2 = "Job cancelled"
@@ -297,7 +297,6 @@ class GUI:
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
-            start_button.config(state="normal")
 
         start_button = Button(win_content,text="Start", command=run_the_job)
         start_button.grid(column=1, row = 93)

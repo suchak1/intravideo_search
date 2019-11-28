@@ -40,7 +40,7 @@ class Job:
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
-        self.settings['runtime'] = mRuntime / 1000
+        self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
@@ -67,13 +67,13 @@ class Job:
             success, frame = video.read()
             if success:
                 img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                img.save(f'test/test{timestamp}.jpg')
+                # img.save(f'test/test{timestamp}.jpg')
                 frms.append((img, timestamp))
             count += 1
         return frms
 
     def classify_frame(self, frame):
-        time = frame [1]
+        time = frame[1]
         img = frame[0]
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
