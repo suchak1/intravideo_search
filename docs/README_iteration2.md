@@ -9,6 +9,12 @@
     - Note: Python 3.7 and a Unix-based OS or Windows Subsystem for Linux (WSL) are required.
     - Troubleshooting: If you encounter the error *ERROR: Could not install packages due to an EnvironmentError*, try adding `sudo` to the command or installing in a fresh virtual environment.
 
+    If there is a problem installing `torch`, try this command:
+
+    ```python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html```
+
+    Then, install the rest of requirements as necessary.
+
 ### (2) How to Run Code
 - To start the GUI, run:
     ```
