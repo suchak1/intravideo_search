@@ -35,7 +35,7 @@ class Job:
             self.video_path = None
             self.settings = None
         # disable multiprocessing on mac os
-        self.multi = sys.platform == 'darwin'
+        self.multi = sys.platform != 'darwin'
 
 
     def do_the_job(self):

@@ -1,4 +1,4 @@
-from model import Job,Seer
+from model import Job, Seer
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from PIL import Image
@@ -32,32 +32,7 @@ class GUI:
         return {"video": self.video_path, "settings": self.settings}
 
     def set_settings(self, values, path):
-
-        #Sets the settings of the GUI and includes the video path file.
-
-        #values is a dictionary in the following format:
-        #        'conf': float,
-        #        'poll': int,
-        #        'anti': int,
-        #        'search': list of strings
-        #    }
-        #   'conf': confidence interval for image classification. Must be a value between 0 and 1
-        #    'poll': the framerate poll (frequency of frames to classify). Must be a value >= 0
-        #    'anti': the treshold for how long a clip can contain frames not containing the search question
-        #            (anything longer will be the bounds of the clip). Must be a value >= 0
-        #    'search': a list of search terms to use. Must contain at least one string.
-
-        # path is the video_input path
-
-        #if not os.path.exists(path):
-        #    print('Here1')
-            #self.set_default_settings()
-        #    return False
-        #print(len(values['search']))
-        #print(values['search'][0])
-        #print(path)
-        #print(type(path))
-
+        # Sets the settings of the GUI and includes the video path file.
         expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
         missing = [x for x in expected_keys if x not in values.keys()]
         if len(missing) > 0:
@@ -263,16 +238,16 @@ class GUI:
         kill_button.grid(column=0, row=100)
 
         '''
-        You would need to set up a way to select output clips and then hit a button which produces 
-        a caption for it. The process would be: get the path of the clip, extract a frame from the 
-        middle of the clip, call the tell_us_oh_wise_one(frame) method from the Seer object which 
+        You would need to set up a way to select output clips and then hit a button which produces
+        a caption for it. The process would be: get the path of the clip, extract a frame from the
+        middle of the clip, call the tell_us_oh_wise_one(frame) method from the Seer object which
         should be an attribute of GUI, and take the string it returns and print it to the GUI somewhere,
         '''
 
         temp_lbl4 = Label(win_content, text="", wraplength="200px", justify=CENTER)
         temp_lbl4.grid(column=3, row=100, columnspan=4)
         temp_lbl4.grid_remove()
-            
+
         def get_caption():
             filename = askopenfilename()
             caption_videopath = str(filename)

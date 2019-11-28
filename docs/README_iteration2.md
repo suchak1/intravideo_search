@@ -11,7 +11,9 @@
 
     If there is a problem installing `torch`, try this command:
 
-    ```python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html```
+    ```
+    python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+    ```
 
     Then, install the rest of requirements as necessary.
 
@@ -43,7 +45,8 @@ Note: Make sure you specify the right python version when you make these command
 
 ### (4) Acceptance tests
 
-Note: Multiprocessing does not currently work on Mac OS, only Linux and Windows Subsystem for Linux. This means the GUI will break after pressing start on Mac OS. We are working on a solution. In the meantime, the following works well on Linux (although uses 100% CPU due to multiprocessing).
+***Note:*** Multiprocessing/parallelized functions do not currently work on Mac OS, only Linux and Windows Subsystem for Linux. This means the GUI will break after pressing start on Mac OS. Our workaround is simply to disable multiprocessing if we detect Mac OS, and use slow/non-parallel versions of our functions. In the meantime, the following works efficiently on Linux (although uses 100% CPU due to multiprocessing).
+To speed up the processes but achieve less accurate results, increase the polling rate.
 
 Here are 3 acceptance tests:
 
@@ -121,3 +124,15 @@ First, run `python src/start.py` to start GUI. Then, choose the test video in `t
 
 ### (8) Notes for TA
 - Our prototype works in a limited capacity, restricted only by the accuracy of the API and ML models. For example, when searching the sample nature video (test/sampleVideo/SampleVideoNature.mp4), the only labels found by the classifier are ``{'ant', 'nematode', 'goldfish', 'leafhopper', 'lacewing', 'vine_snake', 'green_snake', 'common_newt', 'green_mamba', 'snail', 'eft', 'cucumber', 'slug', 'lycaenid', 'bell_pepper', 'wine_bottle', 'spider_web', 'Granny_Smith'}``. The problem here is that a user would be unlikely to search the video for terms like "bell pepper" or "lacewing", and would receive no clips if the search terms were "water" or "leaf". We have several rough ideas to work around this, e.g. query parent child relationships directly through API or utilize semantic similarity functionality to fetch words in the imagenet categories. As is, our implementation does what we intended from our proposal, however we'd ideally like to use the time before Milestone 5 to explore these rough ideas and potentially improve the program for the presentation.
+
+
+The following are additions left to complete before the Dec deadline.
+
+***TODO:***
+
+1. displaying captions for outputted clips - I believe this in progress by Michael or Jeremy?
+2. silence console warnings and display status bar for at least `classify_frames` and maybe `get_frames`
+    - Right now, everything runs one thread except for multiprocessing. We should spawn new thread for Job, so that GUI is still responsive after pressing start.
+3. switch GUI from Tk to ttk and use modern theme - aesthetic change
+4. parallelization / multiprocessing for `get_frames` - should be straightforward following the example of `classify_frames`
+    - will give next best speed boost after `classify_frames`

@@ -29,7 +29,9 @@ python -m pip install -r requirements.txt
 
 If there is a problem installing `torch`, try this command:
 
-```python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html```
+```
+python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
 
 Then, install the rest of requirements as necessary.
 
