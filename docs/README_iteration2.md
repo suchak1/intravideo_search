@@ -43,6 +43,42 @@ Note: Make sure you specify the right python version when you make these command
 
 ### (4) Acceptance tests
 
+Note: Multiprocessing does not currently work on Mac OS, only Linux and Windows Subsystem for Linux. This means the GUI will break after pressing start on Mac OS. We are working on a solution. In the meantime, the following works well on Linux (although uses 100% CPU due to multiprocessing).
+
+Here are 3 acceptance tests:
+
+First, run `python src/start.py` to start GUI. Then, choose the test video in `test/COSTA_RICA.mp4` using the `Upload` button. Input each of the following scenarios, and click Start. The output should match the expected outputs below.
+
+1. Test 1
+    - **Input:**
+        - *Confidence:* 30%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* beach
+
+    - **Output:**
+        - 3 clips in `test/` folder all of the beach
+2. Test 2
+    - **Input:**
+        - *Confidence:* 50%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* fountain
+
+    - **Output:**
+        - 3 clips in `test/` 1st and 3rd are waterfalls, 2nd clip is beach
+3. Test 3
+    - **Input:**
+        - *Confidence:* 80%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* frog
+
+    - **Output:**
+        - 5 clips in `test/` folder first 2 are frogs, middle is komodo dragon, last 2 are snakes
+
+
+
 ### (5) Text Description of Implementation
 - **For the GUI and Input/Output, and local data processing:** We have connected the frontend to the backend of our program. We have also updated the GUI to have a cleaner and easier-to-use interface and to improve user experience. Fundamental testing features like displaying the settings and path as well having a kill window button were improved and implemented. Also, the add and clear buttons were removed from the search bar and instead, whatever is in the search bar at the time of starting the processing will be the terms that are searched for. This allows the user to delete search terms after they have been typed in. The sentence captioning feature has been added to the GUI.
 - **For API interaction and Post-API Data Processing:** We have implemented a semantic similarity (matching search terms with related words) to improve/bolster the relevancy of outputted clips. This was implemented in the `get_related_words()` function. The function `classify_img()` leverages this function, which uses a related words API to build a more inclusive classification dictionary which goes to classify_frames. This means a user should be able to search for more than merely the 1000 predefined TestNet classifications/categories. For example, a classification label “sports_car” now will match user search terms for “car,” “roadster,” “ferrari,” “corvette,” etc.
