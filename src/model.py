@@ -62,10 +62,12 @@ class Job:
 
         while success:
             timestamp = (count * poll)
+            print(timestamp)
             video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
             success, frame = video.read()
             if success:
                 img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                img.save(f'test/test{timestamp}.jpg')
                 frms.append((img, timestamp))
             count += 1
         return frms
@@ -83,18 +85,9 @@ class Job:
         frames = self.get_frames()
 
         # multiprocessing
-        # with Pool() as pool:
-        #     results = pool.map(self.classify_frame, frames)
-        results = []
-        for (f, t) in frames:
-            classifications = Worker().classify_img(f)
-            for term in self.settings['search']:
-                if term in classifications:
-                    print(f'{term} at {t} sec')
-            results.append(self.score(classifications))
-        # results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
+        with Pool() as pool:
+            results = pool.map(self.classify_frame, frames)
+
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):

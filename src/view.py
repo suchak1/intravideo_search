@@ -281,7 +281,7 @@ class GUI:
 
             if bl is False:
                 display_errors(str(bl), msg)
-                start_button.config(state="normal")
+
 
             else:
                 msg2 = "Job cancelled"
@@ -297,7 +297,7 @@ class GUI:
                     cancel_button.config(state="disabled")
                 except e: #capture any errors that may occur
                     display_errors("Error", e)
-
+            start_button.config(state="normal")
 
         start_button = Button(win_content,text="Start", command=run_the_job)
         start_button.grid(column=1, row = 93)
