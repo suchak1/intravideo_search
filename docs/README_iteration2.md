@@ -17,9 +17,8 @@
     - Note: Use `python3` if multiple versions are installed on your system.
 - Within the GUI, upload a video file, or a valid YouTube link, select settings, and enter search terms. Display your video path, settings, and search terms by clicking "Display Settings". Start the search process by clicking the "Start" button. Close the window by clicking the x in the top left corner or by clicking "Kill this Window".
 
-### Testing
-
-- To run all tests, run
+### (3) Testing
+- To run all tests, run:
     ```
     PYTHON=python ./test_suite.sh
     ```
@@ -84,7 +83,7 @@ First, run `python src/start.py` to start GUI. Then, choose the test video in `t
 
 ### (6) Who Did What
 - **Mahmoud:**
-    - Added a start and cancel button to the GUI and added the functions to connect the front end and the back end.
+    - Added a start and cancel button to the GUI and added the functions to connect the frontend and the backend.
     - Introduced functions to capture any errors from the code and display them to the user.
     - Worked with Jeremy to optimize the GUI and its features and worked with AK to make `set_settings()` produce robust error messages for the user.
 - **Rachel:**
@@ -93,7 +92,7 @@ First, run `python src/start.py` to start GUI. Then, choose the test video in `t
 - **Jeremy:**
     - Fixed errors and optimized the GUI in order to improve testing and user experience, e.g. removing add/clear buttons (implementing comma separated search terms instead). Has also made the GUI look as good as possible with current knowledge of the GUI package.
     - Added the Seer class sentence caption to the GUI after the process has been started.
-    - Worked with Mahmoud to round out the front-end development and David and Krish to connect the front end with the backend.
+    - Worked with Mahmoud to round out the frontend development and David and Krish to connect the frontend with the backend.
 - **David:**
     - Implemented the Seer class. This is the captioning feature of the project (see New Features in Section (4) for more information).
 - **AK:**
@@ -106,12 +105,12 @@ First, run `python src/start.py` to start GUI. Then, choose the test video in `t
     - Updated `get_frames()` implementation and testing from Iteration 1. Our previous implementation wrote opencv images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the opencv images straight to PIL images and store them in memory directly, without writing to the user’s disk.
     - Discussed with Rachel on handling updating `get_frames()` tests.
 - **Ralph:**
-    - Updated GUI
+    - Updated GUI by reorganizing the grid layout to be more intuitive, visually appealing, and easy to program, added toggling functionality to the `Display settings` button (now offering `Hide settings` when clicked), and made the displayed settings dynamically update when any constituent setting is changed (instead of only when `Display settings` is clicked). Worked alone on these changes, but collaborated with others (Jeremy, Krish, David) while hunting bugs and formulating details of backend implementation and frontend design.
 
 ### (7) Design/Unit Test Changes
 - **Rachel:** Changed `get_from_yt()` tests to check that program raises exception when given invalid youtube url.
 - **David:** Added some checks to Seer_init tests to check for new attributes added in implementation.
-- **AK*:** Changed the output of `set_settings()` to a tuple where the first value was the original return value, i.e. changed all the tests to check to see if the first item of the returned tuple was True or False, not the whole tuple.
+- **AK:** Changed the output of `set_settings()` to a tuple where the first value was the original return value, i.e. changed all the tests to check to see if the first item of the returned tuple was True or False, not the whole tuple.
 - **Krish:** For `test_get_frames()`, turned strict pixel equivalence test into a test making sure 95% of the pixels between 2 images have RGB values +/- 5 of each other. For `test_get_related_words()`, changed spaces in filenames and changed “waterfall” to “spring” for a single test because “waterfall” was not within the related words for the term “fountain.” All other tests cases were unchanged however, verifying the effectiveness of `get_related_words()`.
 
 ### (8) Notes for TA
