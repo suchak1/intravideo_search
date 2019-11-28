@@ -22,12 +22,13 @@ class Worker:
         if not isinstance(img, Image.Image):
             return None
 
-        prediction = ImagePrediction()
-        prediction.setModelTypeAsSqueezeNet()
-        prediction.setModelPath('src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5')
-        prediction.loadModel()
+        model_path = 'src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5'
+        model = ImagePrediction()
+        model.setModelTypeAsSqueezeNet()
+        model.setModelPath(model_path)
+        model.loadModel()
 
-        predictions, probabilities = [elem[::-1] for elem in prediction.predictImage(img, input_type = 'array')]
+        predictions, probabilities = [elem[::-1] for elem in model.predictImage(img, input_type = 'array')]
         results = {}
 
         for idx, prediction in enumerate(predictions):
@@ -40,7 +41,6 @@ class Worker:
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
-
 
         # arbitrary number of related words to fetch
         # the higher the number, the more tolerant the classification results
