@@ -37,11 +37,20 @@ class Job:
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
 
-    def try_multi(self, fxn, arr):
-        # Given a function and a list to iterate over, try_multi will attempt
+    def multi_map(self, fxn, arr):
+        # Given a function and a list to iterate over, multi_map will attempt
         # to leverage multiprocessing to speed up the operation.
         # If unsuccessful, will default to nonconcurrent method (slow).
-        
+
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+                return results
+        else:
+            return [fxn(elem) for elem in arr]
+
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
@@ -67,27 +76,14 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
-
-        vidPath = self.video_path
         poll = self.settings['poll']
-        count = 0
-        frms = []
-        video = cv2.VideoCapture(vidPath)
-        success = True
-
-        while success:
-            timestamp = (count * poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
-            success, frame = video.read()
-            if success:
-                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                frms.append((img, timestamp))
-            count += 1
-        return frms
+        runtime = self.settings['runtime']
+        timestamps = list(range(0, runtime + poll, poll))
+        frames = self.multi_map(self.get_frame, timestamps)
+        return frames
 
     def classify_frame(self, frame):
-        time = frame[1]
-        img = frame[0]
+        img, time = frame
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
@@ -96,14 +92,7 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
-
-        if self.multi:
-            # multiprocessing
-            with Pool() as pool:
-                results = pool.map(self.classify_frame, frames)
-        else:
-            results = [(t, self.score(Worker().classify_img(f)) / 100) for (f, t) in frames]
-
+        results = self.multi_map(self.classify_frame, frames)
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
