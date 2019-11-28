@@ -121,7 +121,10 @@ class GUI:
 
         win.title("Intravideo Search")
         # set relative window size
-        win.geometry(f'{int(width // 2.5)}x{height // 2}')
+        win_width = int(width // 2.5)
+        win_height = int(height // 2)
+        win.geometry(f'{win_width}x{win_height}')
+        win.minsize(win_width, win_height)
 
         win_header = Frame(win)
         win_header.pack()
