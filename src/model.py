@@ -8,13 +8,9 @@ import pickle
 from PIL import Image
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
-from imageai.Prediction import ImagePrediction
 from multiprocessing import Pool
 sys.path.append('utils')
 import my_pytube
-from torchvision import transforms
-from seer_model import EncoderCNN, DecoderRNN
-from multiprocessing import Pool
 
 
 class Job:
@@ -49,14 +45,6 @@ class Job:
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
 
-    def load_model(self):
-        model_path = 'src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5'
-        model = ImagePrediction()
-        model.setModelTypeAsSqueezeNet()
-        model.setModelPath(model_path)
-        model.loadModel()
-        return model
-
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
         # where the first element is an Image of the frame from the video
@@ -89,10 +77,6 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
-        model = self.load_model()
-        settings = self.settings
-
-        preprocessed = [(*frame, model, settings) for frame in frames]
 
         # multiprocessing
         with Pool() as pool:

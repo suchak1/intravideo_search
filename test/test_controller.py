@@ -57,18 +57,18 @@ def test_classify_img():
     test_folder = os.path.dirname(full_path)
 
     w = Worker()
-    model = Job().load_model()
-    check.is_none(w.classify_img(None, model))
+    # model = Job().load_model()
+    check.is_none(w.classify_img(None))
 
     for idx, name in enumerate(image_names):
         img = Image.open(test_folder + image_dir + name + img_ext)
         # should all be true
         # (that 'banana' is in classification dict for 'banana.jpg' and so on)
-        check.is_in(name, w.classify_img(img, model))
+        check.is_in(name, w.classify_img(img))
 
         # now let's try assertions that should definitely be wrong
         # (that 'volcano' is in the classification dict for 'banana.jpg')
-        check.is_not_in(wrong_names[idx], w.classify_img(img, model))
+        check.is_not_in(wrong_names[idx], w.classify_img(img))
 
 
 def test_get_related_words():

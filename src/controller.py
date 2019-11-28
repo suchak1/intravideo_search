@@ -14,13 +14,19 @@ class Worker:
     def __init__(self):
         return
 
-    def classify_img(self, img, model):
+    def classify_img(self, img):
         # input: Image object to classify
         # output: classification results in dictionary
         # where key is object as a string
         # and value is confidence level scaled 0-100
         if not isinstance(img, Image.Image):
             return None
+
+        model_path = 'src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5'
+        model = ImagePrediction()
+        model.setModelTypeAsSqueezeNet()
+        model.setModelPath(model_path)
+        model.loadModel()
 
         predictions, probabilities = [elem[::-1] for elem in model.predictImage(img, input_type = 'array')]
         results = {}
