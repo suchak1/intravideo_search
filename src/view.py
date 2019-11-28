@@ -1,7 +1,8 @@
-from model import Job
+from model import Job,Seer
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import os
+from PIL import Image
+import os,cv2
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
@@ -16,6 +17,7 @@ class GUI:
 
         self.set_default_settings()
         self.job = None
+        self.seer = Seer()
         # this will be of class Job type, so not included in class diagram
         # but draw association arrow to Job Class
 
@@ -94,7 +96,6 @@ class GUI:
         # where values is a dictionary
         return True
 
-
     def start_job(self):
         try:
             self.job = Job(self.get_settings())
@@ -156,10 +157,11 @@ class GUI:
 
         def add_youtube_link():
             self.video_path = entry0.get()
-            entry0.delete(first=0, last=100)
+            entry0.delete(first=0, last=1000)
+            temp_lbl3.configure(text="Video path: " + self.video_path)
 
         def del_youtube_link():
-            entry0.delete(first=0, last=100)
+            entry0.delete(first=0, last=1000)
 
         button0 = Button(win_content, text="Add", anchor='w', command=add_youtube_link)
         button0.grid(sticky=W, column=3, row=2)
@@ -260,6 +262,37 @@ class GUI:
         kill_button = Button(win_content,text="Kill this window", command= win.destroy)
         kill_button.grid(column=0, row=100)
 
+        '''
+        You would need to set up a way to select output clips and then hit a button which produces 
+        a caption for it. The process would be: get the path of the clip, extract a frame from the 
+        middle of the clip, call the tell_us_oh_wise_one(frame) method from the Seer object which 
+        should be an attribute of GUI, and take the string it returns and print it to the GUI somewhere,
+        '''
+
+        temp_lbl4 = Label(win_content, text="", wraplength="200px", justify=CENTER)
+        temp_lbl4.grid(column=3, row=100, columnspan=4)
+        temp_lbl4.grid_remove()
+            
+        def get_caption():
+            filename = askopenfilename()
+            caption_videopath = str(filename)
+            vid = cv2.VideoCapture(caption_videopath)
+            total_frames = vid.get(7)
+            vid.set(1,total_frames/2)
+            ret, frame = vid.read()
+            frame = Image.fromarray(frame)
+            caption = self.seer.tell_us_oh_wise_one(frame)
+            temp_lbl4.configure(text=caption)
+            temp_lbl4.grid()
+            select_button.configure(text="Clear Caption", command=clear_caption)
+
+        def clear_caption():
+            temp_lbl4.grid_remove()
+            select_button.configure(text="Select Clip", command=get_caption)
+
+        select_button = Button(win_content, text="Select Clip", anchor="w" , command=get_caption)
+        select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
+
         def display_errors(title, message):
             w = Tk()
             w.title(title)
@@ -322,8 +355,10 @@ class GUI:
             #maybe which settings are off?
 
         condition2 = os.path.isfile(path)
-        if condition2 is False and not  "youtube.com" in path:
+        if condition2 is False and not "youtube.com" in path:
             msg += "You entered an invalid file path. Please double check your input video and try again\n"
+        else:
+            condition2 = True
 
         if not condition1 or not condition2:
             return(False, msg)
