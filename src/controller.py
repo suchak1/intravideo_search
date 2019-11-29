@@ -11,9 +11,8 @@ class Worker:
 
     "Controller - data requests"
 
-    def __init__(self, video_path):
-        if video_path:
-            self.video_path
+    def __init__(self, video_path=None):
+        self.video_path = video_path
 
     def classify_img(self, img):
         # input: Image object to classify
