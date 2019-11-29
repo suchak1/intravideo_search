@@ -111,11 +111,13 @@ class Application:
         # create root app
         self.main_window = builder.get_object('Main_Window', master)
 
+        # make gui unresizable
+        master.resizable(0, 0)
+
 
 def render():
     root = ThemedTk(theme='arc')
     app = Application(root)
-    width = win
     root.mainloop()
 
 render()
@@ -123,7 +125,6 @@ render()
         # win = ThemedTk(theme='arc')
         # s = Style()
     #     s.configure('TButton', anchor=CENTER)
-    #     s.configure('TLabel', font=('Helvetica', 100))
     #
     #     def _from_rgb(rgb):
     #         """translates an rgb tuple of int to a tkinter friendly color code
@@ -138,13 +139,6 @@ render()
     #     width = win.winfo_screenwidth()
     #     height = win.winfo_screenheight()
     #
-    #     win.title("IntraVideo Search")
-    #     # set relative window size
-    #     win_width = int(width // 2.5)
-    #     win_height = int(height // 2.5)
-    #     win.geometry(f'{win_width}x{win_height}')
-    #     win.minsize(win_width, win_height)
-    #     win.maxsize(win_width, win_height)
     #
     #     win_header = Frame(win)
     #     win_header.pack()
