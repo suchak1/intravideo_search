@@ -1,6 +1,7 @@
 from model import Job, Seer
 from tkinter import *
 from tkinter.ttk import *
+from ttkthemes import ThemedTk
 from tkinter.filedialog import askopenfilename
 from PIL import Image
 import os,cv2
@@ -90,9 +91,18 @@ class GUI:
         # display GUI, including text fields, choose file, and start button
         # also calls set_settings and start_job when start button is pressed
 
-        win = Tk()
+        win = ThemedTk(theme='arc')
         s = Style()
-        s.configure('TButton', anchor=W)
+        s.configure('TButton', anchor=CENTER)
+
+        def _from_rgb(rgb):
+            """translates an rgb tuple of int to a tkinter friendly color code
+            """
+            return "#%02x%02x%02x" % rgb
+
+
+        win['bg'] = _from_rgb((246, 246, 246))
+        # or use 'black' theme w rgb (66, 66, 66)
 
         # get user screen size
         width = win.winfo_screenwidth()
