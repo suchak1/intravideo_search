@@ -17,3 +17,4 @@ setuptools==42.0.1
 cython==0.29.14
 requests==2.22.0
 ttkthemes==2.4.0
+pygubu==0.9.8.4
