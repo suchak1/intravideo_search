@@ -1,5 +1,6 @@
 from model import Job, Seer
 from tkinter import *
+from tkinter.ttk import *
 from tkinter.filedialog import askopenfilename
 from PIL import Image
 import os,cv2
@@ -90,6 +91,8 @@ class GUI:
         # also calls set_settings and start_job when start button is pressed
 
         win = Tk()
+        s = Style()
+        s.configure('TButton', anchor=W)
 
         # get user screen size
         width = win.winfo_screenwidth()
@@ -121,7 +124,7 @@ class GUI:
             self.video_path = str(filename)
             temp_lbl3.configure(text="Video path: " + str(filename))
 
-        button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
+        button1 = Button(win_content, text="Upload", command=open_file)
         button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
 
         lbl0 = Label(win_content, text="or enter a YouTube link:", justify=LEFT)
@@ -138,22 +141,22 @@ class GUI:
         def del_youtube_link():
             entry0.delete(first=0, last=1000)
 
-        button0 = Button(win_content, text="Add", anchor='w', command=add_youtube_link)
+        button0 = Button(win_content, text="Add", command=add_youtube_link)
         button0.grid(sticky=W, column=3, row=2)
 
-        button00 = Button(win_content, text="Clear", anchor='w', command=del_youtube_link)
+        button00 = Button(win_content, text="Clear", command=del_youtube_link)
         button00.grid(sticky=W, column=4, row=2)
 
         def change_confidence(val):
-            self.settings['conf'] = float(val)/100
+            self.settings['conf'] = round(float(val)/100, 2)
             settings_display_update()
 
         def change_polling(val):
-            self.settings['poll'] = int(val)
+            self.settings['poll'] = int(float(val))
             settings_display_update()
 
         def change_anti(val):
-            self.settings['anti'] = int(val)
+            self.settings['anti'] = int(float(val))
             settings_display_update()
 
         lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
@@ -170,12 +173,12 @@ class GUI:
         slider2.set(self.settings['poll'])
         slider2.grid(sticky = W, column=1, row=4)
 
-        lbl5 = Label(win_content, text="Anti:", justify=LEFT)
-        lbl5.grid(sticky = E, column=0, row=5, padx=10)
-
-        slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
-        slider3.set(self.settings['anti'])
-        slider3.grid(sticky = W, column=1, row=5)
+        # lbl5 = Label(win_content, text="Anti:", justify=LEFT)
+        # lbl5.grid(sticky = E, column=0, row=5, padx=10)
+        #
+        # slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
+        # slider3.set(self.settings['anti'])
+        # slider3.grid(sticky = W, column=1, row=5)
 
 
         lbl6 = Label(win_content, text="Search Terms:", justify=LEFT)
@@ -265,7 +268,7 @@ class GUI:
             temp_lbl4.grid_remove()
             select_button.configure(text="Select Clip", command=get_caption)
 
-        select_button = Button(win_content, text="Select Clip", anchor="w" , command=get_caption)
+        select_button = Button(win_content, text="Select Clip", command=get_caption)
         select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
 
         def display_errors(title, message):
