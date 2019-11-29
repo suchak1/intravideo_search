@@ -193,9 +193,9 @@
             <property name="text" translatable="yes">Settings</property>
             <property name="width">200</property>
             <layout>
-              <property name="column">0</property>
+              <property name="column">1</property>
               <property name="propagate">True</property>
-              <property name="row">1</property>
+              <property name="row">0</property>
             </layout>
             <child>
               <object class="ttk.Scale" id="Conf_Scale">
@@ -273,9 +273,9 @@
                 <property name="takefocus">true</property>
                 <property name="text" translatable="yes">multiprocessing</property>
                 <layout>
-                  <property name="column">2</property>
+                  <property name="column">1</property>
                   <property name="propagate">True</property>
-                  <property name="row">7</property>
+                  <property name="row">34</property>
                 </layout>
               </object>
             </child>
@@ -329,13 +329,14 @@
             </child>
             <child>
               <object class="ttk.Button" id="Start">
+                <property name="command">display_errors</property>
                 <property name="state">normal</property>
                 <property name="text" translatable="yes">Start Job</property>
                 <property name="width">11</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="propagate">True</property>
-                  <property name="row">1</property>
+                  <property name="row">4</property>
                   <property name="sticky">e</property>
                 </layout>
               </object>
@@ -351,12 +352,49 @@
               </object>
             </child>
             <child>
+              <object class="ttk.Progressbar" id="Progressbar_2">
+                <property name="length">150</property>
+                <property name="orient">horizontal</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Progressbar" id="Progressbar_3">
+                <property name="length">150</property>
+                <property name="orient">horizontal</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">6</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="Captions">
+            <property name="borderwidth">25</property>
+            <property name="height">200</property>
+            <property name="labelanchor">nw</property>
+            <property name="takefocus">false</property>
+            <property name="text" translatable="yes">Captions</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+            <child>
               <object class="ttk.Button" id="Caption_Button">
                 <property name="command">handle_caption_btn</property>
                 <property name="text" translatable="yes">Choose Clip</property>
                 <property name="width">CA</property>
                 <layout>
-                  <property name="column">0</property>
+                  <property name="column">6</property>
                   <property name="propagate">True</property>
                   <property name="row">4</property>
                 </layout>
@@ -364,16 +402,17 @@
             </child>
             <child>
               <object class="tk.Text" id="Caption_Text">
+                <property name="blockcursor">true</property>
                 <property name="exportselection">true</property>
                 <property name="font">TkCaptionFont</property>
-                <property name="height">2</property>
+                <property name="height">4</property>
+                <property name="relief">flat</property>
                 <property name="state">disabled</property>
                 <property name="takefocus">true</property>
-                <property name="text" translatable="yes">Select a clip to receive 
-a caption here.</property>
-                <property name="undo">false</property>
-                <property name="width">25</property>
-                <property name="wrap">none</property>
+                <property name="text" translatable="yes">Select a video clip to receive a caption here.</property>
+                <property name="undo">true</property>
+                <property name="width">30</property>
+                <property name="wrap">word</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>

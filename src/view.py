@@ -214,6 +214,13 @@ class Application:
                 text.configure(state=tk.DISABLED)
                 btn['text'] = 'Clear Caption'
 
+    def display_errors(self):
+        w = tk.Tk()
+        w.title(title)
+        w.geometry("800x170")
+        content = Frame(w)
+        content.pack()
+
 def render():
     root = ThemedTk(theme='arc')
     app = Application(root)
