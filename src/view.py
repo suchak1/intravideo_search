@@ -147,6 +147,13 @@ class GUI:
         button00 = Button(win_content, text="Clear", command=del_youtube_link)
         button00.grid(sticky=W, column=4, row=2)
 
+        temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+        temp_lbl1.grid(sticky=W, column=0, row=95)
+        temp_lbl1.grid_remove()
+
+        def settings_display_update():
+            temp_lbl1.configure(text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
+
         def change_confidence(val):
             self.settings['conf'] = round(float(val)/100, 2)
             settings_display_update()
@@ -198,12 +205,8 @@ class GUI:
                     str1 += ', '
             return str1
 
-        def settings_display_update():
-            temp_lbl1.configure(text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
 
-        temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-        temp_lbl1.grid(sticky=W, column=0, row=95)
-        temp_lbl1.grid_remove()
+
 
         str1 = search_display_terms()
         temp_lbl2 = Label(win_content, text="Search: " + str1)
