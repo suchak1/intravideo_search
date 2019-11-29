@@ -113,52 +113,51 @@ def test_get_related_words():
 
 
 def test_make_clip_negative_time():
+    w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    w = Worker(videoPath)
     timestamp = (-1.0, 30.0)
     with pytest.raises(Exception):
-        w.make_clip(timestamp)
+        w.make_clip(timestamp, videoPath)
 
 
 def test_make_clip_out_of_order():
+    w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    w = Worker(videoPath)
     timestamp = (10.0, 5.0)
     with pytest.raises(Exception):
-        w.make_clip(timestamp)
+        w.make_clip(timestamp, videoPath)
 
 
 def test_make_clip_null_input():
+    w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    w1 = Worker(videoPath)
-    w2 = Worker()
     timestamp = None
     with pytest.raises(Exception):
-        w1.make_clip(timestamp)
+        w.make_clip(timestamp, videoPath)
     with pytest.raises(Exception):
-        w2.make_clip((0.0, 1.0))
+        w.make_clip((0.0, 1.0), None)
 
 
 def test_make_clip_zero_delta():
+    w = Worker()
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    w = Worker(videoPath)
     timestamp = (2.0, 2.0)
     with pytest.raises(Exception):
-        w.make_clip(timestamp)
+        w.make_clip(timestamp, videoPath)
 
 
 def test_make_clip_invalid_vidpath():
+    w = Worker()
     videoPath = "this/doesntExist.mp4"
-    w = Worker(videoPath)
     with pytest.raises(Exception):
-        w.make_clip((1.0, 2.0))
+        w.make_clip((1.0, 2.0), videoPath)
 
 
 def test_make_clip_no_frames():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
-    w = Worker(videoPath)
+    w = Worker()
     timestamp = (1.0, 1.0000001)
-    outVidPath = w.make_clip(timestamp)
+    outVidPath = w.make_clip(timestamp, videoPath)
     check.equal(outVidPath, '')
 
 
@@ -169,11 +168,11 @@ def test_make_clip_no_frames():
 def test_make_clip_full_video():
     videoPath = "test/sampleVideo/SampleVideo_1280x720_1mb.mp4"
     clipPath = "test/sampleVideo/testFull.mp4"
-    w = Worker(videoPath)
+    w = Worker()
     timestamp = (0.0, 100000000000.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], 5.0)
     clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
-    outVidPath = w.make_clip(timestamp)
+    outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
 
 
@@ -183,8 +182,8 @@ def test_make_clip_from_mid():
     timestamp = (1.0, 3.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], timestamp[1])
     clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
-    w = Worker(videoPath)
-    outVidPath = w.make_clip(timestamp)
+    w = Worker()
+    outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
 
 
@@ -194,8 +193,8 @@ def test_make_clip_from_start():
     timestamp = (0.0, 3.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], timestamp[1])
     clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
-    w = Worker(videoPath)
-    outVidPath = w.make_clip(timestamp)
+    w = Worker()
+    outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
 
 
@@ -205,8 +204,8 @@ def test_make_clip_from_end():
     timestamp = (3.0, 1000000.0)
     clip = VideoFileClip(videoPath).subclip(timestamp[0], 5.0)
     clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
-    w = Worker(videoPath)
-    outVidPath = w.make_clip(timestamp)
+    w = Worker()
+    outVidPath = w.make_clip(timestamp, videoPath)
     check.is_true(filecmp.cmp(clipPath, outVidPath))
 
 
