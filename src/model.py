@@ -9,6 +9,7 @@ import warnings
 from PIL import Image
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+from imageai.Prediction import ImagePrediction
 from multiprocessing import Pool
 sys.path.append('utils')
 import my_pytube
@@ -87,9 +88,18 @@ class Job:
         frames = [frame for frame in frames if frame]
         return frames
 
+    def load_model(self):
+        model_path = 'src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5'
+        model = ImagePrediction()
+        model.setModelTypeAsSqueezeNet()
+        model.setModelPath(model_path)
+        model.loadModel()
+        return model
+
     def classify_frame(self, frame):
         img, time = frame
-        classifications = Worker().classify_img(img)
+        model = self.model
+        classifications = Worker(model=model).classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
                 print(f'{term} at {time} sec')
@@ -97,6 +107,7 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
+        self.model = self.load_model()
         results = self.multi_map(self.classify_frame, frames)
         return list(sorted(results, key=lambda x: x[0]))
 

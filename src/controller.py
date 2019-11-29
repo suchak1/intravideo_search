@@ -3,7 +3,6 @@ import filecmp
 import os
 from moviepy.editor import VideoFileClip
 from PIL import Image
-from imageai.Prediction import ImagePrediction
 import requests
 
 
@@ -11,8 +10,9 @@ class Worker:
 
     "Controller - data requests"
 
-    def __init__(self, video_path=None):
+    def __init__(self, video_path=None, model=None):
         self.video_path = video_path
+        self.model = model
 
     def classify_img(self, img):
         # input: Image object to classify
@@ -21,13 +21,7 @@ class Worker:
         # and value is confidence level scaled 0-100
         if not isinstance(img, Image.Image):
             return None
-
-        model_path = 'src/squeezenet_weights_tf_dim_ordering_tf_kernels.h5'
-        model = ImagePrediction()
-        model.setModelTypeAsSqueezeNet()
-        model.setModelPath(model_path)
-        model.loadModel()
-
+        model = self.model
         predictions, probabilities = [elem[::-1] for elem in model.predictImage(img, input_type = 'array')]
         results = {}
 
