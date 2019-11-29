@@ -171,6 +171,12 @@ class Application:
         conf.configure(text=f'{int(val * 100)}%')
         self.settings['conf'] = val
 
+    def parse_search_terms(self):
+        search_entry = self.builder.get_object('Search_Entry')
+        terms = str(search_entry.get())
+        search = [term.strip() for term in terms]
+        self.settings['search'] = search
+
 def render():
     root = ThemedTk(theme='arc')
     app = Application(root)
@@ -179,84 +185,6 @@ def render():
 render()
 
 
-    #     temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-    #     temp_lbl1.grid(sticky=W, column=0, row=95)
-    #     temp_lbl1.grid_remove()
-    #
-    #
-    #     def change_confidence(val):
-    #         self.settings['conf'] = round(float(val)/100, 2)
-    #         settings_display_update()
-    #
-    #     def change_polling(val):
-    #         self.settings['poll'] = int(float(val))
-    #         settings_display_update()
-    #
-    #     slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
-    #     slider2.set(self.settings['poll'])
-    #     slider2.grid(sticky = W, column=1, row=4)
-    #
-    #     # lbl5 = Label(win_content, text="Anti:", justify=LEFT)
-    #     # lbl5.grid(sticky = E, column=0, row=5, padx=10)
-    #     #
-    #     # slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
-    #     # slider3.set(self.settings['anti'])
-    #     # slider3.grid(sticky = W, column=1, row=5)
-    #
-    #
-    #     lbl6 = Label(win_content, text="Search Terms:", justify=LEFT)
-    #     lbl6.grid(sticky=E, column=0, row=7, padx=10)
-    #
-    #     entry1 = Entry(win_content, width=30)
-    #     entry1.grid(sticky=W, column=1, row=7, pady=10)
-    #
-    #     def update_search_display():
-    #         temp_lbl2.configure(text="Search: " + search_display_terms())
-    #
-    #     def search_display_terms():
-    #         str1 = ''
-    #         for ele in self.settings['search']:
-    #             if ele and not ele.isspace():
-    #                 str1 += ele
-    #                 str1 += ', '
-    #         return str1
-    #
-    #
-    #
-    #
-    #     str1 = search_display_terms()
-    #     temp_lbl2 = Label(win_content, text="Search: " + str1)
-    #     temp_lbl2.grid(sticky=W, column=0, row=96)
-    #     temp_lbl2.grid_remove()
-    #
-    #     temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
-    #     temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
-    #     temp_lbl3.grid_remove()
-    #
-    #     def entry1_delete():
-    #         entry1.delete(first=0, last=100)
-    #
-    #     def get_search_term():
-    #         my_string = entry1.get()
-    #         result = [x.strip() for x in my_string.split(',')]
-    #         self.settings['search'] = result
-    #
-    #     def hide_settings():
-    #         temp_lbl1.grid_remove()
-    #         temp_lbl2.grid_remove()
-    #         temp_lbl3.grid_remove()
-    #         display_settings_button.configure(text="Display Settings", command=display_settings)
-    #
-    #     def display_settings():
-    #         display_settings_button.configure(text="Hide Settings", command=hide_settings)
-    #         temp_lbl1.grid()
-    #         temp_lbl2.grid()
-    #         temp_lbl3.grid()
-    #
-    #     display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
-    #     display_settings_button.grid(column=0, row=99, pady=10)
-    #
-    #
     #     '''
     #     You would need to set up a way to select output clips and then hit a button which produces
     #     a caption for it. The process would be: get the path of the clip, extract a frame from the
