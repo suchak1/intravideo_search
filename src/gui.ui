@@ -23,7 +23,6 @@
     </child>
     <child>
       <object class="ttk.Labelframe" id="Body">
-        <property name="cursor">arrow</property>
         <property name="height">200</property>
         <property name="labelanchor">nw</property>
         <property name="relief">raised</property>
@@ -36,7 +35,6 @@
         </layout>
         <child>
           <object class="ttk.Labelframe" id="Input">
-            <property name="cursor">arrow</property>
             <property name="height">200</property>
             <property name="labelanchor">nw</property>
             <property name="takefocus">false</property>
@@ -49,6 +47,8 @@
             </layout>
             <child>
               <object class="ttk.Button" id="Browse">
+                <property name="command">on_browse_click</property>
+                <property name="state">normal</property>
                 <property name="text" translatable="yes">Browse...</property>
                 <layout>
                   <property name="column">2</property>
@@ -80,10 +80,8 @@
             </child>
             <child>
               <object class="ttk.Entry" id="YouTube_Entry">
-                <property name="cursor">arrow</property>
                 <property name="exportselection">false</property>
                 <property name="state">normal</property>
-                <property name="takefocus">true</property>
                 <layout>
                   <property name="column">2</property>
                   <property name="propagate">True</property>
@@ -275,7 +273,6 @@
         </child>
         <child>
           <object class="ttk.Labelframe" id="Output">
-            <property name="cursor">arrow</property>
             <property name="height">200</property>
             <property name="labelanchor">nw</property>
             <property name="takefocus">false</property>

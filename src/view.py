@@ -104,15 +104,26 @@ class Application:
 
         # create Builder
         self.builder = builder = pygubu.Builder()
-
         # load ui
         builder.add_from_file('src/gui.ui')
-
         # create root app
         self.main_window = builder.get_object('Main_Window', master)
-
         # make gui unresizable
         master.resizable(0, 0)
+        # connect callbacks
+        builder.connect_callbacks(self)
+
+    def on_browse_click(self):
+        filename = str(askopenfilename())
+        if filename:
+            self.video_path = filename
+            self.change_path_label(filename)
+        print(f'Selected Video: {self.video_path}')
+
+    def change_path_label(self, filename):
+        path_label = self.builder.get_object('Path_Label')
+        file = os.path.basename(filename)
+        path_label.configure(text=file)
 
 
 def render():
@@ -122,45 +133,6 @@ def render():
 
 render()
 
-        # win = ThemedTk(theme='arc')
-        # s = Style()
-    #     s.configure('TButton', anchor=CENTER)
-    #
-    #     def _from_rgb(rgb):
-    #         """translates an rgb tuple of int to a tkinter friendly color code
-    #         """
-    #         return "#%02x%02x%02x" % rgb
-    #
-    #
-    #     win['bg'] = _from_rgb((246, 246, 246))
-    #     # or use 'black' theme w rgb (66, 66, 66)
-    #
-    #     # get user screen size
-    #     width = win.winfo_screenwidth()
-    #     height = win.winfo_screenheight()
-    #
-    #
-    #     win_header = Frame(win)
-    #     win_header.pack()
-    #     win_content = Frame(win)
-    #     win_content.pack()
-    #
-    #     # print(win.theme_names())
-    #     # ttk.theme_use('alt')
-    #
-    #     lbl1 = Label(win_header, text= "IntraVideo Search", font=("Lucida Console", 50, "bold"), anchor="w")
-    #     lbl1.grid(column=0, row=0, columnspan=3)
-    #
-    #     lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
-    #     lbl2.grid(sticky = W, column=0,row=1)
-    #
-    #     def open_file():
-    #         filename = askopenfilename()
-    #         self.video_path = str(filename)
-    #         temp_lbl3.configure(text="Video path: " + str(filename))
-    #
-    #     button1 = Button(win_content, text="Upload", command=open_file)
-    #     button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
     #
     #     lbl0 = Label(win_content, text="or enter a YouTube link:", justify=LEFT)
     #     lbl0.grid(sticky = W, column=0,row=2)
