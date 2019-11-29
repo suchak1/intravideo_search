@@ -11,8 +11,9 @@ class Worker:
 
     "Controller - data requests"
 
-    def __init__(self):
-        return
+    def __init__(self, video_path):
+        if video_path:
+            self.video_path
 
     def classify_img(self, img):
         # input: Image object to classify
@@ -58,12 +59,13 @@ class Worker:
         related.update(extra)
         return related
 
-    def make_clip(self, timestamp, path, outputPath=None):
+    def make_clip(self, timestamp, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
         #       path: (string)"path/to/input/video.mp4"
         #       outputPath: (string) "path/to/destination/video.mp4"
 
         # Check for valid args
+        path = self.video_path
         if isinstance(timestamp, type(None)) or isinstance(path, type(None)) \
                                              or isinstance(timestamp[0], type(None)) \
                                              or isinstance(timestamp[1], type(None)):
