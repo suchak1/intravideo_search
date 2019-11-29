@@ -94,6 +94,7 @@ class GUI:
         win = ThemedTk(theme='arc')
         s = Style()
         s.configure('TButton', anchor=CENTER)
+        s.configure('TLabel', font=('Helvetica', 100))
 
         def _from_rgb(rgb):
             """translates an rgb tuple of int to a tkinter friendly color code
@@ -111,9 +112,10 @@ class GUI:
         win.title("IntraVideo Search")
         # set relative window size
         win_width = int(width // 2.5)
-        win_height = int(height // 2)
+        win_height = int(height // 2.5)
         win.geometry(f'{win_width}x{win_height}')
         win.minsize(win_width, win_height)
+        win.maxsize(win_width, win_height)
 
         win_header = Frame(win)
         win_header.pack()
@@ -123,7 +125,7 @@ class GUI:
         # print(win.theme_names())
         # ttk.theme_use('alt')
 
-        lbl1 = Label(win_header, text= "IntraVideo Search", font=("Times New Roman", 50), anchor="w")
+        lbl1 = Label(win_header, text= "IntraVideo Search", font=("Lucida Console", 50, "bold"), anchor="w")
         lbl1.grid(column=0, row=0, columnspan=3)
 
         lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
@@ -176,14 +178,14 @@ class GUI:
             self.settings['anti'] = int(float(val))
             settings_display_update()
 
-        lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
+        lbl3 = Label(win_content, text="Confidence (%):", justify=LEFT)
         lbl3.grid(sticky = E, column=0, row=3, padx=10)
 
         slider1 = Scale(win_content, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
         slider1.set(self.settings['conf']*100)
         slider1.grid(sticky = W, column=1, row=3)
 
-        lbl4 = Label(win_content, text="Polling Rate:", justify=LEFT)
+        lbl4 = Label(win_content, text="Polling Rate (sec):", justify=LEFT)
         lbl4.grid(sticky = E, column=0, row=4, padx=10)
 
         slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
@@ -250,8 +252,6 @@ class GUI:
         display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
         display_settings_button.grid(column=0, row=99, pady=10)
 
-        kill_button = Button(win_content,text="Kill this window", command= win.destroy)
-        kill_button.grid(column=0, row=100)
 
         '''
         You would need to set up a way to select output clips and then hit a button which produces
@@ -279,9 +279,9 @@ class GUI:
 
         def clear_caption():
             temp_lbl4.grid_remove()
-            select_button.configure(text="Select Clip", command=get_caption)
+            select_button.configure(text="Select Clip to Caption", command=get_caption)
 
-        select_button = Button(win_content, text="Select Clip", command=get_caption)
+        select_button = Button(win_content, text="Select Clip to Caption", command=get_caption)
         select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
 
         def display_errors(title, message):
@@ -294,8 +294,6 @@ class GUI:
             lbl = Label(content, text=message, font=("Times New Roman", 14), justify=LEFT)
             lbl.grid(column = 0, row = 0, columnspan=5)
 
-            kill_button = Button(content,text="Ok", command= w.destroy)
-            kill_button.grid(column=2, row=2)
 
         def run_the_job():
             update_search_display()
