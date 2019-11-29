@@ -111,6 +111,8 @@ class Application:
             'runtime': 1
         }
 
+        self.seer = Seer()
+
         # create builder
         self.builder = builder = pygubu.Builder()
         # load ui
@@ -150,8 +152,7 @@ class Application:
 
     def del_youtube_link(self):
         yt_entry = self.builder.get_object('YouTube_Entry')
-        end = len(str(yt_entry.get()))
-        yt_entry.delete(0, end)
+        yt_entry.delete(0, tk.END)
         if self.check_yt_link(self.video_path):
             self.video_path = None
             self.change_path_label('None')
@@ -176,6 +177,42 @@ class Application:
         terms = str(search_entry.get())
         search = [term.strip() for term in terms]
         self.settings['search'] = search
+        print(search)
+
+    # need to add handler for multiprocessing checkmark
+    # and make multi attribute for job that is true by default
+
+    def handle_caption_btn(self):
+        btn = self.builder.get_object('Caption_Button')
+        text = self.builder.get_object('Caption_Text')
+        if btn['text'] == 'Choose Clip':
+            self.get_caption(btn, text)
+        else:
+            self.clear_caption(btn, text)
+
+    def clear_caption(self, btn, text):
+        text.configure(state=tk.NORMAL)
+        text.delete(1.0, tk.END)
+        text.configure(state=tk.DISABLED)
+        btn['text'] = 'Choose Clip'
+
+    def get_caption(self, btn, text):
+        filename = str(askopenfilename())
+        if filename:
+            video = cv2.VideoCapture(filename)
+            total_frames = video.get(7)
+            video.set(1, total_frames / 2)
+            ret, frame = video.read()
+            if ret:
+                frame = Image.fromarray(frame)
+                caption = str(self.seer.tell_us_oh_wise_one(frame))
+                mid = int(len(caption) // 2)
+                wrapped = caption[:mid] + '-\n' + caption[mid:]
+                text.configure(state=tk.NORMAL)
+                text.delete(1.0, tk.END)
+                text.insert(1.0, wrapped)
+                text.configure(state=tk.DISABLED)
+                btn['text'] = 'Clear Caption'
 
 def render():
     root = ThemedTk(theme='arc')
@@ -185,34 +222,6 @@ def render():
 render()
 
 
-    #     '''
-    #     You would need to set up a way to select output clips and then hit a button which produces
-    #     a caption for it. The process would be: get the path of the clip, extract a frame from the
-    #     middle of the clip, call the tell_us_oh_wise_one(frame) method from the Seer object which
-    #     should be an attribute of GUI, and take the string it returns and print it to the GUI somewhere,
-    #     '''
-    #
-    #     temp_lbl4 = Label(win_content, text="", wraplength="200px", justify=CENTER)
-    #     temp_lbl4.grid(column=3, row=100, columnspan=4)
-    #     temp_lbl4.grid_remove()
-    #
-    #     def get_caption():
-    #         filename = askopenfilename()
-    #         caption_videopath = str(filename)
-    #         vid = cv2.VideoCapture(caption_videopath)
-    #         total_frames = vid.get(7)
-    #         vid.set(1,total_frames/2)
-    #         ret, frame = vid.read()
-    #         frame = Image.fromarray(frame)
-    #         caption = self.seer.tell_us_oh_wise_one(frame)
-    #         temp_lbl4.configure(text=caption)
-    #         temp_lbl4.grid()
-    #         select_button.configure(text="Clear Caption", command=clear_caption)
-    #
-    #     def clear_caption():
-    #         temp_lbl4.grid_remove()
-    #         select_button.configure(text="Select Clip to Caption", command=get_caption)
-    #
     #     select_button = Button(win_content, text="Select Clip to Caption", command=get_caption)
     #     select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
     #

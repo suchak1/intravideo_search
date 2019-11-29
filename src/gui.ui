@@ -352,7 +352,9 @@
             </child>
             <child>
               <object class="ttk.Button" id="Caption_Button">
+                <property name="command">handle_caption_btn</property>
                 <property name="text" translatable="yes">Choose Clip</property>
+                <property name="width">CA</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="propagate">True</property>
@@ -365,6 +367,7 @@
                 <property name="exportselection">true</property>
                 <property name="font">TkCaptionFont</property>
                 <property name="height">2</property>
+                <property name="state">disabled</property>
                 <property name="takefocus">true</property>
                 <property name="text" translatable="yes">Select a clip to receive 
 a caption here.</property>
