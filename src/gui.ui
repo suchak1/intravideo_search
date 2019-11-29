@@ -108,6 +108,7 @@
             </child>
             <child>
               <object class="ttk.Button" id="Add">
+                <property name="command">add_youtube_link</property>
                 <property name="text" translatable="yes">Add</property>
                 <layout>
                   <property name="column">0</property>
@@ -130,6 +131,7 @@
             </child>
             <child>
               <object class="ttk.Button" id="Clear">
+                <property name="command">del_youtube_link</property>
                 <property name="text" translatable="yes">Clear</property>
                 <layout>
                   <property name="column">2</property>
@@ -197,7 +199,11 @@
             </layout>
             <child>
               <object class="ttk.Scale" id="Conf_Scale">
+                <property name="command">change_conf</property>
+                <property name="from_">0</property>
                 <property name="orient">horizontal</property>
+                <property name="to">100</property>
+                <property name="value">50</property>
                 <layout>
                   <property name="column">2</property>
                   <property name="propagate">True</property>
@@ -207,7 +213,11 @@
             </child>
             <child>
               <object class="ttk.Scale" id="Poll_Scale">
+                <property name="command">change_poll</property>
+                <property name="from_">0</property>
                 <property name="orient">horizontal</property>
+                <property name="to">60</property>
+                <property name="value">5</property>
                 <layout>
                   <property name="column">2</property>
                   <property name="propagate">True</property>
@@ -217,6 +227,8 @@
             </child>
             <child>
               <object class="ttk.Label" id="Conf_Label">
+                <property name="anchor">w</property>
+                <property name="justify">center</property>
                 <property name="text" translatable="yes">Confidence (%):</property>
                 <layout>
                   <property name="column">1</property>
@@ -237,7 +249,7 @@
             </child>
             <child>
               <object class="ttk.Label" id="Conf_Level">
-                <property name="text" translatable="yes">98%</property>
+                <property name="text" translatable="yes">50%</property>
                 <layout>
                   <property name="column">3</property>
                   <property name="propagate">True</property>
@@ -247,7 +259,7 @@
             </child>
             <child>
               <object class="ttk.Label" id="Poll_Num">
-                <property name="text" translatable="yes">200 sec</property>
+                <property name="text" translatable="yes">5 sec</property>
                 <layout>
                   <property name="column">3</property>
                   <property name="propagate">True</property>
@@ -307,6 +319,7 @@
               <object class="ttk.Progressbar" id="Progressbar_1">
                 <property name="length">150</property>
                 <property name="orient">horizontal</property>
+                <property name="value">64</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>

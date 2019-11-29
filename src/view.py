@@ -102,7 +102,16 @@ class GUI:
 class Application:
     def __init__(self, master):
 
-        # create Builder
+        # default settings
+        self.settings = {
+            'poll': 5,
+            'anti': 5,
+            'conf': .5,
+            'search': [],
+            'runtime': 1
+        }
+
+        # create builder
         self.builder = builder = pygubu.Builder()
         # load ui
         builder.add_from_file('src/gui.ui')
@@ -125,6 +134,42 @@ class Application:
         file = os.path.basename(filename)
         path_label.configure(text=file)
 
+    def check_yt_link(self, link):
+        return 'youtube.com' in link or 'youtu.be/' in link
+
+    def add_youtube_link(self):
+        yt_entry = self.builder.get_object('YouTube_Entry')
+        link = str(yt_entry.get()).strip()
+        if self.check_yt_link(link):
+            self.video_path = link
+            self.change_path_label(link)
+        else:
+            print('Not a valid YouTube link')
+            return
+        print(f'Selected Video: {self.video_path}')
+
+    def del_youtube_link(self):
+        yt_entry = self.builder.get_object('YouTube_Entry')
+        end = len(str(yt_entry.get()))
+        yt_entry.delete(0, end)
+        if self.check_yt_link(self.video_path):
+            self.video_path = None
+            self.change_path_label('None')
+            print('YouTube link cleared from job.')
+        else:
+            print('YouTube link cleared from entry field.')
+
+    def change_poll(self, val):
+        val = int(float(val))
+        poll = self.builder.get_object('Poll_Num')
+        poll.configure(text=f'{val} sec')
+        self.settings['poll'] = val
+
+    def change_conf(self, val):
+        val = round(float(val) / 100, 2)
+        conf = self.builder.get_object('Conf_Level')
+        conf.configure(text=f'{int(val * 100)}%')
+        self.settings['conf'] = val
 
 def render():
     root = ThemedTk(theme='arc')
@@ -133,33 +178,11 @@ def render():
 
 render()
 
-    #
-    #     lbl0 = Label(win_content, text="or enter a YouTube link:", justify=LEFT)
-    #     lbl0.grid(sticky = W, column=0,row=2)
-    #
-    #     entry0 = Entry(win_content, width=30)
-    #     entry0.grid(sticky=W, column=1, row=2, pady=10)
-    #
-    #     def add_youtube_link():
-    #         self.video_path = entry0.get()
-    #         entry0.delete(first=0, last=1000)
-    #         temp_lbl3.configure(text="Video path: " + self.video_path)
-    #
-    #     def del_youtube_link():
-    #         entry0.delete(first=0, last=1000)
-    #
-    #     button0 = Button(win_content, text="Add", command=add_youtube_link)
-    #     button0.grid(sticky=W, column=3, row=2)
-    #
-    #     button00 = Button(win_content, text="Clear", command=del_youtube_link)
-    #     button00.grid(sticky=W, column=4, row=2)
-    #
+
     #     temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
     #     temp_lbl1.grid(sticky=W, column=0, row=95)
     #     temp_lbl1.grid_remove()
     #
-    #     def settings_display_update():
-    #         temp_lbl1.configure(text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
     #
     #     def change_confidence(val):
     #         self.settings['conf'] = round(float(val)/100, 2)
@@ -168,20 +191,6 @@ render()
     #     def change_polling(val):
     #         self.settings['poll'] = int(float(val))
     #         settings_display_update()
-    #
-    #     def change_anti(val):
-    #         self.settings['anti'] = int(float(val))
-    #         settings_display_update()
-    #
-    #     lbl3 = Label(win_content, text="Confidence (%):", justify=LEFT)
-    #     lbl3.grid(sticky = E, column=0, row=3, padx=10)
-    #
-    #     slider1 = Scale(win_content, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
-    #     slider1.set(self.settings['conf']*100)
-    #     slider1.grid(sticky = W, column=1, row=3)
-    #
-    #     lbl4 = Label(win_content, text="Polling Rate (sec):", justify=LEFT)
-    #     lbl4.grid(sticky = E, column=0, row=4, padx=10)
     #
     #     slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
     #     slider2.set(self.settings['poll'])

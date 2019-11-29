@@ -19,7 +19,7 @@ class Job:
 
     def __init__(self, settings):
         if not isinstance(settings, type(None)):
-            if 'youtube.com' in settings['video']: # if given YouTube URL
+            if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
                 yt_vid_path = self.get_from_yt(settings['video'])
                 if not yt_vid_path: # if empty string
                     self.video_path = settings['video']
