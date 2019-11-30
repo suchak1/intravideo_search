@@ -3,15 +3,16 @@ import os
 import time
 import torch
 import sys
-sys.path.append('utils')
 import cv2
 import pickle
+import warnings
 from PIL import Image
-import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
+sys.path.append('utils')
+import my_pytube
 
-#from multiprocessing import Pool
 
 class Job:
 
@@ -28,24 +29,48 @@ class Job:
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
 
-            #self.video_path = settings['video']
+            # self.video_path = settings['video']
             self.settings = settings['settings']
             # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
+        # disable multiprocessing on mac os
+        self.multi = sys.platform != 'darwin'
 
-        self.tmpCollector = set()
+    def multi_map(self, fxn, arr):
+        # Given a function and a list to iterate over, multi_map will attempt
+        # to leverage multiprocessing to speed up the operation.
+        # If unsuccessful, will default to nonconcurrent method (slow).
+
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+            return results
+        else:
+            return [fxn(elem) for elem in arr]
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
-        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
-        self.settings['runtime'] = mRuntime / 1000
-
+        self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
+
+    def get_frame(self, timestamp):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+        success, frame = video.read()
+        if not success:
+            warnings.warn(
+                f'This time ({timestamp} sec) does not exist in the video.')
+            return None
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return (img, timestamp)
 
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
@@ -54,33 +79,28 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+        poll = int(self.settings['poll'])
+        runtime = int(self.settings['runtime'])
+        poll_times = list(range(0, runtime + poll, poll))
+        timestamps = [time for time in poll_times if time <= runtime]
+        frames = self.multi_map(self.get_frame, timestamps)
+        frames = [frame for frame in frames if frame]
+        return frames
 
-        vidPath = self.video_path
-        poll = self.settings['poll']
-        count = 0
-        frms = []
-        video = cv2.VideoCapture(vidPath)
-        success = True
-
-        while success:
-            timestamp = (count * poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
-            success, frame = video.read()
-            if success:
-                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                frms.append((img, timestamp))
-            count += 1
-        return frms
+    def classify_frame(self, frame):
+        img, time = frame
+        classifications = Worker().classify_img(img)
+        for term in self.settings['search']:
+            if term in classifications:
+                print(f'{term} at {time} sec')
+        return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
+        results = self.multi_map(self.classify_frame, frames)
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
-        [self.tmpCollector.add(key) for key in confidence_dict.keys()]
         search_terms = self.settings['search']
         max_score = 0
         for term in search_terms:
@@ -179,15 +199,8 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        #with Pool() as pool:
-        #    v = self.video_path
-        #    args_list = [(t, v) for t in timestamps]
-        #    map_results = pool.starmap(Worker().make_clip, args_list)
-
-        #return map_results
-        # multiprocessing is running into issues with shared resources
-        v = self.video_path
-        return [Worker().make_clip(t, v) for t in timestamps]
+        return timestamps and self.multi_map(
+            Worker(self.video_path).make_clip, timestamps)
 
 
     def kill(self):

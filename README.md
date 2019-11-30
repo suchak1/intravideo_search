@@ -27,6 +27,14 @@ To install the necessary packages, simply run:
 python -m pip install -r requirements.txt
 ```
 
+If there is a problem installing `torch`, try this command:
+
+```
+python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
+
+Then, install the rest of requirements as necessary.
+
 ### New Packages
 
 To remake the `requirements.txt` file, run:
@@ -38,10 +46,9 @@ pipreqs ./ --force
 
 - To run all tests, run
     ```
-    python -m pytest -vv
+    PYTHON=python ./test_suite.sh
     ```
-    - `-vv` ensure verbose output
-    - if there is a module import error, run `python -m pytest -vv`
+    - where `python` is your python 3 installation (might be `python3` if you have more than one installation)
 - Note: to run a single test file, just append the test file path like so
     ```
     python -m pytest test/test_controller.py -vv
