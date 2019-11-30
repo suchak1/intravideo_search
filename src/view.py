@@ -19,9 +19,6 @@ class GUI:
     "Views - everything user sees"
 
     def __init__(self, master=None):
-        # needed for test runs
-        if not master:
-            master = ThemedTk(theme='arc')
 
         # default settings
         self.set_default_settings()
@@ -34,11 +31,12 @@ class GUI:
         # load ui
         builder.add_from_file('src/gui.ui')
         # create root app
-        self.main_window = builder.get_object('Main_Window', master)
-        # make gui unresizable
-        master.resizable(0, 0)
-        # connect callbacks
-        builder.connect_callbacks(self)
+        if master:
+            self.main_window = builder.get_object('Main_Window', master)
+            # make gui unresizable
+            master.resizable(0, 0)
+            # connect callbacks
+            builder.connect_callbacks(self)
 
     def set_default_settings(self):
         self.settings = DEFAULT
