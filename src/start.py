@@ -1,3 +1,11 @@
 from view import GUI
+import tkinter as tk
+from tkinter.ttk import *
+from ttkthemes import ThemedTk
 
-GUI().render()
+def render():
+    root = ThemedTk(theme='arc')
+    app = GUI(root)
+    root.mainloop()
+
+render()
