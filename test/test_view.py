@@ -12,15 +12,15 @@ notapath = 52
 
 
 #dictionary sets
-default = {"video": '', "settings": {'conf': 0.9,
+default = {"video": '', "settings": {'conf': 0.5,
                                          'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}}  # default settings
 
 
-set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
+set1 = {'conf': 0.5, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'runtime': 10, 'search': ['car']}  # should be true
-set3 = {'conf': 0, 'poll': 5, 'anti': 5,
+set3 = {'conf': 0.0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set4 = {'conf': -0.1, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']} # should be false, conf is negative
@@ -28,12 +28,12 @@ set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set6 = {'conf': 1.1, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, conf is >1
-set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
+set7 = {'conf': 0.5, 'poll': 0, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set8 = {'conf': 0.5, 'poll': -1, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is < 0
 set9 = {'conf': 0.5, 'poll': 500000, 'anti': 5,
-            'runtime': 10, 'search': ['dog', 'pet']}  # should be true
+            'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll > 150 - max slider val on gui
 set10 = {'conf': 0.5, 'poll': 5.2, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is not an integer
 set11 = {'conf': 0.5, 'poll': 5, 'anti': 0,
@@ -59,9 +59,9 @@ set20 = {'conf': 0.5, 'anti': 5, 'runtime': 10,
 set21 = {'conf': 0.5, 'poll': 5, 'runtime': 10,
             'search': ['dog', 'pet']}  # should be false
 set22 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10}  # should be false
-set23 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'runtime': 10,
+set23 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet'], 'video': 'path/to/video'}  # should be false, extra key
-set24 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'runtime': 10,
+set24 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet'], 'x': 0}  # should be false
 
 def test_constructor():
@@ -300,7 +300,7 @@ def test_default_settings():
 	view.set_default_settings()
 	check.equal(view.get_settings(), {
         "video": '', "settings": {
-            'conf': .9, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
+            'conf': .5, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
 
 
 def test_construct_and_remove():
@@ -341,7 +341,7 @@ def test_render():
     # First, create a test GUI and make sure the default values are correct when generated.
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
-    check.equal(test_gui.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui.job)
 
     # change the video path and settings to some valid input that a user would use
@@ -402,7 +402,7 @@ def test_render():
     # make sure that the parameters have been reset to the default value.
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {
-        'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+        'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     #check.equal(test_gui.job, test_job1)
 
     #test_gui.render()
@@ -435,7 +435,7 @@ def test_render():
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the default settings are implemented
     check.equal(test_gui2.video_path, '')
-    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui2.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
     #test_gui2.render()
@@ -446,7 +446,7 @@ def test_render():
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the default settings are rendered
     check.equal(test_gui2.video_path, '')
-    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui2.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
     #test_gui2.render()
@@ -538,7 +538,7 @@ def test_verify_settings():
     check.is_false(view.verify_settings())
 
     view.set_settings(set9, path)
-    check.is_true(view.verify_settings())
+    check.is_false(view.verify_settings())
     view.set_settings(set9, notapath)
     check.is_false(view.verify_settings())
 

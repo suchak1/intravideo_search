@@ -154,8 +154,6 @@ class GUI:
         poll = settings['poll']
         search = settings['search']
 
-        print(os.path.isfile(video_path))
-
         if not isinstance(conf, float) or conf < 0.0 or conf > 1.0:
             self.update_log(f'ERROR: Invalid confidence level ({conf}).')
             return False
@@ -207,59 +205,59 @@ class GUI:
             btn['text'] = 'Start Job'
 
 
-        def set_settings(self, values, path):
-            # Sets the settings of the GUI and includes the video path file.
-            expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
-            missing = [x for x in expected_keys if x not in values.keys()]
-            if len(missing) > 0:
-                self.set_default_settings()
-                return False
+    def set_settings(self, values, path):
+        # Sets the settings of the GUI and includes the video path file.
+        expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
+        missing = [x for x in expected_keys if x not in values.keys()]
+        if len(missing) > 0:
+            self.set_default_settings()
+            return False
 
-            extra = [x for x in values.keys() if x not in expected_keys]
-            if len(extra) > 0:
-                self.set_default_settings()
-                return False
-            # values['runtime'] = int(values['runtime'])
-            try:
-                if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
-                    raise TypeError
+        extra = [x for x in values.keys() if x not in expected_keys]
+        if len(extra) > 0:
+            self.set_default_settings()
+            return False
+        # values['runtime'] = int(values['runtime'])
+        try:
+            if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
+                raise TypeError
 
-                if not isinstance(path, str):
-                    raise TypeError
+            if not isinstance(path, str):
+                raise TypeError
 
-                if len(values['search']) != 0:
-                    for term in values['search']:
-                        if not isinstance(term, str):
-                            raise TypeError
+            if len(values['search']) != 0:
+                for term in values['search']:
+                    if not isinstance(term, str):
+                        raise TypeError
 
-            except TypeError:
-                self.set_default_settings()
-                return False
+        except TypeError:
+            self.set_default_settings()
+            return False
 
-            if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['runtime'] < 0 or values['search'] == []):
-                self.set_default_settings()
-                return False
+        if (values['conf'] < 0 or values['conf'] > 1 or values['poll'] < 0 or values['anti'] < 0 or values['runtime'] < 0 or values['search'] == []):
+            self.set_default_settings()
+            return False
 
-            #print('values: ' + str(values))
-            self.settings = values  # be sure that values are always in the same order. Do validation
-            #print('self.settings: ' + str(self.settings))
-            self.video_path = path
-            # where values is a dictionary
+        #print('values: ' + str(values))
+        self.settings = values  # be sure that values are always in the same order. Do validation
+        #print('self.settings: ' + str(self.settings))
+        self.video_path = path
+        # where values is a dictionary
+        return True
+
+    def construct_job(self):
+        try:
+            self.job = Job(self.get_settings())
             return True
+        except:
+            return False
 
-        def construct_job(self):
-            try:
-                self.job = Job(self.get_settings())
-                return True
-            except:
-                return False
-
-        def remove_job(self):
-            try:
-                self.job.kill()
-                return True
-            except:
-                return False
+    def remove_job(self):
+        try:
+            self.job.kill()
+            return True
+        except:
+            return False
 
 # multiprocessing checkbox support
 # default is off on mac, on otherwise
