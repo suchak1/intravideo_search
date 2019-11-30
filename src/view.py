@@ -18,7 +18,7 @@ class GUI:
 
     "Views - everything user sees"
 
-    def __init__(self, master):
+    def __init__(self, master=ThemedTk(theme='arc')):
 
         # default settings
         self.set_default_settings()
