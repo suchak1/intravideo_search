@@ -5,6 +5,7 @@ import torch
 import sys
 import cv2
 import pickle
+import warnings
 from PIL import Image
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
@@ -37,6 +38,19 @@ class Job:
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
 
+    def multi_map(self, fxn, arr):
+        # Given a function and a list to iterate over, multi_map will attempt
+        # to leverage multiprocessing to speed up the operation.
+        # If unsuccessful, will default to nonconcurrent method (slow).
+
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+            return results
+        else:
+            return [fxn(elem) for elem in arr]
 
     def do_the_job(self):
         video = cv2.VideoCapture(self.video_path)
@@ -47,6 +61,17 @@ class Job:
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
 
+    def get_frame(self, timestamp):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+        success, frame = video.read()
+        if not success:
+            warnings.warn(
+                f'This time ({timestamp} sec) does not exist in the video.')
+            return None
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return (img, timestamp)
+
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
         # where the first element is an Image of the frame from the video
@@ -54,27 +79,16 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
-
-        vidPath = self.video_path
-        poll = self.settings['poll']
-        count = 0
-        frms = []
-        video = cv2.VideoCapture(vidPath)
-        success = True
-
-        while success:
-            timestamp = (count * poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
-            success, frame = video.read()
-            if success:
-                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                frms.append((img, timestamp))
-            count += 1
-        return frms
+        poll = int(self.settings['poll'])
+        runtime = int(self.settings['runtime'])
+        poll_times = list(range(0, runtime + poll, poll))
+        timestamps = [time for time in poll_times if time <= runtime]
+        frames = self.multi_map(self.get_frame, timestamps)
+        frames = [frame for frame in frames if frame]
+        return frames
 
     def classify_frame(self, frame):
-        time = frame[1]
-        img = frame[0]
+        img, time = frame
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
@@ -83,14 +97,7 @@ class Job:
 
     def classify_frames(self):
         frames = self.get_frames()
-
-        if self.multi:
-            # multiprocessing
-            with Pool() as pool:
-                results = pool.map(self.classify_frame, frames)
-        else:
-            results = [(t, self.score(Worker().classify_img(f)) / 100) for (f, t) in frames]
-
+        results = self.multi_map(self.classify_frame, frames)
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
@@ -192,15 +199,8 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        #with Pool() as pool:
-        #    v = self.video_path
-        #    args_list = [(t, v) for t in timestamps]
-        #    map_results = pool.starmap(Worker().make_clip, args_list)
-
-        #return map_results
-        # multiprocessing is running into issues with shared resources
-        v = self.video_path
-        return [Worker().make_clip(t, v) for t in timestamps]
+        return timestamps and self.multi_map(
+            Worker(self.video_path).make_clip, timestamps)
 
 
     def kill(self):
