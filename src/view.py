@@ -7,6 +7,7 @@ from PIL import Image
 import os
 import cv2
 import pygubu
+import re
 # -*- coding: utf-8 -*-
 
 # set the default values for the GUI constructor.
@@ -111,6 +112,9 @@ class Application:
             'runtime': 1
         }
 
+        self.video_path = ''
+
+        self.job = None
         self.seer = Seer()
 
         # create builder
@@ -146,7 +150,8 @@ class Application:
             self.video_path = link
             self.change_path_label(link)
         else:
-            print('Not a valid YouTube link')
+            print('Not a valid YouTube link.')
+            self.update_log('ERROR: Please enter a valid YouTube link.')
             return
         print(f'Selected Video: {self.video_path}')
 
@@ -214,12 +219,41 @@ class Application:
                 text.configure(state=tk.DISABLED)
                 btn['text'] = 'Clear Caption'
 
-    def display_errors(self):
-        w = tk.Tk()
-        w.title(title)
-        w.geometry("800x170")
-        content = Frame(w)
-        content.pack()
+    def update_log(self, update):
+        text = self.builder.get_object('Log')
+        text.configure(state=tk.NORMAL)
+        text.delete(1.0, tk.END)
+        text.insert(1.0, update)
+        text.configure(state=tk.DISABLED)
+
+    def verify_settings(self):
+        settings = self.settings
+        video_path = self.video_path
+
+        conf = settings['conf']
+        poll = settings['poll']
+        search = settings['search']
+
+        if not isinstance(conf, float) or conf < 0.0 or conf > 1.0:
+            self.update_log('ERROR: Invalid confidence level.')
+            return False
+        elif not isinstance(poll, int) or poll < 0 or poll > 150:
+            self.update_log('ERROR: Invalid polling rate.')
+            return False
+        elif (not isinstance(search, str) or
+              not os.path.isfile(video_path) and
+              not self.check_yt_link(video_path)):
+            self.update_log('ERROR: Invalid source video filepath or YouTube link.')
+            return False
+        elif (not isinstance(search, list) or
+              not len(search) or
+              not any(re.search('[A-Za-z]', term) for term in search)):
+            self.update_log('ERROR: Invalid search terms detected.')
+            return False
+        else:
+            self.update_log(f'SUCCESS: Settings {settings} verified.')
+            return True
+
 
 def render():
     root = ThemedTk(theme='arc')
@@ -227,22 +261,25 @@ def render():
     root.mainloop()
 
 render()
+# verify_settings
+# check that search terms aren't empty and have at least one alphabetic letter
 
+# run job
+# attach start button
+# self.settings['search'] = self.parse_search_terms
+# then verify_settings
+# if true: say processing job and do job else: error
+# decide for cancel button
 
-    #     select_button = Button(win_content, text="Select Clip to Caption", command=get_caption)
-    #     select_button.grid(column=2, columnspan=3, row=99) #acknowledge that a file has been uploaded
-    #
-    #     def display_errors(title, message):
-    #         w = Tk()
-    #         w.title(title)
-    #         w.geometry("800x170")
-    #         content = Frame(w)
-    #         content.pack()
-    #
-    #         lbl = Label(content, text=message, font=("Times New Roman", 14), justify=LEFT)
-    #         lbl.grid(column = 0, row = 0, columnspan=5)
-    #
-    #
+# multiprocessing checkbox support
+# default is off on mac, on otherwise
+# disabled button, checked otherwise
+# if checked, can check on and off which updates multi val
+# which gets passes in job constructor Job(multi=True)
+# use that val in job unless mac, then block (false)
+
+# read article about progress bars
+
     #     def run_the_job():
     #         update_search_display()
     #         get_search_term()
@@ -274,31 +311,3 @@ render()
     #     win.mainloop()
     #     return 0
     #
-    # def run_job(self):
-    #     """
-    #     Validates the settings of the GUI and makes sure that they are valid
-    #     Ensures that the video path given is a valid video and can be opened by the application
-    #     Returns a tuple: (bool, msg) where bool is True if everything is valid and a Job was started and False otherwise,
-    #     and msg is a success or error message
-    #     """
-    #     settings = self.settings
-    #     path = self.video_path
-    #
-    #     msg = ""
-    #
-    #     condition1 = self.set_settings(settings, path)
-    #     if condition1 is False:
-    #         msg += "One or more of your settings parameters are invalid. Please double check your settings and try again\n"
-    #         #maybe which settings are off?
-    #
-    #     condition2 = os.path.isfile(path)
-    #     if condition2 is False and not "youtube.com" in path:
-    #         msg += "You entered an invalid file path. Please double check your input video and try again\n"
-    #     else:
-    #         condition2 = True
-    #
-    #     if not condition1 or not condition2:
-    #         return(False, msg)
-    #
-    #     self.job = Job(self.get_settings())
-    #     return (True, "Success")
