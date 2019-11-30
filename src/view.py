@@ -261,9 +261,6 @@ def render():
     root.mainloop()
 
 render()
-# verify_settings
-# check that search terms aren't empty and have at least one alphabetic letter
-
 # run job
 # attach start button
 # self.settings['search'] = self.parse_search_terms
