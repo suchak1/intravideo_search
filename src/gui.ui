@@ -330,8 +330,10 @@
             </child>
             <child>
               <object class="ttk.Button" id="Start">
-                <property name="command">display_errors</property>
+                <property name="command">start_job</property>
+                <property name="default">active</property>
                 <property name="state">normal</property>
+                <property name="takefocus">true</property>
                 <property name="text" translatable="yes">Start Job</property>
                 <property name="width">11</property>
                 <layout>
