@@ -6,5 +6,7 @@ env:
     - TEST_FILE=test_view.py
     - TEST_FILE=test_model.py
     - TEST_FILE=test_controller.py
+before_script:
+    - echo 'export DISPLAY=:0.0' >> ~/.bashrc
 script:
     - python -m pytest test/$TEST_FILE -vv
