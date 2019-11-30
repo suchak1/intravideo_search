@@ -69,9 +69,9 @@ class GUI:
         error_no_path = "ERROR: NO PATH"
         error_no_term = "ERROR: NO TERM"
         error_conf_out_of_range = "ERROR: YOUR CONF IS _, AND IT HAS TO BE BETWEEN 0 AND 1"
-        error_poll_less_than_0 = "ERROR: YOUR POLL IS _, AND IT HAS TO BE LESS THAN 0"
-        error_anti_less_than_0 = "ERROR: YOUR ANTI IS _, AND IT HAS TO BE LESS THAN 0"
-        error_runtime_less_than_0 = "ERROR: YOUR RUNTIME IS _, AND IT HAS TO BE LESS THAN 0"
+        error_poll_less_than_0 = "ERROR: YOUR POLL IS _, AND IT HAS TO BE GREATER THAN 0"
+        error_anti_less_than_0 = "ERROR: YOUR ANTI IS _, AND IT HAS TO BE GREATER THAN 0"
+        error_runtime_less_than_0 = "ERROR: YOUR RUNTIME IS _, AND IT HAS TO BE GREATER THAN 0"
         error_empty_search = "ERROR: EMPTY SEARCH"
 
         expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
