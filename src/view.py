@@ -37,6 +37,9 @@ class GUI:
             master.resizable(0, 0)
             # connect callbacks
             builder.connect_callbacks(self)
+            self.has_master = True
+        else:
+            self.has_master = False
 
     def set_default_settings(self):
         self.settings = DEFAULT
@@ -154,26 +157,31 @@ class GUI:
         conf = settings['conf']
         poll = settings['poll']
         search = settings['search']
+        success = True
+        msg = ''
 
         if not isinstance(conf, float) or conf < 0.0 or conf > 1.0:
-            self.update_log(f'ERROR: Invalid confidence level ({conf}).')
-            return False
+            msg = f'ERROR: Invalid confidence level ({conf}).'
+            success = False
         elif not isinstance(poll, int) or poll < 0 or poll > 150:
-            self.update_log(f'ERROR: Invalid polling rate ({poll}).')
-            return False
+            msg = f'ERROR: Invalid polling rate ({poll}).'
+            success = False
         elif (not isinstance(video_path, str) or
               not os.path.isfile(video_path) and
               not self.check_yt_link(video_path)):
-            self.update_log(f'ERROR: Invalid source video filepath or YouTube link ({video_path}).')
-            return False
+            msg = f'ERROR: Invalid source video filepath or YouTube link ({video_path}).'
+            success = False
         elif (not isinstance(search, list) or
               not len(search) or
               not any(re.search('[A-Za-z]', term) for term in search)):
-            self.update_log(f'ERROR: Invalid search terms detected ({search}).')
-            return False
+            msg = f'ERROR: Invalid search terms detected ({search}).'
+            success = False
         else:
-            self.update_log(f'SUCCESS: Settings {settings} verified.')
-            return True
+            msg = f'SUCCESS: Settings {settings} verified.'
+
+        if self.has_master:
+            self.update_log(msg)
+        return success
 
     def start_btn_handler(self):
         if self.builder.get_object('Start')['text'] == 'Cancel':
