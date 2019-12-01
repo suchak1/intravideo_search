@@ -1,4 +1,4 @@
-from model import Job, Seer
+from model import Job, Seer, aobject
 import tkinter as tk
 from tkinter.ttk import *
 from ttkthemes import ThemedTk
@@ -16,19 +16,22 @@ import asyncio
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
 
-class GUI:
+class GUI(aobject):
 
     "Views - everything user sees"
 
-    def __init__(self, master=None):
+    async def __new__(cls, master):
+        return await super().__new__(cls, master)
+
+    async def __init__(self, master=None):
 
         # default settings
         self.set_default_settings()
 
         self.job = None
         start = time.time()
-        loop = asyncio.new_event_loop()
-        self.seer = self.run_and_get(Seer())#asyncio.run(self.get_seer())
+        # loop = asyncio.get_event_loop()
+        self.seer = await Seer()  # asyncio.run(self.get_seer())
         end = time.time()
         print(f'{round(end-start, 2)} sec to load Seer.')
 

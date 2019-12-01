@@ -3,9 +3,9 @@ import tkinter as tk
 from tkinter.ttk import *
 from ttkthemes import ThemedTk
 
-def render():
+async def render():
     root = ThemedTk(theme='arc')
-    app = GUI(root)
+    app = await GUI(root)
     root.mainloop()
 
-render()
+await render()

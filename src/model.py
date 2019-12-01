@@ -14,6 +14,20 @@ sys.path.append('utils')
 import my_pytube
 
 
+class aobject(object):
+    """Inheriting this class allows you to define an async __init__.
+
+    So you can create objects by doing something like `await MyClass(params)`
+    """
+    async def __new__(cls, *a, **kw):
+        instance = super().__new__(cls)
+        await instance.__init__(*a, **kw)
+        return instance
+
+    async def __init__(self):
+        pass
+
+
 class Job:
 
     "Model - data logic"
@@ -228,8 +242,11 @@ class Job:
                 raise ValueError("Your video could not be downloaded: %s" % e)
         return vid_path
 
-class Seer():
-    def __init__(self):
+class Seer(aobject):
+    async def __new__(cls):
+        return await super().__new__(cls)
+
+    async def __init__(self):
         # Device Config. Use GPU if available.
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
