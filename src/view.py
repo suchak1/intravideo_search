@@ -27,7 +27,8 @@ class GUI:
 
         self.job = None
         start = time.time()
-        self.seer = asyncio.run(self.get_seer())
+        loop = asyncio.new_event_loop()
+        self.seer = self.run_and_get(Seer())#asyncio.run(self.get_seer())
         end = time.time()
         print(f'{round(end-start, 2)} sec to load Seer.')
 
@@ -46,9 +47,13 @@ class GUI:
         else:
             self.has_master = False
 
-    async def get_seer(self):
-        seer = await Seer()
-        return seer
+    # async def get_seer(self):
+    #     seer = await Seer()
+    #     return seer
+    def run_and_get(self, coro):
+        task = asyncio.create_task(coro)
+        asyncio.get_running_loop().run_until_complete(task)
+        return task.result()
 
     def set_default_settings(self):
         self.settings = DEFAULT
