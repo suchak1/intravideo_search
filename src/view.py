@@ -16,22 +16,22 @@ import asyncio
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
 
-class GUI(aobject):
+class GUI():#aobject):
 
     "Views - everything user sees"
 
-    async def __new__(cls, master):
-        return await super().__new__(cls, master)
+    # async def __new__(cls, master):
+    #     return await super().__new__(cls, master)
 
-    async def __init__(self, master=None):
+    def __init__(self, master=None):
 
         # default settings
         self.set_default_settings()
 
         self.job = None
         start = time.time()
-        # loop = asyncio.get_event_loop()
-        self.seer = await Seer()  # asyncio.run(self.get_seer())
+        loop = asyncio.get_event_loop()
+        self.seer = loop.run_until_complete(Seer())  # asyncio.run(self.get_seer())
         end = time.time()
         print(f'{round(end-start, 2)} sec to load Seer.')
 
