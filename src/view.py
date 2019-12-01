@@ -8,6 +8,8 @@ import os
 import cv2
 import pygubu
 import re
+import time
+import asyncio
 # -*- coding: utf-8 -*-
 
 
@@ -24,7 +26,10 @@ class GUI:
         self.set_default_settings()
 
         self.job = None
-        self.seer = Seer()
+        start = time.time()
+        self.seer = asyncio.run(self.get_seer())
+        end = time.time()
+        print(f'{round(end-start, 2)} sec to load Seer.')
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -40,6 +45,10 @@ class GUI:
             self.has_master = True
         else:
             self.has_master = False
+
+    async def get_seer(self):
+        seer = await Seer()
+        return seer
 
     def set_default_settings(self):
         self.settings = DEFAULT
@@ -126,22 +135,25 @@ class GUI:
         btn['text'] = 'Choose Clip'
 
     def get_caption(self, btn, text):
-        filename = str(askopenfilename())
-        if filename:
-            video = cv2.VideoCapture(filename)
-            total_frames = video.get(7)
-            video.set(1, total_frames / 2)
-            ret, frame = video.read()
-            if ret:
-                frame = Image.fromarray(frame)
-                caption = str(self.seer.tell_us_oh_wise_one(frame))
-                mid = int(len(caption) // 2)
-                wrapped = caption[:mid] + '-\n' + caption[mid:]
-                text.configure(state=tk.NORMAL)
-                text.delete(1.0, tk.END)
-                text.insert(1.0, wrapped)
-                text.configure(state=tk.DISABLED)
-                btn['text'] = 'Clear Caption'
+        if self.seer:
+            filename = str(askopenfilename())
+            if filename:
+                video = cv2.VideoCapture(filename)
+                total_frames = video.get(7)
+                video.set(1, total_frames / 2)
+                ret, frame = video.read()
+                if ret:
+                    frame = Image.fromarray(frame)
+                    caption = str(self.seer.tell_us_oh_wise_one(frame))
+                    mid = int(len(caption) // 2)
+                    wrapped = caption[:mid] + '-\n' + caption[mid:]
+                    text.configure(state=tk.NORMAL)
+                    text.delete(1.0, tk.END)
+                    text.insert(1.0, wrapped)
+                    text.configure(state=tk.DISABLED)
+                    btn['text'] = 'Clear Caption'
+        else:
+            self.update_log('Please try again in a bit. ML model is still loading.')
 
     def update_log(self, update):
         text = self.builder.get_object('Log')
