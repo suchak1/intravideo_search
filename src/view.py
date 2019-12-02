@@ -29,11 +29,11 @@ class GUI:
 
         self.job = None
         self.process = None
-        self.queue = q
         self.seer = Seer()
         self.prog_num = 0
         self.prog_len = 100
         self.master = master
+        # self.queue = q
 
         # create builder
         self.builder = builder = pygubu.Builder()
