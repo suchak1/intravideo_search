@@ -198,6 +198,7 @@ class GUI:
             self.start_job()
 
     def get_progress(self):
+        print(1)
         if self.process and self.process.is_alive():
             pbar = self.builder.get_object('Progressbar_1')
             if self.job and self.job.frame_len:
