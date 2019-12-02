@@ -205,28 +205,30 @@ class GUI:
     def get_progress(self):
         pbar = self.builder.get_object('Progressbar_1')
         job = self.job
-        if self.process and self.process.is_alive():
-            # copy_q = copy.deepcopy(self.queue)
-            # if copy_q.get() == 1:
-            if self.job.success:
-                self.job.kill()
+        process = self.process
+        if self.process:
+            exitcode = self.process.exitcode
+            print(exitcode)
+            if exitcode is not None:
                 self.process.terminate()
                 self.process.join()
-                self.update_log('SUCCESS: Job completed.')
+                self.job.kill()
                 self.job = None
                 self.process = None
-                self.kill_job()
+                self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Done.'
+                pbar['value'] = 100
+                if exitcode == 0:
+                    self.update_log('SUCCESS: Job completed. No relevant clips found.')
+                else:
+                    self.update_log(f'SUCCESS: Job completed. {exitcode} clips saved in source video path.')
                 return
-            # if self.job.frame_len:
-            #     val = int(round(job.frame_num / job.frame_len, 2) * 100)
-            #     pbar['value'] = val
-
-            # self.prog_num += 1
-            # val = int(round(self.prog_num % 100 / self.prog_len, 2) * 100)
-            # pbar['value'] = val
-
-        # else:
-        #     pbar['value'] = int((self.prog_num / self.prog_len) * 100)
+            else:
+                self.prog_num += 1
+                val = int(round(self.prog_num % 100 / self.prog_len, 2) * 100)
+                pbar['value'] = val
+        else:
+            pbar['value'] = int((self.prog_num / self.prog_len) * 100)
         self.master.after(50, self.get_progress)
 
 

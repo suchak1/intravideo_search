@@ -59,9 +59,7 @@ class Job:
         self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
-        self.save_clips(results)
-        # queue.put(1)
-        self.success = True
+        return self.save_clips(results)
 
     def get_frame(self, timestamp):
         video = cv2.VideoCapture(self.video_path)
@@ -72,7 +70,7 @@ class Job:
                 f'This time ({timestamp} sec) does not exist in the video.')
             return None
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        self.frame_num += 1
+        # self.frame_num += 1
         return (img, timestamp)
 
     def get_frames(self):
@@ -203,8 +201,8 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        return timestamps and self.multi_map(
-            Worker(self.video_path).make_clip, timestamps)
+        return len(timestamps) and len(self.multi_map(
+            Worker(self.video_path).make_clip, timestamps))
 
 
     def kill(self):
