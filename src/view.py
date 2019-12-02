@@ -11,6 +11,7 @@ import re
 import queue
 import time
 from multiprocessing import Queue, Process
+import copy
 # -*- coding: utf-8 -*-
 
 
@@ -33,6 +34,7 @@ class GUI:
         self.prog_num = 0
         self.prog_len = 100
         self.master = master
+        self.queue = q
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -198,13 +200,15 @@ class GUI:
             self.start_job()
 
     def get_progress(self):
-        print(1)
         if self.process and self.process.is_alive():
             pbar = self.builder.get_object('Progressbar_1')
-            if self.job and self.job.frame_len:
+            if self.job:# and self.job.frame_len:
+                print(1)
                 job = self.job
                 print(job.frame_num)
-                val = int(round(job.frame_num / job.frame_len, 2) * 100)
+                # val = int(round(job.frame_num / job.frame_len, 2) * 100)
+                copy_q = copy.deepcopy(self.queue)
+                val = int(round(copy_q.get() / 100, 2) * 100)
                 pbar['value'] = val
         self.master.after(50, self.get_progress)
 
@@ -230,12 +234,12 @@ class GUI:
         self.parse_search_terms()
         if self.verify_settings():
             settings = self.get_settings()
-            self.job = Job(settings)
+            self.job = Job(settings, self.queue)
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:
                 # btn.configure(text="Cancel")
-                self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
+                self.process = Process(target=self.job.do_the_job, args=(self.queue,))
                 btn['text'] = 'Cancel'
                 self.process.start()
                 # pbar = self.builder.get_object('Progressbar_1')

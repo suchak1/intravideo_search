@@ -18,7 +18,7 @@ class Job:
 
     "Model - data logic"
 
-    def __init__(self, settings):
+    def __init__(self, settings, queue):
         if not isinstance(settings, type(None)):
             if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
                 yt_vid_path = self.get_from_yt(settings['video'])
@@ -39,6 +39,7 @@ class Job:
         self.multi = sys.platform != 'darwin'
         self.frame_len = None
         self.frame_num = 0
+        self.queue = queue
 
     def multi_map(self, fxn, arr):
         # Given a function and a list to iterate over, multi_map will attempt
@@ -54,7 +55,8 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self):
+    def do_the_job(self, queue):
+        self.queue = queue
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
@@ -73,6 +75,9 @@ class Job:
             return None
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         self.frame_num += 1
+        queue = self.queue
+        val = queue.get()
+        self.queue.put(val+1)
         return (img, timestamp)
 
     def get_frames(self):
