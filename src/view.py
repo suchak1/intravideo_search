@@ -19,6 +19,7 @@ import multiprocessing as mp
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
+multi = True if sys.platform != 'darwin' else None
 # manager = Manager()
 # q = manager.Queue()
 
@@ -34,7 +35,7 @@ class GUI:
         self.job = None
         self.process = None
         self.seer = Seer()
-        self.multi = True if sys.platform != 'darwin' else None
+        self.multi = multi
         self.prog_num = 0
         self.prog_len = 100
         self.master = master
@@ -328,6 +329,8 @@ def render():
     root = ThemedTk(theme='arc')
     app = GUI(root)
     root.protocol('WM_DELETE_WINDOW', app.close)
+    if multi is None:
+
     root.mainloop()
 
 # multiprocessing checkbox support
