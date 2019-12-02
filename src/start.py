@@ -1,3 +1,3 @@
-from view import GUI
+from view import render
 
-GUI().render()
+render()

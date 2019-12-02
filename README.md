@@ -13,6 +13,7 @@
 ### Prerequisites
 
 <!---Obtain a free API key.--->
+Python 3.7 and a Unix-based OS or Windows Subsystem for Linux (WSL).
 
 ### Contributing
 
@@ -23,8 +24,16 @@ To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
 
 To install the necessary packages, simply run:
 ```
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
+
+If there is a problem installing `torch`, try this command:
+
+```
+python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
+
+Then, install the rest of requirements as necessary.
 
 ### New Packages
 
@@ -35,22 +44,22 @@ pipreqs ./ --force
 
 ### Testing
 
-- To run all tests, run 
+- To run all tests, run
     ```
-    pytest -vv
+    PYTHON=python ./test_suite.sh
     ```
-    - `-vv` ensure verbose output
-    - if there is a module import error, run `python -m pytest -vv`
+    - where `python` is your python 3 installation (might be `python3` if you have more than one installation)
 - Note: to run a single test file, just append the test file path like so
     ```
-    pytest test/test_controller.py -vv
+    python -m pytest test/test_controller.py -vv
     ```
     and to run a single function, add the `-k` flag and the function name:
     ```
-    pytest test/test_controller.py -k "test_classify_img" -vv
+    python -m pytest test/test_controller.py -k "test_classify_img" -vv
     ```
     This might be necessary since functions like `classify_img` take a while because loading a ML model for the first time is expensive.
 
+Note: Make sure you specify the right python version when you make these commands if you have multiple python installations, ie `python3`.
 
 ### Prettify
 

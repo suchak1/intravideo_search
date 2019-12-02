@@ -12,15 +12,15 @@ notapath = 52
 
 
 #dictionary sets
-default = {"video": '', "settings": {'conf': 0.9,
+default = {"video": '', "settings": {'conf': 0.5,
                                          'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}}  # default settings
 
 
-set1 = {'conf': 0.9, 'poll': 5, 'anti': 5,
+set1 = {'conf': 0.5, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set2 = {'conf': 0.1, 'poll': 2, 'anti': 8,
             'runtime': 10, 'search': ['car']}  # should be true
-set3 = {'conf': 0, 'poll': 5, 'anti': 5,
+set3 = {'conf': 0.0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set4 = {'conf': -0.1, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']} # should be false, conf is negative
@@ -28,12 +28,12 @@ set5 = {'conf': 1.0, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set6 = {'conf': 1.1, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, conf is >1
-set7 = {'conf': 0.9, 'poll': 0, 'anti': 5,
+set7 = {'conf': 0.5, 'poll': 0, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be true
 set8 = {'conf': 0.5, 'poll': -1, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is < 0
 set9 = {'conf': 0.5, 'poll': 500000, 'anti': 5,
-            'runtime': 10, 'search': ['dog', 'pet']}  # should be true
+            'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll > 150 - max slider val on gui
 set10 = {'conf': 0.5, 'poll': 5.2, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is not an integer
 set11 = {'conf': 0.5, 'poll': 5, 'anti': 0,
@@ -46,22 +46,22 @@ set14 = {'conf': 0.5, 'poll': 5, 'anti': 5.2,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, anti is not an integer
 set15 = {'conf': 0.5, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet', '50']}  # should be true
-set16 = {'conf': 0.5, 'poll': 5, 'anti': 5, 
+set16 = {'conf': 0.5, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': []} #should be false, no search terms
 set17 = {'conf': 0.5, 'poll': 5, 'anti': 5,
             'runtime': 10, 'search': [84, '84']} # should be false, one value is not a string
-set18 = {'search': ['dog', 'pet'], 'poll': 5, 
+set18 = {'search': ['dog', 'pet'], 'poll': 5,
             'conf': 0.5, 'anti': 5, 'runtime': 10} #should be true, even if out of order
 set19 = {'poll': 5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet']}  # should be false
-set20 = {'conf': 0.5, 'anti': 5, 'runtime': 10, 
+set20 = {'conf': 0.5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet']}  # should be false
-set21 = {'conf': 0.5, 'poll': 5, 'runtime': 10, 
+set21 = {'conf': 0.5, 'poll': 5, 'runtime': 10,
             'search': ['dog', 'pet']}  # should be false
 set22 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10}  # should be false
-set23 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'runtime': 10, 
+set23 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet'], 'video': 'path/to/video'}  # should be false, extra key
-set24 = {'conf': 0.9, 'poll': 5, 'anti': 5, 'runtime': 10, 
+set24 = {'conf': 0.5, 'poll': 5, 'anti': 5, 'runtime': 10,
             'search': ['dog', 'pet'], 'x': 0}  # should be false
 
 def test_constructor():
@@ -72,7 +72,7 @@ def test_constructor():
     # test default constructor with no parameters
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
-    check.equal(test_gui.settings, {'conf': .9,
+    check.equal(test_gui.settings, {'conf': .5,
                                     'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui.job)
 
@@ -80,7 +80,7 @@ def test_constructor():
 def test_set_settings():
     view = GUI()
 
-    
+
     check.is_true(view.set_settings(set1, path))
     check.is_false(view.set_settings(set1, notapath))
 
@@ -102,11 +102,11 @@ def test_set_settings():
     check.is_true(view.set_settings(set7, path))
     check.is_false(view.set_settings(set7, notapath))
 
-    
+
     check.is_false(view.set_settings(set8, path))
     check.is_false(view.set_settings(set8, notapath))
 
-    
+
     check.is_true(view.set_settings(set9, path))
     check.is_false(view.set_settings(set9, notapath))
 
@@ -300,13 +300,13 @@ def test_default_settings():
 	view.set_default_settings()
 	check.equal(view.get_settings(), {
         "video": '', "settings": {
-            'conf': .9, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
+            'conf': .5, 'poll': 5, 'anti': 5, 'search': [], 'runtime': 1}})
 
 
-def test_start_and_kill():
+def test_construct_and_remove():
     view = GUI()
-    check.is_true(view.start_job())
-    check.is_true(view.kill_job())
+    check.is_true(view.construct_job())
+    check.is_true(view.remove_job())
     # combined because kill needs a started Job and this reduces redundancy
 
 
@@ -341,7 +341,7 @@ def test_render():
     # First, create a test GUI and make sure the default values are correct when generated.
     test_gui = GUI()
     check.equal(test_gui.video_path, '')
-    check.equal(test_gui.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui.job)
 
     # change the video path and settings to some valid input that a user would use
@@ -402,7 +402,7 @@ def test_render():
     # make sure that the parameters have been reset to the default value.
     check.equal(test_gui.video_path, '')
     check.equal(test_gui.settings, {
-        'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+        'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     #check.equal(test_gui.job, test_job1)
 
     #test_gui.render()
@@ -435,7 +435,7 @@ def test_render():
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the default settings are implemented
     check.equal(test_gui2.video_path, '')
-    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui2.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
     #test_gui2.render()
@@ -446,7 +446,7 @@ def test_render():
     test_gui2.set_settings(test_gui2.settings, test_gui2.video_path)
     # assert that these changes do not go through and the default settings are rendered
     check.equal(test_gui2.video_path, '')
-    check.equal(test_gui2.settings, {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
+    check.equal(test_gui2.settings, {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []})
     check.is_none(test_gui2.job)
 
     #test_gui2.render()
@@ -492,128 +492,127 @@ def test_render():
     #test_gui3.render()
 
 
-def test_run_job():
+def test_verify_settings():
     view = GUI()
 
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set1, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set1, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set2, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set2, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set3, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set3, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set4, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set4, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set5, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set5, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set6, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set6, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set7, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set7, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set8, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set8, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set9, path)
-    check.is_true(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set9, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set10, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set10, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set11, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set11, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set12, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set12, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set13, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set13, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set14, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set14, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set15, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set15, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set16, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set16, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set17, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set17, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set18, path)
-    check.is_true(view.run_job()[0])
+    check.is_true(view.verify_settings())
     view.set_settings(set18, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set19, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set19, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set20, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set20, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set21, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set21, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set22, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set22, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set23, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set23, notapath)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
 
     view.set_settings(set24, path)
-    check.is_false(view.run_job()[0])
+    check.is_false(view.verify_settings())
     view.set_settings(set24, notapath)
-    check.is_false(view.run_job()[0])
-
+    check.is_false(view.verify_settings())

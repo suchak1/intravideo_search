@@ -1,25 +1,54 @@
-from model import Job
-from tkinter import *
+from model import Job, Seer
+import tkinter as tk
+from tkinter.ttk import *
+from ttkthemes import ThemedTk
 from tkinter.filedialog import askopenfilename
+from PIL import Image
 import os
+import cv2
+import pygubu
+import re
+from multiprocessing import Process  # , Queue, Manager
+import multiprocessing as mp
 # -*- coding: utf-8 -*-
 
+
 # set the default values for the GUI constructor.
-DEFAULT = {'conf': .9, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
+DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
+# manager = Manager()
+# q = manager.Queue()
 
 class GUI:
 
     "Views - everything user sees"
 
-    def __init__(self):
-        # dictionary of key, val of key is string, val is int
+    def __init__(self, master=None):
 
+        # default settings
         self.set_default_settings()
-        self.job = None
-        # this will be of class Job type, so not included in class diagram
-        # but draw association arrow to Job Class
 
-        # self.render()   # display GUI when this class instantiates
+        self.job = None
+        self.process = None
+        self.seer = Seer()
+        self.prog_num = 0
+        self.prog_len = 100
+        self.master = master
+        # self.queue = q
+
+        # create builder
+        self.builder = builder = pygubu.Builder()
+        # load ui
+        builder.add_from_file('src/gui.ui')
+        # create root app
+        if master:
+            self.main_window = builder.get_object('Main_Window', master)
+            # make gui unresizable
+            master.resizable(0, 0)
+            # connect callbacks
+            builder.connect_callbacks(self)
+            self.has_master = True
+        else:
+            self.has_master = False
 
     def set_default_settings(self):
         self.settings = DEFAULT
@@ -29,33 +58,212 @@ class GUI:
         # get settings currently in text boxes of GUI
         return {"video": self.video_path, "settings": self.settings}
 
+    def on_browse_click(self):
+        filename = str(askopenfilename())
+        if filename:
+            self.video_path = filename
+            self.change_path_label(filename)
+        self.update_log(f'Selected Video: {filename}')
+        print(f'Selected Video: {self.video_path}')
+
+    def change_path_label(self, filename):
+        path_label = self.builder.get_object('Path_Label')
+        if not self.check_yt_link(filename):
+            filename = os.path.basename(filename)
+        path_label.configure(text=filename)
+
+    def check_yt_link(self, link):
+        return 'youtube.com' in link or 'youtu.be/' in link
+
+    def add_youtube_link(self):
+        yt_entry = self.builder.get_object('YouTube_Entry')
+        link = str(yt_entry.get()).strip()
+        if self.check_yt_link(link):
+            self.video_path = link
+            self.change_path_label(link)
+        else:
+            print('Not a valid YouTube link.')
+            self.update_log('ERROR: Please enter a valid YouTube link.')
+            return
+        print(f'Selected Video: {self.video_path}')
+
+    def del_youtube_link(self):
+        yt_entry = self.builder.get_object('YouTube_Entry')
+        yt_entry.delete(0, tk.END)
+        if self.check_yt_link(self.video_path):
+            self.video_path = None
+            self.change_path_label('None')
+            print('YouTube link cleared from job.')
+        else:
+            print('YouTube link cleared from entry field.')
+
+    def change_poll(self, val):
+        val = int(float(val))
+        poll = self.builder.get_object('Poll_Num')
+        poll.configure(text=f'{val} sec')
+        self.settings['poll'] = val
+
+    def change_conf(self, val):
+        val = round(float(val) / 100, 2)
+        conf = self.builder.get_object('Conf_Level')
+        conf.configure(text=f'{int(val * 100)}%')
+        self.settings['conf'] = val
+
+    def parse_search_terms(self):
+        search_entry = self.builder.get_object('Search_Entry')
+        terms = str(search_entry.get())
+        search = [term.strip() for term in terms.split(',')]
+        self.settings['search'] = search
+        print(search)
+        self.update_log(f'Detected search terms: {search}')
+
+    # need to add handler for multiprocessing checkmark
+    # and make multi attribute for job that is true by default
+
+    def handle_caption_btn(self):
+        btn = self.builder.get_object('Caption_Button')
+        text = self.builder.get_object('Caption_Text')
+        if btn['text'] == 'Choose Clip':
+            self.get_caption(btn, text)
+        else:
+            self.clear_caption(btn, text)
+
+    def clear_caption(self, btn, text):
+        text.configure(state=tk.NORMAL)
+        text.delete(1.0, tk.END)
+        text.configure(state=tk.DISABLED)
+        btn['text'] = 'Choose Clip'
+
+    def get_caption(self, btn, text):
+        filename = str(askopenfilename())
+        if filename:
+            video = cv2.VideoCapture(filename)
+            total_frames = video.get(7)
+            video.set(1, total_frames / 2)
+            ret, frame = video.read()
+            if ret:
+                frame = Image.fromarray(frame)
+                caption = str(self.seer.tell_us_oh_wise_one(frame))
+                mid = int(len(caption) // 2)
+                wrapped = caption[:mid] + '-\n' + caption[mid:]
+                text.configure(state=tk.NORMAL)
+                text.delete(1.0, tk.END)
+                text.insert(1.0, wrapped)
+                text.configure(state=tk.DISABLED)
+                btn['text'] = 'Clear Caption'
+
+    def update_log(self, update):
+        text = self.builder.get_object('Log')
+        text.configure(state=tk.NORMAL)
+        text.delete(1.0, tk.END)
+        text.insert(1.0, update)
+        text.configure(state=tk.DISABLED)
+
+    def verify_settings(self):
+        settings = self.settings
+        video_path = self.video_path
+
+        conf = settings['conf']
+        poll = settings['poll']
+        search = settings['search']
+        success = True
+        msg = ''
+
+        if not isinstance(conf, float) or conf < 0.0 or conf > 1.0:
+            msg = f'ERROR: Invalid confidence level ({conf}).'
+            success = False
+        elif not isinstance(poll, int) or poll < 0 or poll > 150:
+            msg = f'ERROR: Invalid polling rate ({poll}).'
+            success = False
+        elif (not isinstance(video_path, str) or
+              not os.path.isfile(video_path) and
+              not self.check_yt_link(video_path)):
+            msg = f'ERROR: Invalid source video filepath or YouTube link ({video_path}).'
+            success = False
+        elif (not isinstance(search, list) or
+              not len(search) or
+              not any(re.search('[A-Za-z]', term) for term in search)):
+            msg = f'ERROR: Invalid search terms detected ({search}).'
+            success = False
+        else:
+            msg = f'SUCCESS: Settings {settings} verified.'
+
+        if self.has_master:
+            self.update_log(msg)
+        return success
+
+    def start_btn_handler(self):
+        if self.job or self.process:
+            self.kill_job()
+        else:
+            self.start_job()
+
+    def get_progress(self):
+        pbar = self.builder.get_object('Progressbar_1')
+        job = self.job
+        process = self.process
+        if self.process:
+            exitcode = self.process.exitcode
+            print(exitcode)
+            if exitcode is not None:
+                self.process.terminate()
+                self.process.join()
+                self.job.kill()
+                self.job = None
+                self.process = None
+                self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Done.'
+                pbar['value'] = 100
+                if exitcode == 0:
+                    self.update_log('SUCCESS: Job completed. No relevant clips found.')
+                else:
+                    self.update_log(f'SUCCESS: Job completed. {exitcode} clips saved in source video path.')
+                return
+            else:
+                self.prog_num += 1
+                val = int(round(self.prog_num % 100 / self.prog_len, 2) * 100)
+                pbar['value'] = val
+        else:
+            pbar['value'] = int((self.prog_num / self.prog_len) * 100)
+        self.master.after(50, self.get_progress)
+
+
+    def kill_job(self):
+        if self.job or self.process:
+            try:
+                print('Killing...')
+                self.update_log('Killing...')
+                self.process.terminate()
+                self.job.kill()
+                self.job = None
+                self.process = None
+                self.prog_num = 0
+                print('Job killed successfully.')
+                self.update_log('Job killed successfully.')
+                self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Waiting...'
+            except:
+                self.update_log('ERROR: Job could not be killed.')
+
+    def start_job(self):
+        self.parse_search_terms()
+        if self.verify_settings():
+            settings = self.get_settings()
+            self.job = Job(settings)
+            self.update_log(f'SUCCESS: Processing job with settings: {settings}')
+            btn = self.builder.get_object('Start')
+            try:
+                self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
+                btn['text'] = 'Cancel'
+                self.builder.get_object('Status')['text'] = 'Working...'
+                self.process.start()
+                self.master.after(50, self.get_progress)
+            except Exception as e:
+                self.update_log(f'ERROR: Exception {e} occurred.')
+
+
     def set_settings(self, values, path):
-
-        #Sets the settings of the GUI and includes the video path file.
-
-        #values is a dictionary in the following format:
-        #        'conf': float,
-        #        'poll': int,
-        #        'anti': int,
-        #        'search': list of strings
-        #    }
-        #   'conf': confidence interval for image classification. Must be a value between 0 and 1
-        #    'poll': the framerate poll (frequency of frames to classify). Must be a value >= 0
-        #    'anti': the treshold for how long a clip can contain frames not containing the search question
-        #            (anything longer will be the bounds of the clip). Must be a value >= 0
-        #    'search': a list of search terms to use. Must contain at least one string.
-
-        # path is the video_input path
-
-        #if not os.path.exists(path):
-        #    print('Here1')
-            #self.set_default_settings()
-        #    return False
-        #print(len(values['search']))
-        #print(values['search'][0])
-        #print(path)
-        #print(type(path))
-
+        # Sets the settings of the GUI and includes the video path file.
         expected_keys = ['conf', 'poll', 'anti', 'runtime', 'search']
         missing = [x for x in expected_keys if x not in values.keys()]
         if len(missing) > 0:
@@ -66,7 +274,6 @@ class GUI:
         if len(extra) > 0:
             self.set_default_settings()
             return False
-
         try:
             if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
                 raise TypeError
@@ -87,187 +294,42 @@ class GUI:
             self.set_default_settings()
             return False
 
-        #print('values: ' + str(values))
         self.settings = values  # be sure that values are always in the same order. Do validation
-        #print('self.settings: ' + str(self.settings))
         self.video_path = path
         # where values is a dictionary
         return True
 
-
-    def start_job(self):
+    def construct_job(self):
         try:
             self.job = Job(self.get_settings())
             return True
         except:
             return False
 
-    def kill_job(self):
+    def remove_job(self):
         try:
             self.job.kill()
             return True
         except:
             return False
 
-    def render(self):
-        # display GUI, including text fields, choose file, and start button
-        # also calls set_settings and start_job when start button is pressed
-
-        win = Tk()
-
-        win.title("Intravideo Search")
-        win.geometry("960x540")
-        win_header = Frame(win)
-        win_header.pack()
-        win_content = Frame(win)
-        win_content.pack()
-
-        lbl1 = Label(win_header, text= "Welcome to Intravideo Search!", font=("Times New Roman", 50), anchor="w")
-        lbl1.grid(column=0, row=0, columnspan=3)
-
-        lbl2 = Label(win_content, text="Upload a video file.", justify=LEFT)
-        lbl2.grid(sticky = W, column=0,row=1)
-
-        def open_file():
-            filename = askopenfilename()
-            self.video_path = str(filename)
-
-        button1 = Button(win_content, text="Upload", anchor="w", command=open_file)
-        button1.grid(column=1, row=1) #acknowledge that a file has been uploaded
-
-        def change_confidence(val):
-            self.settings['conf'] = float(val)/100
-
-        def change_polling(val):
-            self.settings['poll'] = int(val)
-
-        def change_anti(val):
-            self.settings['anti'] = int(val)
-
-        lbl3 = Label(win_content, text="Confidence:", justify=LEFT)
-        lbl3.grid(sticky = E, column=0, row=2, padx=10)
-
-        slider1 = Scale(win_content, from_=0, to=100, length = 200, orient=HORIZONTAL, command=change_confidence)
-        slider1.set(self.settings['conf']*100)
-        slider1.grid(sticky = W, column=1, row=2)
-
-        lbl4 = Label(win_content, text="Polling Rate:", justify=LEFT)
-        lbl4.grid(sticky = E, column=0, row=3, padx=10)
-
-        slider2 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_polling)
-        slider2.set(self.settings['poll'])
-        slider2.grid(sticky = W, column=1, row=3)
-
-        lbl5 = Label(win_content, text="Anti:", justify=LEFT)
-        lbl5.grid(sticky = E, column=0, row=4, padx=10)
-
-        slider3 = Scale(win_content, from_=0, to=200, length = 200, orient=HORIZONTAL, command=change_anti)
-        slider3.set(self.settings['anti'])
-        slider3.grid(sticky = W, column=1, row=4)
+    def close(self):
+        if self.job:
+            self.kill_job()
+        self.master.destroy()
 
 
-        lbl6 = Label(win_content, text="Search Terms:", justify=LEFT)
-        lbl6.grid(sticky=E, column=0, row=6, padx=10)
+def render():
+    root = ThemedTk(theme='arc')
+    app = GUI(root)
+    root.protocol('WM_DELETE_WINDOW', app.close)
+    root.mainloop()
 
-        entry1 = Entry(win_content, width=30)
-        entry1.grid(sticky=W, column=1, row=6, pady=10)
+# multiprocessing checkbox support
+# default is off on mac, on otherwise
+# disabled button, checked otherwise
+# if checked, can check on and off which updates multi val
+# which gets passes in job constructor Job(multi=True)
+# use that val in job unless mac, then block (false)
 
-        def entry1_delete():
-            entry1.delete(first=0, last=100)
-
-        def add_search_term():
-            self.settings['search'].append(entry1.get())
-
-        button2 = Button(win_content, text="Add", anchor='w', command=add_search_term)
-        button2.grid(sticky=W, column=3, row=6)
-
-        button3 = Button(win_content, text="Clear", anchor='w', command=entry1_delete)
-        button3.grid(sticky=W, column=4, row=6)
-
-        def display_settings(): #Or maybe display settings dynamically?
-            temp_lbl1 = Label(win_content, text="Settings: " + str(self.settings['conf']) + ", " + str(self.settings['poll']) + ", " + str(self.settings['anti']) + ", " + str(self.settings['runtime']))
-            temp_lbl1.grid(sticky=W, column=0, row=95)
-            temp_lbl2 = Label(win_content, text="Search: ")
-            temp_lbl2.grid(sticky=W, column=0, row=96)
-
-            str1 = ''
-            for ele in self.settings['search']:
-                str1 += ', '
-                str1 += ele
-
-            temp_lbl4 = Label(win_content, text=str1)
-            temp_lbl4.grid(sticky=W, column=1, row=96)
-            temp_lbl3 = Label(win_content, text= "Video path: " + self.video_path, wraplength="200px", justify=LEFT)
-            temp_lbl3.grid(sticky=W, column=0, row=97, columnspan=2)
-
-
-        display_settings_button = Button(win_content,text="Display Settings", command=display_settings)
-        display_settings_button.grid(column=0, row=99, pady=10)
-
-        kill_button = Button(win_content,text="Kill this window", command= win.destroy)
-        kill_button.grid(column=0, row=100)
-
-        def display_errors(title, message):
-            w = Tk()
-            w.title(title)
-            w.geometry("800x170")
-            content = Frame(w)
-            content.pack()
-
-            lbl = Label(content, text=message, font=("Times New Roman", 14), justify=LEFT)
-            lbl.grid(column = 0, row = 0, columnspan=5)
-
-            kill_button = Button(content,text="Ok", command= w.destroy)
-            kill_button.grid(column=2, row=2)
-
-        def run_the_job():
-            bl, msg = self.run_job()
-
-            if bl is False:
-                display_errors(str(bl), msg)
-
-            else:
-                msg2 = "Job cancelled"
-                cancel_button = Button(win_content,text="Cancel", command=lambda:[self.job.kill,display_errors("Cancelled", msg2)])
-                cancel_button.grid(column=2,row=93) #kill this button once pressed?
-
-                try:
-                    self.job.do_the_job() #We need to parallelize with the progress bar
-                except e: #capture any errors that may occur
-                    display_errors("Error", e)
-
-
-        start_button = Button(win_content,text="Start", command=run_the_job)
-        start_button.grid(column=1, row = 93)
-
-        win.mainloop()
-        return 0
-
-    def run_job(self):
-        """
-        Validates the settings of the GUI and makes sure that they are valid
-        Ensures that the video path given is a valid video and can be opened by the application
-        Returns a tuple: (bool, msg) where bool is True if everything is valid and a Job was started and False otherwise,
-        and msg is a success or error message
-        """
-        settings = self.settings
-        path = self.video_path
-
-        msg = ""
-
-        condition1 = self.set_settings(settings, path)
-        if condition1 is False:
-            msg += "One or more of your settings parameters are invalid. Please double check your settings and try again\n"
-            #maybe which settings are off?
-
-        condition2 = os.path.isfile(path)
-        if condition2 is False and not  "youtube.com" in path:
-            msg += "You entered an invalid file path. Please double check your input video and try again\n"
-
-        if not condition1 or not condition2:
-            return(False, msg)
-
-        self.job = Job(self.get_settings())
-        return (True, "Success")
-
-
+# read article about progress bars

@@ -1,10 +1,18 @@
 from controller import Worker
 import os
+import time
 import torch
 import sys
 import cv2
+import pickle
+import warnings
 from PIL import Image
-#from multiprocessing import Pool
+from torchvision import transforms
+from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
+sys.path.append('utils')
+import my_pytube
+
 
 class Job:
 
@@ -12,7 +20,7 @@ class Job:
 
     def __init__(self, settings):
         if not isinstance(settings, type(None)):
-            if 'youtube.com' in settings['video']: # if given YouTube URL
+            if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
                 yt_vid_path = self.get_from_yt(settings['video'])
                 if not yt_vid_path: # if empty string
                     self.video_path = settings['video']
@@ -20,18 +28,46 @@ class Job:
                     self.video_path = yt_vid_path
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
-
-            #self.video_path = settings['video']
             self.settings = settings['settings']
-            # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
+        # disable multiprocessing on mac os
+        self.multi = sys.platform != 'darwin'
 
-    def do_the_job(self):
+    def multi_map(self, fxn, arr):
+        # Given a function and a list to iterate over, multi_map will attempt
+        # to leverage multiprocessing to speed up the operation.
+        # If unsuccessful, will default to nonconcurrent method (slow).
+
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+            return results
+        else:
+            return [fxn(elem) for elem in arr]
+
+    def do_the_job(self):  # , queue=None):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
+        mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
+        self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
-        results = self.interpret_results(data)
-        self.save_clips(results)
+        results = self.interpret_results(data, self.settings['conf'])
+        return self.save_clips(results)
+
+    def get_frame(self, timestamp):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+        success, frame = video.read()
+        if not success:
+            warnings.warn(
+                f'This time ({timestamp} sec) does not exist in the video.')
+            return None
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return (img, timestamp)
 
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
@@ -40,33 +76,27 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
-        vidPath = self.video_path
-        poll = self.settings['poll']
-        count = 0
-        frms = []
-        video = cv2.VideoCapture(vidPath)
-        success = True
-        while success:
-            timestamp = (count*poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp*1000))
-            success,frame = video.read()
-            if success:
-                cv2.imwrite('frame%d.jpg' % count, frame) # save frame as .jpg
-                try:
-                    f = Image.open('frame%d.jpg' % count) # make frame Image
-                    os.remove('frame%d.jpg' % count) # delete frame.jpg
-                    frms.append((f,timestamp))
-                except:
-                    raise NameError('getFrameError')
-            count += 1
-        return frms
+        poll = int(self.settings['poll'])
+        runtime = int(self.settings['runtime'])
+        poll_times = list(range(0, runtime + poll, poll))
+        timestamps = [time for time in poll_times if time <= runtime]
+        frames = self.multi_map(self.get_frame, timestamps)
+        frames = [frame for frame in frames if frame]
+        self.frame_len = len(frames)
+        return frames
+
+    def classify_frame(self, frame):
+        img, time = frame
+        classifications = Worker().classify_img(img)
+        for term in self.settings['search']:
+            if term in classifications:
+                print(f'{term} at {time} sec')
+        return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        norm = 100
-        results = [(val / norm, t) for (val, t) in results]
-        return list(sorted(results, key=lambda x: x[1]))
+        results = self.multi_map(self.classify_frame, frames)
+        return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
         search_terms = self.settings['search']
@@ -163,20 +193,12 @@ class Job:
                 endTime = (finalTime + nextTime) / 2
 
             adjustedEndpoints.append((startTime, endTime))
-
         return adjustedEndpoints
 
 
     def save_clips(self, timestamps):
-        #with Pool() as pool:
-        #    v = self.video_path
-        #    args_list = [(t, v) for t in timestamps]
-        #    map_results = pool.starmap(Worker().make_clip, args_list)
-
-        #return map_results
-        # multiprocessing is running into issues with shared resources
-        v = self.video_path
-        return [Worker().make_clip(t, v) for t in timestamps]
+        return len(timestamps) and len(self.multi_map(
+            Worker(self.video_path).make_clip, timestamps))
 
 
     def kill(self):
@@ -186,29 +208,110 @@ class Job:
     def get_from_yt(self, url):
         # input YouTube video URL
         # output string of path to downloaded video
-        return ['todo']
+        folder_path = './test'
+        vid_path = ''
+        try:
+            yt = my_pytube.YouTube(url)
+            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+            vid_path = vid.download(output_path=folder_path)
+        except Exception as e:
+            for i in range(3):
+                try:
+                    yt = my_pytube.YouTube(url)
+                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                    vid_path = vid.download(output_path=folder_path)
+                except:
+                    time.sleep(5)
+            if vid_path=='':
+                raise ValueError("Your video could not be downloaded: %s" % e)
+        return vid_path
 
 class Seer():
     def __init__(self):
+        # Device Config. Use GPU if available.
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        # Default Paths
+        self.vocab_path = 'torchdata/vocab.pkl'
+        self.encoder_path = 'torchdata/encoder-5-3000.pkl'
+        self.decoder_path = 'torchdata/decoder-5-3000.pkl'
+
+        # Default Model Parameters
+        self.embed_size = 256
+        self.hidden_size = 512
+        self.num_layers = 1
+        with open(self.vocab_path, 'rb') as f:
+            self.vocab = CustomUnpickler(open(self.vocab_path, 'rb')).load()
+
+        # The Model
         self.encoder, self.decoder = self.prepare_model()
 
-        # Device configuration. Uses the GPU if one is available.
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        pass
 
     def prepare_model(self):
         # This is a utility to load and otherwise prepare the pytorch model.
         # It is only used in initialization of the Seer class.
-        return None, None
+        # Create a new destination file
+        if not os.path.isfile(self.encoder_path):
+            whole_encoder = open(self.encoder_path, 'wb')
+            parts = [os.path.join('torchdata',file) for file in os.listdir('torchdata/') if 'part' in file]
+            parts.sort()
+            for file in parts:
+                input_file = open(file, 'rb')
+                while True:
+                    bytes = input_file.read()
+                    if not bytes:
+                        break
+                    whole_encoder.write(bytes)
+                input_file.close()
+            whole_encoder.close()
+
+
+        encoder = EncoderCNN(self.embed_size).eval()  # eval mode (batchnorm uses moving mean/variance)
+        decoder = DecoderRNN(self.embed_size, self.hidden_size, len(self.vocab), self.num_layers)
+        encoder = encoder.to(self.device)
+        decoder = decoder.to(self.device)
+        # Load the trained model parameters
+        encoder.load_state_dict(torch.load(self.encoder_path))
+        decoder.load_state_dict(torch.load(self.decoder_path))
+
+        return encoder, decoder
 
     def tell_us_oh_wise_one(self, pilImage):
         # This is the method which produces a caption given an image (PIL Image)
         # The argument type is str and the return type is str.
         img = self.prepare_data(pilImage)
-        caption = ""
+        features = self.encoder(img)
+        sampled_ids = self.decoder.sample(features)
+        sampled_ids = sampled_ids[0].cpu().numpy()
+
+        # Convert word_ids to words
+        sampled_caption = []
+        for word_id in sampled_ids:
+            word = self.vocab.idx2word[word_id]
+            if word == '<end>':
+                break
+            sampled_caption.append(word)
+        if sampled_caption[-1] == ".":
+            sampled_caption = sampled_caption[:-1]
+        caption = ' '.join(sampled_caption[1:])
         return caption
 
     def prepare_data(self, pilImage):
         # This is a private utility for the tell_us_oh_wise_one method.
         # This loads and preproceses the image, normalizing, resizing etc.
-        return pilImage
+        # Image preprocessing
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize((0.485, 0.456, 0.406),
+                                                             (0.229, 0.224, 0.225))])
+        image = pilImage.resize([224, 224], Image.LANCZOS)
+        image = transform(image).unsqueeze(0)
+        image_tensor = image.to(self.device)
+
+        return image_tensor
+
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if name == 'Vocabulary':
+            from build_vocab import Vocabulary
+            return Vocabulary
+        return super().find_class(module, name)
