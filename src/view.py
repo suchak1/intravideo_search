@@ -8,11 +8,15 @@ import os
 import cv2
 import pygubu
 import re
+import queue
+import time
+from multiprocessing import Queue, Process
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
+q = Queue()
 
 class GUI:
 
@@ -24,6 +28,7 @@ class GUI:
         self.set_default_settings()
 
         self.job = None
+        self.process = None
         self.seer = Seer()
 
         # create builder
@@ -184,14 +189,31 @@ class GUI:
         return success
 
     def start_btn_handler(self):
-        if self.builder.get_object('Start')['text'] == 'Cancel':
+        if self.job or self.process:
             self.kill_job()
         else:
             self.start_job()
 
+    def get_progress(self):
+        if self.process and self.process.is_alive():
+            # self.after(50, self.get_progress)
+            time.sleep(1)
+            self.get_progress()
+            return
+        else:
+            pbar = self.builder.get_object('Progressbar_1')
+            if self.job and self.job.frame_len:
+                job = self.job
+                val = int(round(job.frame_num / job.frame_len, 2) * 100)
+                pbar['value'] = val
+                # pbar.stop()
+
     def kill_job(self):
-        if self.job:
+        if self.job or self.process:
             try:
+                print('Killing...')
+                self.process.terminate()
+                self.process.join()
                 self.job.kill()
                 self.update_log('Job killed successfully.')
                 self.builder.get_object('Start')['text'] = 'Start Job'
@@ -205,13 +227,19 @@ class GUI:
             self.job = Job(settings)
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
-            btn['text'] = 'Cancel'
             try:
-                success = self.job.do_the_job()
+                # btn.configure(text="Cancel")
+                self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
+                btn['text'] = 'Cancel'
+                self.process.start()
+                pbar = self.builder.get_object('Progressbar_1')
+                # pbar.start(50)
+                self.get_progress()
+                # success = self.job.do_the_job()
                 self.update_log('SUCCESS: Job completed.')
             except Exception as e:
-                self.update_log('ERROR: Exception {e} occurred.')
-            btn['text'] = 'Start Job'
+                self.update_log(f'ERROR: Exception {e} occurred.')
+            # btn['text'] = 'Start Job'
 
 
     def set_settings(self, values, path):

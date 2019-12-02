@@ -37,6 +37,8 @@ class Job:
             self.settings = None
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
+        self.frame_len = None
+        self.frame_num = 0
 
     def multi_map(self, fxn, arr):
         # Given a function and a list to iterate over, multi_map will attempt
@@ -70,6 +72,7 @@ class Job:
                 f'This time ({timestamp} sec) does not exist in the video.')
             return None
         img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        self.frame_num += 1
         return (img, timestamp)
 
     def get_frames(self):
@@ -85,6 +88,7 @@ class Job:
         timestamps = [time for time in poll_times if time <= runtime]
         frames = self.multi_map(self.get_frame, timestamps)
         frames = [frame for frame in frames if frame]
+        self.frame_len = len(frames)
         return frames
 
     def classify_frame(self, frame):

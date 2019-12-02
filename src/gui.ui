@@ -320,7 +320,6 @@
               <object class="ttk.Progressbar" id="Progressbar_1">
                 <property name="length">150</property>
                 <property name="orient">horizontal</property>
-                <property name="value">64</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>
@@ -330,7 +329,7 @@
             </child>
             <child>
               <object class="ttk.Button" id="Start">
-                <property name="command">start_job</property>
+                <property name="command">start_btn_handler</property>
                 <property name="default">active</property>
                 <property name="state">normal</property>
                 <property name="takefocus">true</property>
