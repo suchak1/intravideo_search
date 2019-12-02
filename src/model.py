@@ -28,17 +28,15 @@ class Job:
                     self.video_path = yt_vid_path
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
-
-            # self.video_path = settings['video']
             self.settings = settings['settings']
-            # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
-        self.frame_len = None
-        self.frame_num = 0
+        # self.frame_len = 100
+        # self.frame_num = 1
+        self.success = False
 
     def multi_map(self, fxn, arr):
         # Given a function and a list to iterate over, multi_map will attempt
@@ -54,7 +52,7 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self):
+    def do_the_job(self, queue=None):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
@@ -62,6 +60,8 @@ class Job:
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
         self.save_clips(results)
+        # queue.put(1)
+        self.success = True
 
     def get_frame(self, timestamp):
         video = cv2.VideoCapture(self.video_path)

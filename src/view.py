@@ -10,13 +10,17 @@ import pygubu
 import re
 import queue
 import time
-from multiprocessing import Queue, Process
+from multiprocessing import Queue, Process, Manager
+import multiprocessing as mp
+import sys
+import copy
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
-q = Queue()
+manager = Manager()
+q = manager.Queue()
 
 class GUI:
 
@@ -29,6 +33,7 @@ class GUI:
 
         self.job = None
         self.process = None
+        self.queue = q
         self.seer = Seer()
         self.prog_num = 0
         self.prog_len = 100
@@ -198,30 +203,47 @@ class GUI:
             self.start_job()
 
     def get_progress(self):
+        pbar = self.builder.get_object('Progressbar_1')
+        job = self.job
         if self.process and self.process.is_alive():
-            pbar = self.builder.get_object('Progressbar_1')
-            if self.job and self.job.frame_len:
-                job = self.job
-                print(job.frame_num)
-                val = int(round(job.frame_num / job.frame_len, 2) * 100)
-                pbar['value'] = val
+            # copy_q = copy.deepcopy(self.queue)
+            # if copy_q.get() == 1:
+            if self.job.success:
+                self.job.kill()
+                self.process.terminate()
+                self.process.join()
+                self.update_log('SUCCESS: Job completed.')
+                self.job = None
+                self.process = None
+                self.kill_job()
+                return
+            # if self.job.frame_len:
+            #     val = int(round(job.frame_num / job.frame_len, 2) * 100)
+            #     pbar['value'] = val
+
+            # self.prog_num += 1
+            # val = int(round(self.prog_num % 100 / self.prog_len, 2) * 100)
+            # pbar['value'] = val
+
+        # else:
+        #     pbar['value'] = int((self.prog_num / self.prog_len) * 100)
         self.master.after(50, self.get_progress)
 
-        # pbar = self.builder.get_object('Progressbar_1')
-        # self.prog_num += 1
-        # val = min(int(round(self.prog_num / self.prog_len, 2) * 100), 100)
-        # pbar['value'] = val
-        # self.master.after(50, self.get_progress)
 
     def kill_job(self):
         if self.job or self.process:
             try:
                 print('Killing...')
+                self.update_log('Killing...')
                 self.process.terminate()
-                self.process.join()
                 self.job.kill()
+                self.job = None
+                self.process = None
+                self.prog_num = 0
+                print('Job killed successfully.')
                 self.update_log('Job killed successfully.')
                 self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Waiting...'
             except:
                 self.update_log('ERROR: Job could not be killed.')
 
@@ -236,12 +258,14 @@ class GUI:
                 # btn.configure(text="Cancel")
                 self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
                 btn['text'] = 'Cancel'
+                self.builder.get_object('Status')['text'] = 'Working...'
                 self.process.start()
+                self.master.after(50, self.get_progress)
+                # self.process.join()
                 # pbar = self.builder.get_object('Progressbar_1')
                 # # pbar.start(50)
                 # self.get_progress()
                 # success = self.job.do_the_job()
-                self.update_log('SUCCESS: Job completed.')
             except Exception as e:
                 self.update_log(f'ERROR: Exception {e} occurred.')
             # btn['text'] = 'Start Job'
@@ -301,10 +325,17 @@ class GUI:
         except:
             return False
 
+    def close(self):
+        if self.job:
+            self.kill_job()
+        self.master.destroy()
+
+
 def render():
     root = ThemedTk(theme='arc')
     app = GUI(root)
-    root.after(50, app.get_progress)
+    root.protocol('WM_DELETE_WINDOW', app.close)
+    # root.after(50, app.get_progress)
     root.mainloop()
 
 # multiprocessing checkbox support
