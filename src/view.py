@@ -30,6 +30,9 @@ class GUI:
         self.job = None
         self.process = None
         self.seer = Seer()
+        self.prog_num = 0
+        self.prog_len = 100
+        self.master = master
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -199,8 +202,16 @@ class GUI:
             pbar = self.builder.get_object('Progressbar_1')
             if self.job and self.job.frame_len:
                 job = self.job
+                print(job.frame_num)
                 val = int(round(job.frame_num / job.frame_len, 2) * 100)
                 pbar['value'] = val
+        self.master.after(50, self.get_progress)
+
+        # pbar = self.builder.get_object('Progressbar_1')
+        # self.prog_num += 1
+        # val = min(int(round(self.prog_num / self.prog_len, 2) * 100), 100)
+        # pbar['value'] = val
+        # self.master.after(50, self.get_progress)
 
     def kill_job(self):
         if self.job or self.process:
@@ -289,6 +300,12 @@ class GUI:
             return True
         except:
             return False
+
+def render():
+    root = ThemedTk(theme='arc')
+    app = GUI(root)
+    root.after(50, app.get_progress)
+    root.mainloop()
 
 # multiprocessing checkbox support
 # default is off on mac, on otherwise
