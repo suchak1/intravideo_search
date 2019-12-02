@@ -8,19 +8,15 @@ import os
 import cv2
 import pygubu
 import re
-import queue
-import time
-from multiprocessing import Queue, Process, Manager
+from multiprocessing import Process  # , Queue, Manager
 import multiprocessing as mp
-import sys
-import copy
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
-manager = Manager()
-q = manager.Queue()
+# manager = Manager()
+# q = manager.Queue()
 
 class GUI:
 
@@ -257,20 +253,13 @@ class GUI:
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:
-                # btn.configure(text="Cancel")
                 self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
                 btn['text'] = 'Cancel'
                 self.builder.get_object('Status')['text'] = 'Working...'
                 self.process.start()
                 self.master.after(50, self.get_progress)
-                # self.process.join()
-                # pbar = self.builder.get_object('Progressbar_1')
-                # # pbar.start(50)
-                # self.get_progress()
-                # success = self.job.do_the_job()
             except Exception as e:
                 self.update_log(f'ERROR: Exception {e} occurred.')
-            # btn['text'] = 'Start Job'
 
 
     def set_settings(self, values, path):
@@ -285,7 +274,6 @@ class GUI:
         if len(extra) > 0:
             self.set_default_settings()
             return False
-        # values['runtime'] = int(values['runtime'])
         try:
             if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
                 raise TypeError
@@ -306,9 +294,7 @@ class GUI:
             self.set_default_settings()
             return False
 
-        #print('values: ' + str(values))
         self.settings = values  # be sure that values are always in the same order. Do validation
-        #print('self.settings: ' + str(self.settings))
         self.video_path = path
         # where values is a dictionary
         return True
@@ -337,7 +323,6 @@ def render():
     root = ThemedTk(theme='arc')
     app = GUI(root)
     root.protocol('WM_DELETE_WINDOW', app.close)
-    # root.after(50, app.get_progress)
     root.mainloop()
 
 # multiprocessing checkbox support
