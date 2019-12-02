@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="ttk.Frame" id="Main_Window">
+    <property name="height">200</property>
+    <layout>
+      <property name="column">1</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+      <rows>
+        <row id="0">
+          <property name="minsize">0</property>
+        </row>
+      </rows>
+      <columns>
+        <column id="0">
+          <property name="minsize">0</property>
+          <property name="pad">0</property>
+        </column>
+        <column id="1">
+          <property name="minsize">0</property>
+        </column>
+      </columns>
+    </layout>
+    <child>
+      <object class="ttk.Label" id="Title">
+        <property name="font">{sans} 11 {bold}</property>
+        <property name="relief">flat</property>
+        <property name="takefocus">false</property>
+        <property name="text" translatable="yes">IntraVideo Search</property>
+        <layout>
+          <property name="column">1</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="Body">
+        <property name="borderwidth">20</property>
+        <property name="height">200</property>
+        <property name="labelanchor">nw</property>
+        <property name="relief">flat</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">1</property>
+          <property name="padx">40</property>
+          <property name="propagate">True</property>
+          <property name="row">3</property>
+        </layout>
+        <child>
+          <object class="ttk.Labelframe" id="Input">
+            <property name="borderwidth">20</property>
+            <property name="height">200</property>
+            <property name="labelanchor">nw</property>
+            <property name="relief">raised</property>
+            <property name="takefocus">false</property>
+            <property name="text" translatable="yes">Input</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="Browse">
+                <property name="command">on_browse_click</property>
+                <property name="state">normal</property>
+                <property name="text" translatable="yes">Browse...</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="File_Label">
+                <property name="text" translatable="yes">Choose File</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="YouTube_Label">
+                <property name="takefocus">false</property>
+                <property name="text" translatable="yes">Enter YouTube Link&gt;</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Entry" id="YouTube_Entry">
+                <property name="exportselection">false</property>
+                <property name="state">normal</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="Add">
+                <property name="command">add_youtube_link</property>
+                <property name="text" translatable="yes">Add</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">2</property>
+                  <property name="sticky">e</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="or_label">
+                <property name="text" translatable="yes">or</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">3</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="Clear">
+                <property name="command">del_youtube_link</property>
+                <property name="text" translatable="yes">Clear</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">2</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Entry" id="Search_Entry">
+                <property name="exportselection">false</property>
+                <property name="state">normal</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">7</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Search_Label">
+                <property name="text" translatable="yes">Search Terms:</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">7</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="left_sep">
+                <property name="text" translatable="yes">------------------&lt;</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">5</property>
+                  <property name="sticky">e</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="right_sep">
+                <property name="text" translatable="yes">&gt;------------------</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">5</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="Settings">
+            <property name="borderwidth">20</property>
+            <property name="height">200</property>
+            <property name="text" translatable="yes">Settings</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+            <child>
+              <object class="ttk.Scale" id="Conf_Scale">
+                <property name="command">change_conf</property>
+                <property name="from_">0</property>
+                <property name="orient">horizontal</property>
+                <property name="to">100</property>
+                <property name="value">50</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Scale" id="Poll_Scale">
+                <property name="command">change_poll</property>
+                <property name="from_">0</property>
+                <property name="orient">horizontal</property>
+                <property name="to">60</property>
+                <property name="value">5</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Conf_Label">
+                <property name="anchor">w</property>
+                <property name="justify">center</property>
+                <property name="text" translatable="yes">Confidence (%):</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Poll_Label">
+                <property name="text" translatable="yes">Poll Rate (sec):</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Conf_Level">
+                <property name="text" translatable="yes">50%</property>
+                <layout>
+                  <property name="column">3</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Poll_Num">
+                <property name="text" translatable="yes">5 sec</property>
+                <layout>
+                  <property name="column">3</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Checkbutton" id="Checkbutton_1">
+                <property name="state">normal</property>
+                <property name="takefocus">true</property>
+                <property name="text" translatable="yes">multiprocessing</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">34</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Video_Label">
+                <property name="text" translatable="yes">Selected Video:</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">6</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Path_Label">
+                <property name="font">{sans} 9 {italic}</property>
+                <property name="text" translatable="yes">None</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">6</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="Output">
+            <property name="borderwidth">25</property>
+            <property name="height">200</property>
+            <property name="labelanchor">nw</property>
+            <property name="takefocus">false</property>
+            <property name="text" translatable="yes">Output</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+            <child>
+              <object class="ttk.Progressbar" id="Progressbar_1">
+                <property name="length">150</property>
+                <property name="orient">horizontal</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="Start">
+                <property name="command">start_btn_handler</property>
+                <property name="default">active</property>
+                <property name="state">normal</property>
+                <property name="takefocus">true</property>
+                <property name="text" translatable="yes">Start Job</property>
+                <property name="width">11</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                  <property name="sticky">e</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Status">
+                <property name="text" translatable="yes">Waiting...</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="Captions">
+            <property name="borderwidth">25</property>
+            <property name="height">200</property>
+            <property name="labelanchor">nw</property>
+            <property name="takefocus">false</property>
+            <property name="text" translatable="yes">Captions</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="Caption_Button">
+                <property name="command">handle_caption_btn</property>
+                <property name="text" translatable="yes">Choose Clip</property>
+                <property name="width">CA</property>
+                <layout>
+                  <property name="column">6</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="tk.Text" id="Caption_Text">
+                <property name="blockcursor">true</property>
+                <property name="exportselection">true</property>
+                <property name="font">TkCaptionFont</property>
+                <property name="height">4</property>
+                <property name="relief">flat</property>
+                <property name="state">disabled</property>
+                <property name="takefocus">true</property>
+                <property name="text" translatable="yes">Select a video clip to receive a caption here.</property>
+                <property name="undo">true</property>
+                <property name="width">30</property>
+                <property name="wrap">word</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Label" id="Description">
+        <property name="text" translatable="yes">A search engine for video, leveraging ML image classication.</property>
+        <layout>
+          <property name="column">1</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="Errors">
+        <property name="borderwidth">25</property>
+        <property name="height">200</property>
+        <property name="labelanchor">n</property>
+        <property name="relief">raised</property>
+        <property name="takefocus">false</property>
+        <property name="text" translatable="yes">Log</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">1</property>
+          <property name="propagate">True</property>
+          <property name="row">4</property>
+        </layout>
+        <child>
+          <object class="tk.Text" id="Log">
+            <property name="background">#424242</property>
+            <property name="blockcursor">false</property>
+            <property name="exportselection">true</property>
+            <property name="font">ansifixed</property>
+            <property name="foreground">#ffffff</property>
+            <property name="height">2</property>
+            <property name="relief">groove</property>
+            <property name="setgrid">true</property>
+            <property name="state">disabled</property>
+            <property name="tabstyle">tabular</property>
+            <property name="takefocus">true</property>
+            <property name="text" translatable="yes">Program started.</property>
+            <property name="undo">true</property>
+            <property name="width">75</property>
+            <property name="wrap">word</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
