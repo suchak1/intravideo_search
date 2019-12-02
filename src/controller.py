@@ -11,9 +11,14 @@ class Worker:
 
     "Controller - data requests"
 
+<<<<<<< HEAD
     def __init__(self):
         #print('constructor')
         pass
+=======
+    def __init__(self, video_path=None):
+        self.video_path = video_path
+>>>>>>> 9c484581f1024a3dd231d60d937b0ec6437b6578
 
     def classify_img(self, img):
         # input: Image object to classify
@@ -60,12 +65,13 @@ class Worker:
         related.update(extra)
         return related
 
-    def make_clip(self, timestamp, path, outputPath=None):
+    def make_clip(self, timestamp, outputPath=None):
         # Args: timestamp:((int)t0, (int)t1)
         #       path: (string)"path/to/input/video.mp4"
         #       outputPath: (string) "path/to/destination/video.mp4"
         #print('make_clip')
         # Check for valid args
+        path = self.video_path
         if isinstance(timestamp, type(None)) or isinstance(path, type(None)) \
                                              or isinstance(timestamp[0], type(None)) \
                                              or isinstance(timestamp[1], type(None)):
@@ -73,11 +79,12 @@ class Worker:
         if not os.path.isfile(path):
             raise ValueError("No file at {}".format(path))
 
+        start, end = timestamp
         # For the destination path, use the outputPath given, or else use the
         # default template.
         if isinstance(outputPath, type(None)):
             pathRoot, pathExt = os.path.splitext(path)
-            clipPath = pathRoot + "_subclip({},{})".format(timestamp[0], timestamp[1]) + pathExt
+            clipPath = pathRoot + "_subclip({},{})".format(start, end) + pathExt
         else:
             clipPath = outputPath
 
@@ -85,22 +92,37 @@ class Worker:
         # ensure that the parameters are properly formatted or otherwise
         # good-to-go and make a sub-clip.
         numFrames, fps, framH, frameW, fourcc = self.get_video_info(path)
-        if timestamp[1] > int(numFrames/fps):
-            timestamp = (timestamp[0], int(numFrames/fps))
-        delta = timestamp[1] - timestamp[0]
+        if end > int(numFrames/fps):
+            end = int(numFrames/fps)
+        delta = end - start
         if delta < 0:
             raise ValueError("Timestamp is out of order! Abort!")
         if delta == 0:
             raise ValueError("There is no interval in this timestamp {}".format(timestamp))
         if int(delta*fps) < 1:
             return ""
-        if timestamp[0] < 0 or timestamp[1] < 0:
+        if start < 0 or end < 0:
             raise ValueError("Negative time in the timestamp. That can't be right.")
 
         # Make that subclip.
+<<<<<<< HEAD
         clip = VideoFileClip(path).subclip(timestamp[0], timestamp[1])
         #print(clipPath)
         clip.write_videofile(clipPath, codec='libx264', temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+=======
+        clip = VideoFileClip(path).subclip(start, end)
+
+        # due to multiprocessing, we must give unique names to temp audio files
+        audio_path = f'temp-audio({start}_{end}).mp4'
+
+        clip.write_videofile(
+            clipPath,
+            codec='libx264',
+            temp_audiofile=audio_path,
+            remove_temp=True,
+            audio_codec='aac'
+        )
+>>>>>>> 9c484581f1024a3dd231d60d937b0ec6437b6578
 
         # Return the path to the newly minted clip.
         return clipPath
