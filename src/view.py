@@ -196,17 +196,11 @@ class GUI:
 
     def get_progress(self):
         if self.process and self.process.is_alive():
-            # self.after(50, self.get_progress)
-            time.sleep(1)
-            self.get_progress()
-            return
-        else:
             pbar = self.builder.get_object('Progressbar_1')
             if self.job and self.job.frame_len:
                 job = self.job
                 val = int(round(job.frame_num / job.frame_len, 2) * 100)
                 pbar['value'] = val
-                # pbar.stop()
 
     def kill_job(self):
         if self.job or self.process:
@@ -232,9 +226,9 @@ class GUI:
                 self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
                 btn['text'] = 'Cancel'
                 self.process.start()
-                pbar = self.builder.get_object('Progressbar_1')
-                # pbar.start(50)
-                self.get_progress()
+                # pbar = self.builder.get_object('Progressbar_1')
+                # # pbar.start(50)
+                # self.get_progress()
                 # success = self.job.do_the_job()
                 self.update_log('SUCCESS: Job completed.')
             except Exception as e:
