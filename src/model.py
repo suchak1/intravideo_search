@@ -28,10 +28,7 @@ class Job:
                     self.video_path = yt_vid_path
             else: # if given string was not a YouTube URL
                 self.video_path = settings['video']
-
-            # self.video_path = settings['video']
             self.settings = settings['settings']
-            # self.do_the_job()
         else:
             self.video_path = None
             self.settings = None
@@ -52,14 +49,14 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self):
+    def do_the_job(self):  # , queue=None):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
-        self.save_clips(results)
+        return self.save_clips(results)
 
     def get_frame(self, timestamp):
         video = cv2.VideoCapture(self.video_path)
@@ -85,6 +82,7 @@ class Job:
         timestamps = [time for time in poll_times if time <= runtime]
         frames = self.multi_map(self.get_frame, timestamps)
         frames = [frame for frame in frames if frame]
+        self.frame_len = len(frames)
         return frames
 
     def classify_frame(self, frame):
@@ -199,8 +197,8 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        return timestamps and self.multi_map(
-            Worker(self.video_path).make_clip, timestamps)
+        return len(timestamps) and len(self.multi_map(
+            Worker(self.video_path).make_clip, timestamps))
 
 
     def kill(self):

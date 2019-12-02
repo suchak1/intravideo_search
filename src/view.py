@@ -8,11 +8,15 @@ import os
 import cv2
 import pygubu
 import re
+from multiprocessing import Process  # , Queue, Manager
+import multiprocessing as mp
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
+# manager = Manager()
+# q = manager.Queue()
 
 class GUI:
 
@@ -24,7 +28,12 @@ class GUI:
         self.set_default_settings()
 
         self.job = None
+        self.process = None
         self.seer = Seer()
+        self.prog_num = 0
+        self.prog_len = 100
+        self.master = master
+        # self.queue = q
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -184,17 +193,55 @@ class GUI:
         return success
 
     def start_btn_handler(self):
-        if self.builder.get_object('Start')['text'] == 'Cancel':
+        if self.job or self.process:
             self.kill_job()
         else:
             self.start_job()
 
-    def kill_job(self):
-        if self.job:
-            try:
+    def get_progress(self):
+        pbar = self.builder.get_object('Progressbar_1')
+        job = self.job
+        process = self.process
+        if self.process:
+            exitcode = self.process.exitcode
+            print(exitcode)
+            if exitcode is not None:
+                self.process.terminate()
+                self.process.join()
                 self.job.kill()
+                self.job = None
+                self.process = None
+                self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Done.'
+                pbar['value'] = 100
+                if exitcode == 0:
+                    self.update_log('SUCCESS: Job completed. No relevant clips found.')
+                else:
+                    self.update_log(f'SUCCESS: Job completed. {exitcode} clips saved in source video path.')
+                return
+            else:
+                self.prog_num += 1
+                val = int(round(self.prog_num % 100 / self.prog_len, 2) * 100)
+                pbar['value'] = val
+        else:
+            pbar['value'] = int((self.prog_num / self.prog_len) * 100)
+        self.master.after(50, self.get_progress)
+
+
+    def kill_job(self):
+        if self.job or self.process:
+            try:
+                print('Killing...')
+                self.update_log('Killing...')
+                self.process.terminate()
+                self.job.kill()
+                self.job = None
+                self.process = None
+                self.prog_num = 0
+                print('Job killed successfully.')
                 self.update_log('Job killed successfully.')
                 self.builder.get_object('Start')['text'] = 'Start Job'
+                self.builder.get_object('Status')['text'] = 'Waiting...'
             except:
                 self.update_log('ERROR: Job could not be killed.')
 
@@ -205,13 +252,14 @@ class GUI:
             self.job = Job(settings)
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
-            btn['text'] = 'Cancel'
             try:
-                success = self.job.do_the_job()
-                self.update_log('SUCCESS: Job completed.')
+                self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
+                btn['text'] = 'Cancel'
+                self.builder.get_object('Status')['text'] = 'Working...'
+                self.process.start()
+                self.master.after(50, self.get_progress)
             except Exception as e:
-                self.update_log('ERROR: Exception {e} occurred.')
-            btn['text'] = 'Start Job'
+                self.update_log(f'ERROR: Exception {e} occurred.')
 
 
     def set_settings(self, values, path):
@@ -272,10 +320,10 @@ class GUI:
         if len(extra) > 0:
             error_extra_keys = error_extra_keys.replace("_", str(len(extra)))
             self.set_default_settings()
-            valid = False
-            error_list.append(error_extra_keys)
-            outcome = (valid, error_list)
-            return outcome
+            return False
+        try:
+            if not (isinstance(values['conf'], (int,float)) and isinstance(values['poll'], int) and isinstance(values['anti'], int) and isinstance(values['runtime'], int)):
+                raise TypeError
 
         try:
             if not (isinstance(values['conf'], (int,float))):
@@ -324,9 +372,7 @@ class GUI:
             outcome = (valid, error_list)
             return outcome
 
-        #print('values: ' + str(values))
         self.settings = values  # be sure that values are always in the same order. Do validation
-        #print('self.settings: ' + str(self.settings))
         self.video_path = path
         # where values is a dictionary
 
@@ -346,38 +392,7 @@ class GUI:
             return True
         except:
             return False
-
-    def render(self):
-        # display GUI, including text fields, choose file, and start button
-        # also calls set_settings and start_job when start button is pressed
-
-        win = Tk()
-
-        # get user screen size
-        width = win.winfo_screenwidth()
-        height = win.winfo_screenheight()
-
-        win.title("IntraVideo Search")
-        # set relative window size
-        win_width = int(width // 2.5)
-        win_height = int(height // 2)
-        win.geometry(f'{win_width}x{win_height}')
-        win.minsize(win_width, win_height)
-
-        win_header = Frame(win)
-        win_header.pack()
-        win_content = Frame(win)
-        win_content.pack()
-
-        # print(win.theme_names())
-        # ttk.theme_use('alt')
-
-        lbl1 = Label(win_header, text= "IntraVideo Search", font=("Times New Roman", 50), anchor="w")
-        lbl1.grid(column=0, row=0, columnspan=3)
-
-        lbl2 = Label(win_content, text="Upload a video file", justify=LEFT)
-        lbl2.grid(sticky = W, column=0,row=1)
-
+          
         def open_file():
             filename = askopenfilename()
             self.video_path = str(filename)
@@ -601,6 +616,18 @@ class GUI:
 
         if not condition1 or not condition2:
             return (False, msg)
+          
+    def close(self):
+        if self.job:
+            self.kill_job()
+        self.master.destroy()
+
+
+def render():
+    root = ThemedTk(theme='arc')
+    app = GUI(root)
+    root.protocol('WM_DELETE_WINDOW', app.close)
+    root.mainloop()
 
 # multiprocessing checkbox support
 # default is off on mac, on otherwise
