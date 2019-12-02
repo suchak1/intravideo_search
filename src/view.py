@@ -10,14 +10,15 @@ import pygubu
 import re
 import queue
 import time
-from multiprocessing import Queue, Process
+from multiprocessing import Queue, Process, Manager
 import copy
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
-q = Queue()
+manager = Manager()
+q = manager.Queue()
 
 class GUI:
 
@@ -227,6 +228,8 @@ class GUI:
                 self.job.kill()
                 self.update_log('Job killed successfully.')
                 self.builder.get_object('Start')['text'] = 'Start Job'
+                self.job = None
+                self.process = None
             except:
                 self.update_log('ERROR: Job could not be killed.')
 
@@ -234,12 +237,12 @@ class GUI:
         self.parse_search_terms()
         if self.verify_settings():
             settings = self.get_settings()
-            self.job = Job(settings, self.queue)
+            self.job = Job(settings, q)
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:
                 # btn.configure(text="Cancel")
-                self.process = Process(target=self.job.do_the_job, args=(self.queue,))
+                self.process = Process(target=self.job.do_the_job)
                 btn['text'] = 'Cancel'
                 self.process.start()
                 # pbar = self.builder.get_object('Progressbar_1')

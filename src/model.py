@@ -18,7 +18,7 @@ class Job:
 
     "Model - data logic"
 
-    def __init__(self, settings, queue):
+    def __init__(self, settings, queue=None):
         if not isinstance(settings, type(None)):
             if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
                 yt_vid_path = self.get_from_yt(settings['video'])
@@ -55,8 +55,8 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self, queue):
-        self.queue = queue
+    def do_the_job(self):
+        # self.queue = queue
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
