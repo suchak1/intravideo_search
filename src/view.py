@@ -8,12 +8,8 @@ import os
 import cv2
 import pygubu
 import re
-<<<<<<< HEAD
 import sys
-=======
 from multiprocessing import Process  # , Queue, Manager
-import multiprocessing as mp
->>>>>>> 9c484581f1024a3dd231d60d937b0ec6437b6578
 # -*- coding: utf-8 -*-
 
 
@@ -39,6 +35,7 @@ class GUI:
         self.prog_num = 0
         self.prog_len = 100
         self.master = master
+        check_box = BooleanVar()
         # self.queue = q
 
         # create builder
@@ -52,6 +49,7 @@ class GUI:
             master.resizable(0, 0)
             # connect callbacks
             builder.connect_callbacks(self)
+
             self.has_master = True
         else:
             self.has_master = False
@@ -329,8 +327,6 @@ def render():
     root = ThemedTk(theme='arc')
     app = GUI(root)
     root.protocol('WM_DELETE_WINDOW', app.close)
-    if multi is None:
-
     root.mainloop()
 
 # multiprocessing checkbox support

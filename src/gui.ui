@@ -282,13 +282,16 @@
             </child>
             <child>
               <object class="ttk.Checkbutton" id="Multi">
+                <property name="offvalue">False</property>
+                <property name="onvalue">True</property>
                 <property name="state">normal</property>
                 <property name="takefocus">false</property>
                 <property name="text" translatable="yes">multiprocessing</property>
+                <property name="variable">boolean:False</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>
-                  <property name="row">34</property>
+                  <property name="row">7</property>
                 </layout>
               </object>
             </child>
