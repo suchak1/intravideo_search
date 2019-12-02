@@ -8,6 +8,7 @@ import os
 import cv2
 import pygubu
 import re
+import sys
 # -*- coding: utf-8 -*-
 
 
@@ -25,6 +26,7 @@ class GUI:
 
         self.job = None
         self.seer = Seer()
+        self.multi = sys.platform != 'darwin'
 
         # create builder
         self.builder = builder = pygubu.Builder()
