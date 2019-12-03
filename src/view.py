@@ -10,6 +10,7 @@ import pygubu
 import re
 from multiprocessing import Process  # , Queue, Manager
 import multiprocessing as mp
+import sys
 # -*- coding: utf-8 -*-
 
 
@@ -49,6 +50,9 @@ class GUI:
             self.has_master = True
         else:
             self.has_master = False
+
+        if sys.platform == 'darwin':
+            builder.get_object('Checkbutton_1').configure(state='disabled')
 
     def set_default_settings(self):
         self.settings = DEFAULT
