@@ -100,6 +100,7 @@ By running `python src/start.py`, you can start the GUI for yourself and try to 
 6. When the Job completes, the Log will output whether any relevant clips where found and how many. These clips will be saved in the source video's original filepath.
 
 ***Extra:***
+
 7. Press `Choose Caption` to choose a video clip to caption. This action is available even while a Job is running.
 
 ## Result
