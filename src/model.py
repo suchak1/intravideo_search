@@ -49,14 +49,16 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self):  # , queue=None):
+    def do_the_job(self, queue=None):
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
-        return self.save_clips(results)
+        queue.put(len(results))
+        self.save_clips(results)
+        return queue
 
     def get_frame(self, timestamp):
         video = cv2.VideoCapture(self.video_path)
