@@ -215,7 +215,7 @@ class Job:
             Worker(self.video_path).make_clip, timestamps)
         if success:
             print(f'{clip_num} clips saved successfully.')
-        return
+        return success
 
 
     def kill(self):
