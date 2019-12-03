@@ -13,7 +13,10 @@
 ### Prerequisites
 
 <!---Obtain a free API key.--->
-Python 3.7 and a Unix-based OS or Windows Subsystem for Linux (WSL).
+These are hard requirements, and the program will not work without these.
+- Python 3.7
+- Linux (tested on Ubuntu 1or Windows Subsystem for Linux (WSL)
+- an internet connection (for related words API calls and YouTube downloads)
 
 ### Contributing
 
@@ -77,7 +80,13 @@ This will automatically update/rewrite all Python code in the entire repo to fol
 ## Result
 
 By running `python src/start.py`, you can start the GUI for yourself and try to add a video. Settings should update as you use the GUI.
-![GUI](pics/GUI.PNG)
+
+1. Enter a YT video and click `Add` to add the video to the pending Job. To clear the video from the job, press `Clear`. Or you can choose a local video on your hard drive with the `Browse` button.
+
+2. Enter a search term (or list of search terms delimited by commas - whitespace doesn't matter).
+
+3. Adjust the settings if necessary. A higher confidence level will likely result in not only less false positives but also less clips. A lower poll rate with likely result in not only more precise clip lengths and classification but also longer Job run time.
+![GUI](pics/gui_v2_working.PNG)
 
 We have also included a Jupyter notebook, so you can part of the backend dynamically.
 Simply run `jupyter notebook` (make sure you have it installed, not a Python package) in the main directory and select `classify_img.ipynb` in your browser. Click Cell in the taskbar/menu and Run All. Now, note that the notebook successfully recognizes a goldfish with 99% confidence. Feel free to input/replace a URL of your choice to test object detection. ![classify_img](pics/classify_img.PNG)
