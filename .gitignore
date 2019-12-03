@@ -4,3 +4,5 @@ venv/*
 *.pyc
 .ipynb*
 torchdata/encoder-5-3000.pkl
+test/sampleVideo/test*
+test/sampleVideo/SampleVideo*

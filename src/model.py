@@ -3,49 +3,74 @@ import os
 import time
 import torch
 import sys
-sys.path.append('utils')
 import cv2
 import pickle
+import warnings
 from PIL import Image
-import my_pytube
 from torchvision import transforms
 from seer_model import EncoderCNN, DecoderRNN
+from multiprocessing import Pool
+sys.path.append('utils')
+import my_pytube
 
-#from multiprocessing import Pool
 
 class Job:
 
     "Model - data logic"
 
     def __init__(self, settings):
-        if not isinstance(settings, type(None)):
-            if 'youtube.com' in settings['video']: # if given YouTube URL
-                yt_vid_path = self.get_from_yt(settings['video'])
-                if not yt_vid_path: # if empty string
-                    self.video_path = settings['video']
-                else: # if YouTube video successfully downloaded
-                    self.video_path = yt_vid_path
-            else: # if given string was not a YouTube URL
-                self.video_path = settings['video']
-
-            #self.video_path = settings['video']
-            self.settings = settings['settings']
-            # self.do_the_job()
-        else:
+        if isinstance(settings, type(None)):
             self.video_path = None
             self.settings = None
+        else:
+            self.settings = settings['settings']
+            self.video_path = settings['video']
+        # disable multiprocessing on mac os
+        self.multi = sys.platform != 'darwin'
 
-        self.tmpCollector = set()
+    def multi_map(self, fxn, arr):
+        # Given a function and a list to iterate over, multi_map will attempt
+        # to leverage multiprocessing to speed up the operation.
+        # If unsuccessful, will default to nonconcurrent method (slow).
 
-    def do_the_job(self):
+        if self.multi:
+            with Pool() as pool:
+                results = pool.map(fxn, arr)
+                pool.close()
+                pool.join()
+            return results
+        else:
+            return [fxn(elem) for elem in arr]
+
+    def handle_vid(self):
+        video_path = self.video_path
+        if 'youtube.com' in video_path or 'youtu.be/' in video_path: # if given YouTube URL
+            yt_vid_path = self.get_from_yt(video_path)
+            if yt_vid_path: # if non-empty string
+                self.video_path = yt_vid_path
+
+    def do_the_job(self, queue=None):
+        self.handle_vid()
         video = cv2.VideoCapture(self.video_path)
-        video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
-        self.settings['runtime'] = mRuntime / 1000
-
+        self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
+        queue.put(len(results))
         self.save_clips(results)
+        return queue
+
+    def get_frame(self, timestamp):
+        video = cv2.VideoCapture(self.video_path)
+        video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
+        success, frame = video.read()
+        if not success:
+            warnings.warn(
+                f'This time ({timestamp} sec) does not exist in the video.')
+            return None
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return (img, timestamp)
 
     def get_frames(self):
         # Given video and poll setting, returns list of tuples
@@ -54,33 +79,35 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+        print('Retrieving video frames...')
+        poll = int(self.settings['poll'])
+        runtime = int(self.settings['runtime'])
+        poll_times = list(range(0, runtime + poll, poll))
+        timestamps = [time for time in poll_times if time <= runtime]
+        frames = self.multi_map(self.get_frame, timestamps)
+        frames = [frame for frame in frames if frame]
+        frame_num = len(frames)
+        print(f'{frame_num} frames retrieved successfully.')
+        return frames
 
-        vidPath = self.video_path
-        poll = self.settings['poll']
-        count = 0
-        frms = []
-        video = cv2.VideoCapture(vidPath)
-        success = True
-
-        while success:
-            timestamp = (count * poll)
-            video.set(cv2.CAP_PROP_POS_MSEC, (timestamp * 1000))
-            success, frame = video.read()
-            if success:
-                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-                frms.append((img, timestamp))
-            count += 1
-        return frms
+    def classify_frame(self, frame):
+        img, time = frame
+        classifications = Worker().classify_img(img)
+        for term in self.settings['search']:
+            if term in classifications:
+                prob = round(classifications[term], 2)
+                print(f'{term} at {time} sec with probability: {prob}%')
+        return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
-        results = [(self.score(Worker().classify_img(f)), t) for (f, t) in frames]
-        norm = 100
-        results = [(t, val / norm) for (val, t) in results]
+        num_frames = len(frames)
+        print(f'Classifying {num_frames} frames...')
+        results = self.multi_map(self.classify_frame, frames)
+        print(f'{num_frames} frames classified successfully.')
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
-        [self.tmpCollector.add(key) for key in confidence_dict.keys()]
         search_terms = self.settings['search']
         max_score = 0
         for term in search_terms:
@@ -179,15 +206,16 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        #with Pool() as pool:
-        #    v = self.video_path
-        #    args_list = [(t, v) for t in timestamps]
-        #    map_results = pool.starmap(Worker().make_clip, args_list)
-
-        #return map_results
-        # multiprocessing is running into issues with shared resources
-        v = self.video_path
-        return [Worker().make_clip(t, v) for t in timestamps]
+        clip_num = len(timestamps)
+        if not timestamps:
+            print('No clips found.')
+        else:
+            print(f'Saving {clip_num} clips...')
+        success = timestamps and self.multi_map(
+            Worker(self.video_path).make_clip, timestamps)
+        if success:
+            print(f'{clip_num} clips saved successfully.')
+        return success
 
 
     def kill(self):
@@ -199,20 +227,30 @@ class Job:
         # output string of path to downloaded video
         folder_path = './test'
         vid_path = ''
-        try:
-            yt = my_pytube.YouTube(url)
-            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-            vid_path = vid.download(output_path=folder_path)
-        except Exception as e:
-            for i in range(3):
-                try:
-                    yt = my_pytube.YouTube(url)
-                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-                    vid_path = vid.download(output_path=folder_path)
-                except:
+        for i in range(3):
+            try:
+                yt = my_pytube.YouTube(url)
+                vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                title = vid.title
+
+                files = os.listdir(folder_path)
+                already_dl = [file for file in files if title in file and file[-4:] == '.mp4']
+
+                if already_dl:
+                    print(already_dl)
+                    vid_path = os.path.join(folder_path, already_dl[0])
+                    print(f'Found already downloaded video: {already_dl[0]}')
+                    break
+
+                print('Downloading video...')
+                vid_path = vid.download(output_path=folder_path)
+                print('Download complete.')
+            except Exception as e:
+                if i == 2:
+                    raise ValueError("Your video could not be downloaded: %s" % e)
+                else:
                     time.sleep(5)
-            if vid_path=='':
-                raise ValueError("Your video could not be downloaded: %s" % e)
+
         return vid_path
 
 class Seer():

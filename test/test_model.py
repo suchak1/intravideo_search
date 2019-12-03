@@ -20,7 +20,7 @@ example_parameters1 = {
         'poll': 5,
         'anti': 5,
         'search': ["dog"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -33,7 +33,7 @@ example_parameters2 = {
         'poll': 4,
         'anti': 5,
         'search': ["rabbit"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -46,7 +46,7 @@ example_parameters3 = {
         'poll': 1,
         'anti': 3,
         'search': ["rock"],
-        'runtime':100.0
+        'runtime': 5.0
     },
     'video': 'test/sampleVideo/SampleVideo_1280x720_1mb.mp4'
 }
@@ -59,7 +59,7 @@ example_parameters4 = {
         'poll': 8,
         'anti': 6,
         'search': ["water"],
-        'runtime':100.0
+        'runtime': 25.0
     },
     'video': 'test/sampleVideo/SampleVideoNature.mp4'
 }
@@ -276,6 +276,7 @@ def areImagesSame(im1, im2):
 # from list of Images to list of tuples of Images and timestamps
 def test_get_frames_poll_5():
     frames = example_job1.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     check.equal(len(frames), 2)
     # frame at 0 seconds of sample video
     frame1 = Image.open('test/sampleVideo/settings_poll_5/frame0.jpg')
@@ -294,6 +295,7 @@ def test_get_frames_poll_5():
 
 def test_get_frames_poll_1():
     frames = example_job3.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     poll = example_job3.settings['poll']
     check.equal(len(frames), 6)
     # check frames against expected frame at each second (because poll = 1)
@@ -309,6 +311,7 @@ def test_get_frames_poll_1():
 
 def test_get_frames_poll_8():
     frames = example_job4.get_frames()
+    frames = list(sorted(frames, key=lambda x: x[1]))
     poll = example_job4.settings['poll']
     check.equal(len(frames), 4)
     # check frames against frame at 0,8,16,24 seconds (because poll = 8)
@@ -412,10 +415,12 @@ def test_get_from_yt():
     expected_duration2 = 359
     expected_duration3 = 228
     job0 = Job(parameters)
+    job0.handle_vid()
 
     # test valid url1
     parameters['video'] = url1
     job1 = Job(parameters)
+    job1.handle_vid()
     # get_from_yet is called in the initialization of job
     # if parameter video is a YouTube URL
     url1_path = job1.video_path
@@ -425,6 +430,7 @@ def test_get_from_yt():
     # test valid url2
     parameters['video'] = url2
     job2 = Job(parameters)
+    job2.handle_vid()
     url2_path = job2.video_path
     check.equal(url2_path,expected_path2)
     check.equal(expected_duration2, get_vid_duration(url2_path))
@@ -432,6 +438,7 @@ def test_get_from_yt():
     # test valid url3
     parameters['video'] = url3
     job3 = Job(parameters)
+    job3.handle_vid()
     url3_path = job3.video_path
     check.equal(url3_path,expected_path3)
     check.equal(expected_duration3, get_vid_duration(url3_path))
