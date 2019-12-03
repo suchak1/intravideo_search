@@ -102,7 +102,7 @@ class Job:
     def classify_frames(self):
         frames = self.get_frames()
         num_frames = len(frames)
-        print('Classifying {num_frames} frames...')
+        print(f'Classifying {num_frames} frames...')
         results = self.multi_map(self.classify_frame, frames)
         print(f'{num_frames} frames classified successfully.')
         return list(sorted(results, key=lambda x: x[0]))
