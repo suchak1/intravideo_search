@@ -47,7 +47,11 @@ pipreqs ./ --force
 
 ### Testing
 
-- To run all tests, run
+- To run all tests, first make the test suite executable (bash file).
+    ```
+    chmod +x test_suite.sh
+    ```
+    Then, run
     ```
     PYTHON=python ./test_suite.sh
     ```
@@ -77,7 +81,7 @@ This will automatically update/rewrite all Python code in the entire repo to fol
 ## Deployment
 
 
-## Result
+## Running the Program
 
 By running `python src/start.py`, you can start the GUI for yourself and try to add a video. Settings should update as you use the GUI.
 
@@ -85,7 +89,21 @@ By running `python src/start.py`, you can start the GUI for yourself and try to 
 
 2. Enter a search term (or list of search terms delimited by commas - whitespace doesn't matter).
 
-3. Adjust the settings if necessary. A higher confidence level will likely result in not only less false positives but also less clips. A lower poll rate with likely result in not only more precise clip lengths and classification but also longer Job run time.
+3. Adjust the settings if necessary.
+    - A high confidence level will likely result in less false positives but also less clips. A low confidence level will likely result in more false positives but also more clips.
+    - A low poll rate with likely result in more precise clip lengths and classification but also longer Job run time. A high poll rate will likely result in less precise clip lengths and classifications but also shorter Job run time.
+
+4. To enable multiprocessing (CPU intensive concurrency), enable the multiprocessing checkmark. This is an experimental feature that will drastically speed up the Job but also eat up CPU resources.
+
+5. Press `Start Job` to start a Job with the specified settings and inputs (video and search terms). You can cancel at any time as the `Start` button will automatically become a `Cancel` button.
+
+6. When the Job completes, the Log will output whether any relevant clips where found and how many. These clips will be saved in the source video's original filepath.
+
+***Extra:***
+7. Press `Choose Caption` to choose a video clip to caption. This action is available even while a Job is running.
+
+## Result
+
 ![GUI](pics/gui_v2_working.PNG)
 
 We have also included a Jupyter notebook, so you can part of the backend dynamically.
