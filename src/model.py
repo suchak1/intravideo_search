@@ -230,17 +230,18 @@ class Job:
         for i in range(3):
             try:
                 yt = my_pytube.YouTube(url)
-                title = yt.title
+                vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                title = vid.title
 
                 files = os.listdir(folder_path)
                 already_dl = [file for file in files if title in file and file[-4:] == '.mp4']
 
                 if already_dl:
+                    print(already_dl)
                     vid_path = os.path.join(folder_path, already_dl[0])
                     print(f'Found already downloaded video: {already_dl[0]}')
                     break
 
-                vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
                 print('Downloading video...')
                 vid_path = vid.download(output_path=folder_path)
                 print('Download complete.')
