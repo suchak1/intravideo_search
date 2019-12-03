@@ -19,19 +19,12 @@ class Job:
     "Model - data logic"
 
     def __init__(self, settings):
-        if not isinstance(settings, type(None)):
-            if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
-                yt_vid_path = self.get_from_yt(settings['video'])
-                if not yt_vid_path: # if empty string
-                    self.video_path = settings['video']
-                else: # if YouTube video successfully downloaded
-                    self.video_path = yt_vid_path
-            else: # if given string was not a YouTube URL
-                self.video_path = settings['video']
-            self.settings = settings['settings']
-        else:
+        if isinstance(settings, type(None)):
             self.video_path = None
             self.settings = None
+        else:
+            self.settings = settings['settings']
+            self.video_path = settings['video']
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
 
@@ -49,14 +42,24 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
-    def do_the_job(self):  # , queue=None):
+    def handle_vid(self):
+        video_path = self.video_path
+        if 'youtube.com' in video_path or 'youtu.be/' in video_path: # if given YouTube URL
+            yt_vid_path = self.get_from_yt(video_path)
+            if yt_vid_path: # if non-empty string
+                self.video_path = yt_vid_path
+
+    def do_the_job(self, queue=None):
+        self.handle_vid()
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
         self.settings['runtime'] = int(mRuntime // 1000)
         data = self.classify_frames()
         results = self.interpret_results(data, self.settings['conf'])
-        return self.save_clips(results)
+        queue.put(len(results))
+        self.save_clips(results)
+        return queue
 
     def get_frame(self, timestamp):
         video = cv2.VideoCapture(self.video_path)
@@ -76,13 +79,15 @@ class Job:
         # element is the timestamp. For example, if poll is 5, get_frames()
         # will return a frame every 5 seconds at timestamps 0, 5, 10, etc.
         # seconds, i.e. it will return [(frame, 0), (frame, 5), (frame, 10)...]
+        print('Retrieving video frames...')
         poll = int(self.settings['poll'])
         runtime = int(self.settings['runtime'])
         poll_times = list(range(0, runtime + poll, poll))
         timestamps = [time for time in poll_times if time <= runtime]
         frames = self.multi_map(self.get_frame, timestamps)
         frames = [frame for frame in frames if frame]
-        self.frame_len = len(frames)
+        frame_num = len(frames)
+        print(f'{frame_num} frames retrieved successfully.')
         return frames
 
     def classify_frame(self, frame):
@@ -90,12 +95,16 @@ class Job:
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
-                print(f'{term} at {time} sec')
+                prob = round(classifications[term], 2)
+                print(f'{term} at {time} sec with probability: {prob}%')
         return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
         frames = self.get_frames()
+        num_frames = len(frames)
+        print(f'Classifying {num_frames} frames...')
         results = self.multi_map(self.classify_frame, frames)
+        print(f'{num_frames} frames classified successfully.')
         return list(sorted(results, key=lambda x: x[0]))
 
     def score(self, confidence_dict):
@@ -197,8 +206,16 @@ class Job:
 
 
     def save_clips(self, timestamps):
-        return len(timestamps) and len(self.multi_map(
-            Worker(self.video_path).make_clip, timestamps))
+        clip_num = len(timestamps)
+        if not timestamps:
+            print('No clips found.')
+        else:
+            print(f'Saving {clip_num} clips...')
+        success = timestamps and self.multi_map(
+            Worker(self.video_path).make_clip, timestamps)
+        if success:
+            print(f'{clip_num} clips saved successfully.')
+        return success
 
 
     def kill(self):
@@ -210,20 +227,30 @@ class Job:
         # output string of path to downloaded video
         folder_path = './test'
         vid_path = ''
-        try:
-            yt = my_pytube.YouTube(url)
-            vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-            vid_path = vid.download(output_path=folder_path)
-        except Exception as e:
-            for i in range(3):
-                try:
-                    yt = my_pytube.YouTube(url)
-                    vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-                    vid_path = vid.download(output_path=folder_path)
-                except:
+        for i in range(3):
+            try:
+                yt = my_pytube.YouTube(url)
+                vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
+                title = vid.title
+
+                files = os.listdir(folder_path)
+                already_dl = [file for file in files if title in file and file[-4:] == '.mp4']
+
+                if already_dl:
+                    print(already_dl)
+                    vid_path = os.path.join(folder_path, already_dl[0])
+                    print(f'Found already downloaded video: {already_dl[0]}')
+                    break
+
+                print('Downloading video...')
+                vid_path = vid.download(output_path=folder_path)
+                print('Download complete.')
+            except Exception as e:
+                if i == 2:
+                    raise ValueError("Your video could not be downloaded: %s" % e)
+                else:
                     time.sleep(5)
-            if vid_path=='':
-                raise ValueError("Your video could not be downloaded: %s" % e)
+
         return vid_path
 
 class Seer():

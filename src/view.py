@@ -8,15 +8,15 @@ import os
 import cv2
 import pygubu
 import re
-from multiprocessing import Process  # , Queue, Manager
+from multiprocessing import Process, Queue, Manager
 import multiprocessing as mp
 # -*- coding: utf-8 -*-
 
 
 # set the default values for the GUI constructor.
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
-# manager = Manager()
-# q = manager.Queue()
+manager = Manager()
+q = manager.Queue()
 
 class GUI:
 
@@ -33,7 +33,7 @@ class GUI:
         self.prog_num = 0
         self.prog_len = 100
         self.master = master
-        # self.queue = q
+        self.queue = q
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -144,11 +144,9 @@ class GUI:
             if ret:
                 frame = Image.fromarray(frame)
                 caption = str(self.seer.tell_us_oh_wise_one(frame))
-                mid = int(len(caption) // 2)
-                wrapped = caption[:mid] + '-\n' + caption[mid:]
                 text.configure(state=tk.NORMAL)
                 text.delete(1.0, tk.END)
-                text.insert(1.0, wrapped)
+                text.insert(1.0, caption)
                 text.configure(state=tk.DISABLED)
                 btn['text'] = 'Clear Caption'
 
@@ -204,8 +202,8 @@ class GUI:
         process = self.process
         if self.process:
             exitcode = self.process.exitcode
-            print(exitcode)
             if exitcode is not None:
+                print('Process exited.')
                 self.process.terminate()
                 self.process.join()
                 self.job.kill()
@@ -214,10 +212,11 @@ class GUI:
                 self.builder.get_object('Start')['text'] = 'Start Job'
                 self.builder.get_object('Status')['text'] = 'Done.'
                 pbar['value'] = 100
-                if exitcode == 0:
+                num_vids = self.queue.get()
+                if num_vids == 0:
                     self.update_log('SUCCESS: Job completed. No relevant clips found.')
                 else:
-                    self.update_log(f'SUCCESS: Job completed. {exitcode} clips saved in source video path.')
+                    self.update_log(f'SUCCESS: Job completed. {num_vids} clips saved in source video path.')
                 return
             else:
                 self.prog_num += 1
@@ -253,7 +252,7 @@ class GUI:
             self.update_log(f'SUCCESS: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:
-                self.process = Process(target=self.job.do_the_job)#, args=(self.queue,))
+                self.process = Process(target=self.job.do_the_job, args=(self.queue,))
                 btn['text'] = 'Cancel'
                 self.builder.get_object('Status')['text'] = 'Working...'
                 self.process.start()
