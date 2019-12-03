@@ -415,10 +415,12 @@ def test_get_from_yt():
     expected_duration2 = 359
     expected_duration3 = 228
     job0 = Job(parameters)
+    job0.handle_vid()
 
     # test valid url1
     parameters['video'] = url1
     job1 = Job(parameters)
+    job1.handle_vid()
     # get_from_yet is called in the initialization of job
     # if parameter video is a YouTube URL
     url1_path = job1.video_path
@@ -428,6 +430,7 @@ def test_get_from_yt():
     # test valid url2
     parameters['video'] = url2
     job2 = Job(parameters)
+    job2.handle_vid()
     url2_path = job2.video_path
     check.equal(url2_path,expected_path2)
     check.equal(expected_duration2, get_vid_duration(url2_path))
@@ -435,6 +438,7 @@ def test_get_from_yt():
     # test valid url3
     parameters['video'] = url3
     job3 = Job(parameters)
+    job3.handle_vid()
     url3_path = job3.video_path
     check.equal(url3_path,expected_path3)
     check.equal(expected_duration3, get_vid_duration(url3_path))

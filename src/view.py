@@ -144,11 +144,9 @@ class GUI:
             if ret:
                 frame = Image.fromarray(frame)
                 caption = str(self.seer.tell_us_oh_wise_one(frame))
-                mid = int(len(caption) // 2)
-                wrapped = caption[:mid] + '-\n' + caption[mid:]
                 text.configure(state=tk.NORMAL)
                 text.delete(1.0, tk.END)
-                text.insert(1.0, wrapped)
+                text.insert(1.0, caption)
                 text.configure(state=tk.DISABLED)
                 btn['text'] = 'Clear Caption'
 

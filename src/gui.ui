@@ -65,6 +65,7 @@
               <object class="ttk.Button" id="Browse">
                 <property name="command">on_browse_click</property>
                 <property name="state">normal</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">Browse...</property>
                 <layout>
                   <property name="column">2</property>
@@ -109,6 +110,7 @@
             <child>
               <object class="ttk.Button" id="Add">
                 <property name="command">add_youtube_link</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">Add</property>
                 <layout>
                   <property name="column">0</property>
@@ -132,6 +134,7 @@
             <child>
               <object class="ttk.Button" id="Clear">
                 <property name="command">del_youtube_link</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">Clear</property>
                 <layout>
                   <property name="column">2</property>
@@ -332,7 +335,7 @@
                 <property name="command">start_btn_handler</property>
                 <property name="default">active</property>
                 <property name="state">normal</property>
-                <property name="takefocus">true</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">Start Job</property>
                 <property name="width">11</property>
                 <layout>
@@ -371,6 +374,7 @@
             <child>
               <object class="ttk.Button" id="Caption_Button">
                 <property name="command">handle_caption_btn</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">Choose Clip</property>
                 <property name="width">CA</property>
                 <layout>
@@ -433,7 +437,6 @@
             <property name="background">#424242</property>
             <property name="blockcursor">false</property>
             <property name="exportselection">true</property>
-            <property name="font">ansifixed</property>
             <property name="foreground">#ffffff</property>
             <property name="height">2</property>
             <property name="relief">groove</property>
