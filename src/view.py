@@ -204,8 +204,8 @@ class GUI:
         process = self.process
         if self.process:
             exitcode = self.process.exitcode
-            print(exitcode)
             if exitcode is not None:
+                print('Process exited.')
                 self.process.terminate()
                 self.process.join()
                 self.job.kill()

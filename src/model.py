@@ -19,19 +19,11 @@ class Job:
     "Model - data logic"
 
     def __init__(self, settings):
-        if not isinstance(settings, type(None)):
-            if 'youtube.com' in settings['video'] or 'youtu.be/' in settings['video']: # if given YouTube URL
-                yt_vid_path = self.get_from_yt(settings['video'])
-                if not yt_vid_path: # if empty string
-                    self.video_path = settings['video']
-                else: # if YouTube video successfully downloaded
-                    self.video_path = yt_vid_path
-            else: # if given string was not a YouTube URL
-                self.video_path = settings['video']
-            self.settings = settings['settings']
-        else:
+        if isinstance(settings, type(None)):
             self.video_path = None
             self.settings = None
+        else:
+            self.settings = settings
         # disable multiprocessing on mac os
         self.multi = sys.platform != 'darwin'
 
@@ -49,7 +41,19 @@ class Job:
         else:
             return [fxn(elem) for elem in arr]
 
+    def handle_vid(self):
+        if 'youtube.com' in self.settings['video'] or 'youtu.be/' in self.settings['video']: # if given YouTube URL
+            yt_vid_path = self.get_from_yt(self.settings['video'])
+            if not yt_vid_path: # if empty string
+                self.video_path = self.settings['video']
+            else: # if YouTube video successfully downloaded
+                self.video_path = yt_vid_path
+        else: # if given string was not a YouTube URL
+            self.video_path = self.settings['video']
+        self.settings = self.settings['settings']
+
     def do_the_job(self, queue=None):
+        self.handle_vid()
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
@@ -92,7 +96,8 @@ class Job:
         classifications = Worker().classify_img(img)
         for term in self.settings['search']:
             if term in classifications:
-                print(f'{term} at {time} sec')
+                prob = round(classifications[term], 2)
+                print(f'{term} at {time} sec with probability: {prob}%')
         return (time, self.score(classifications) / 100)
 
     def classify_frames(self):
