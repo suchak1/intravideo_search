@@ -53,10 +53,18 @@ Wrote final design document.
 Created feature in GUI to select an output clip and provide a caption, description, of what is happening in the clip.
 
 #### *Krish:*
-Worker `classify_img` and last min various bug fixes, work with *Ralph*, *David*
-Implemented `get_related_words()` for semantic similarity.
-Updated `get_frames()` implementation and testing from Iteration 1. Our previous implementation wrote `opencv` images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the `opencv` images straight to PIL images and store them in memory directly, without writing to the user’s disk.
-Discussed with Rachel on handling updating `get_frames()` tests.
+- Worker `classify_img` and last min various bug fixes, work with *Ralph*, *David*.
+Takes image and outputs classification labels and probabilities.
+- Implemented `get_related_words()` for semantic similarity. Gets related words, so user does not have to search for exact classification label to receive matching clip. For example, search `spring` will get videos of `fountain` as well.
+- Updated `get_frames()` implementation and testing from Iteration 1. Our previous implementation wrote `opencv` images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the `opencv` images straight to PIL images and store them in memory directly, without writing to the user’s disk.
+    - Discussed with Rachel on handling updating `get_frames()` tests.
+
+- Entirety of multiprocessing. Now `get_frames` pulls frames in parallel, `classify_img` classifies images in parallel, and `save_clips` saves clips in parallel as each of the elements of each operation is independent of one another.
+
+- GUI refresh - second version of GUI with theme and responsiveness during Job. Used pygubu Tkinter GUI designer to make it, and loaded the Job in a separate process, so user can still interact with GUI while Job occurs (including cancelling the Job) - before this, GUI would freeze until clips were saved when user clicked Start.
+
+- Blackbox utility (`src/analyze.py`). Allows user to see if search terms are "model-safe" before using GUI and processing/classifying video (not perfect solution, but workaround).
+- Multiprocessing checkmark functionality alongside Mahmoud.
 
 #### *Ralph:*
 Job `classify_frames` and `save_clips`, work with *Rachel*, *Krish*, *David*
