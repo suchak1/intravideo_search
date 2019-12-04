@@ -29,6 +29,11 @@ To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
 ### Installation
 If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
+Here is a YouTube link to an installation guide for the repo in case you get stuck: https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
+
+Feel free to use the resources at CSIL as well to get started, including CSIL staff.
+
+
 1. Clone the repository:
 ```
 $ git clone https://github.com/suchak1/intravideo_search.git
@@ -117,6 +122,26 @@ This will automatically update/rewrite all Python code in the entire repo to fol
 ## Running and Using the Program
 (Make sure you run the program and any utilities in the main dir (`intravideo_search/`).
 
+
+#### Using the blackbox utility
+
+One limitation of the application stems from using free, pretrained ML models that are only trained on 1000 objects. This means that our program only classifies objects and is specifically good at animals. We try to match your search term to the model's classification labels, but we do not always do so perfectly, or many a time 1000 objects is simply too small a sample of the English language to describe your search term. If you search for `beach`, we will also automatically search for `seashore`, `sea`, `coast`, `coastline`, etc on your behalf. However, sometimes this fails.
+
+For example, if you search for `waterfall` in the `test/COSTA_RICA.mp4` video included in the repo, then you may not get any results. However if you search for `fountain` or `spring`, you should get multiple clips of waterfalls/fountains. To be sure, you can query the blackbox, and receive a "model-safe" word or phrase for a search term you want to use.
+
+Run the following to get started:
+```
+python src/analyze.py
+```
+
+Here is the waterfall / fountain example:
+![blackbox](pics/blackbox.PNG)
+
+Note: This feature requires an internet connection just like rest of the application.
+Now, back to the main GUI application!
+
+#### The Main Application
+
 Run `$ python src/start.py` to begin. Then the following steps can be taken from within the GUI.
 
 1. Select a video by:
@@ -148,6 +173,29 @@ Run `$ python src/start.py` to begin. Then the following steps can be taken from
 7. Press `Choose Clip` to choose a video clip to caption. This action is available even while a Job is running.
 
 ![GUI](pics/gui_v2_working.PNG)
+
+## Known Functionality
+
+The following are known functionality and not bugs.
+
+- Log updates for most actions a user takes. For example, starting a job, saving clips (including number of videos).
+
+- Clips save automatically to video's original source path (path at the time of starting the job).
+
+- The progress bar does not measure actual numerical progress, only that a job is still running.
+
+- Some search term inputs or confidence levels can yield no clips (which will be relayed on the GUI log - "No relevant clips found"). You can use the black box utility in `src/analyze.py` (explained in the section above) to use more model-friendly search terms. Also, output on your bash terminal will hint at which confidence levels the program finds your search terms - so you can adjust on the next run.
+
+- Large video files may fill up your memory and cause the program to crash, so only videos your machine can handle are recommended. If your computer has insufficient memory, use the CSIL machines.
+
+- To find related words (words that relate to your search terms), we use an API called Datamuse. Datamuse allows for 100,000 requests per day by a given IP address. Something to keep in mind - the program will probably stop working if you exceed this limit.
+
+- If you cancel a job, make sure you wait for all output of your bash terminal to stop. (This may include "Broken pipes" if you cancel during the classification stage as we are trying shutdown multiple subprocessing using multiple copies of Tensorflow models all at once as gracefully as we can.) Not doing so will probably not affect classification for the next job, but may lead to memory leaks causing system instability.
+
+- Sometimes YouTube videos will not download. The GUI will display an error message on the Log and explain that this is a network error or isssue with `pytube`. This could be an issue with a specific video or wireless connection. We would suggest trying to download at CSIL or trying a different video.
+
+
+## *Extra*
 
 We have also included a Jupyter notebook, so you can part of the backend dynamically.
 Simply run `jupyter notebook` (make sure you have it installed, not a Python package) in the main directory and select `classify_img.ipynb` in your browser. Click Cell in the taskbar/menu and Run All. Now, note that the notebook successfully recognizes a goldfish with 99% confidence. Feel free to input/replace a URL of your choice to test object detection. ![classify_img](pics/classify_img.PNG)
