@@ -7,5 +7,5 @@ TEST_FILES=(
 )
 
 for i in "${TEST_FILES[@]}"; do
-    $PYTHON pytest test/$i -vv
+    $PYTHON -m pytest test/$i -vv
 done
