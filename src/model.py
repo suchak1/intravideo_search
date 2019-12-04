@@ -247,7 +247,6 @@ class Job:
                     break
 
                 print('Downloading video...')
-                assert 1==0
                 vid_path = vid.download(output_path=folder_path)
                 print('Download complete.')
             except Exception as e:
