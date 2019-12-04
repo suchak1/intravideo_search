@@ -65,6 +65,7 @@ Takes image and outputs classification labels and probabilities.
 
 - Blackbox utility (`src/analyze.py`). Allows user to see if search terms are "model-safe" before using GUI and processing/classifying video (not perfect solution, but workaround).
 - Multiprocessing checkmark functionality alongside Mahmoud.
+- Added pseudo-progress bar that loads until Job ends. Collects data on whether process has completed or not. Does not show actual numerical progress - main purpose is to show user that something is happening without user having to look at command line.
 
 #### *Ralph:*
 Job `classify_frames` and `save_clips`, work with *Rachel*, *Krish*, *David*
