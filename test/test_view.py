@@ -33,7 +33,7 @@ set7 = {'conf': 0.5, 'poll': 0, 'anti': 5,
 set8 = {'conf': 0.5, 'poll': -1, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is < 0
 set9 = {'conf': 0.5, 'poll': 500000, 'anti': 5,
-            'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll > 150 - max slider val on gui
+            'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll > 60 - max slider val on gui
 set10 = {'conf': 0.5, 'poll': 5.2, 'anti': 5,
             'runtime': 10, 'search': ['dog', 'pet']}  # should be false, poll is not an integer
 set11 = {'conf': 0.5, 'poll': 5, 'anti': 0,

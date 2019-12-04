@@ -197,7 +197,7 @@ class GUI:
         if not isinstance(conf, float) or conf < 0.0 or conf > 1.0:
             msg = f'ERROR: Invalid confidence level ({conf}).'
             success = False
-        elif not isinstance(poll, int) or poll < 0 or poll > 150:
+        elif not isinstance(poll, int) or poll < 0 or poll > 60:
             msg = f'ERROR: Invalid polling rate ({poll}).'
             success = False
         elif (not isinstance(video_path, str) or
