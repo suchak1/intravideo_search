@@ -68,7 +68,7 @@ Takes image and outputs classification labels and probabilities.
 - Added pseudo-progress bar that loads until Job ends. Collects data on whether process has completed or not. Does not show actual numerical progress - main purpose is to show user that something is happening without user having to look at command line.
 
 #### *Ralph:*
-Job `classify_frames` and `save_clips`, work with *Rachel*, *Krish*, *David*
+Job `classify_frames` and `save_clips`, work with *Rachel*, *Krish*, *David*  
 Updated GUI by reorganizing the grid layout to be more intuitive, visually appealing, and easy to program, added toggling functionality to the Display settings button (now offering Hide settings when clicked), and made the displayed settings dynamically update when any constituent setting is changed (instead of only when Display settings is clicked). Worked alone on these changes, but collaborated with others (*Jeremy*, *Krish*, *David*) while hunting bugs and formulating details of backend implementation and frontend design.
 
 ### Checkpoint for source code
