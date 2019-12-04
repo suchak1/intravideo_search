@@ -215,6 +215,8 @@ class GUI:
                 num_vids = self.queue.get()
                 if num_vids == 0:
                     self.update_log('SUCCESS: Job completed. No relevant clips found.')
+                elif num_vids == -1:
+                    self.update_log('JOB ENDED: Some YouTube videos have squirrley encodings and this is one of them. Please try a different link.')
                 else:
                     self.update_log(f'SUCCESS: Job completed. {num_vids} clips saved in source video path.')
                 return
