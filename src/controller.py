@@ -37,7 +37,7 @@ class Worker:
 
         return results
 
-    def get_related_words(self, word):
+    def get_related_words(self, word, delim='_'):
         # input: string / term
         # output: dictionary of related words
         # to be used in classify_img to help classify objs
@@ -46,7 +46,7 @@ class Worker:
         # the higher the number, the more tolerant the classification results
         num = 20
 
-        words = word.split('_')
+        words = word.split(delim)
         extra = words + [' '.join(words)] if len(words) > 1 else words
         query = '+'.join(words)
         response = requests.get('https://api.datamuse.com/words?ml=' + query)
