@@ -47,18 +47,19 @@ class GUI:
             master.resizable(0, 0)
             # connect callbacks
             builder.connect_callbacks(self)
+            # default checkmark state
+            check = self.builder.get_object('Multi')
+            if sys.platform == 'darwin':
+                check.state(['disabled'])
+                self.multi = None
+            else:
+                check.state(['!alternate'])
+                check.state(['selected'])
+                self.multi = True
+
             self.has_master = True
         else:
             self.has_master = False
-
-        check = self.builder.get_object('Multi')
-        if sys.platform == 'darwin':
-            check.state(['disabled'])
-            self.multi = None
-        else:
-            check.state(['!alternate'])
-            check.state(['selected'])
-            self.multi = True
 
     def set_default_settings(self):
         self.settings = DEFAULT
