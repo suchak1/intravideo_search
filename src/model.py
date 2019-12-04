@@ -50,7 +50,11 @@ class Job:
                 self.video_path = yt_vid_path
 
     def do_the_job(self, queue=None):
-        self.handle_vid()
+        try:
+            self.handle_vid()
+        except:
+            queue.put(-1)
+            return queue
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
@@ -245,6 +249,7 @@ class Job:
                 print('Downloading video...')
                 vid_path = vid.download(output_path=folder_path)
                 print('Download complete.')
+                break
             except Exception as e:
                 if i == 2:
                     raise ValueError("Your video could not be downloaded: %s" % e)

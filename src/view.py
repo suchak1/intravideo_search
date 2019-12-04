@@ -210,13 +210,17 @@ class GUI:
                 self.job = None
                 self.process = None
                 self.builder.get_object('Start')['text'] = 'Start Job'
-                self.builder.get_object('Status')['text'] = 'Done.'
                 pbar['value'] = 100
                 num_vids = self.queue.get()
                 if num_vids == 0:
                     self.update_log('SUCCESS: Job completed. No relevant clips found.')
+                    self.builder.get_object('Status')['text'] = 'Done.'
+                elif num_vids == -1:
+                    self.update_log('OH DEAR: Some YouTube videos have squirrley encodings and this is one of them. Please try a different link.')
+                    self.builder.get_object('Status')['text'] = 'Aborted.'
                 else:
                     self.update_log(f'SUCCESS: Job completed. {num_vids} clips saved in source video path.')
+                    self.builder.get_object('Status')['text'] = 'Done.'
                 return
             else:
                 self.prog_num += 1
@@ -249,7 +253,7 @@ class GUI:
         if self.verify_settings():
             settings = self.get_settings()
             self.job = Job(settings)
-            self.update_log(f'SUCCESS: Processing job with settings: {settings}')
+            self.update_log(f'PROCESSING: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:
                 self.process = Process(target=self.job.do_the_job, args=(self.queue,))
