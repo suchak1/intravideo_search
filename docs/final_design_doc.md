@@ -10,7 +10,7 @@
 
 #### Proposed, but not implemented functionality:
 - We decided to simply save clips to disk, so we could focus on other functionality instead of letting user view or choose clips first in the GUI itself.
-- We eliminated the need for error messages using a slider that forced the user to select from the set of valid input values. Therefore, the only valid inputs are ones that are available on the GUI. We test for invalid inputs too in `verify_settings()` in view.py
+- We eliminated the need for error messages using a slider that forced the user to select from the set of valid input values. Therefore, the only valid inputs are ones that are available on the GUI. We test for invalid inputs too in `verify_settings` in view.py
 
 #### Implemented, but not proposed functionality:
 - The application can take YouTube links and download them + automatically add them to the Job pipeline for classification.
@@ -23,14 +23,14 @@
 GUI `get_settings` and `set_settings`, work with *Jeremy*, *AK*
 Added a start and cancel button to the GUI and added the functions to connect the frontend and the backend.
 Introduced functions to capture any errors from the code and display them to the user.
-Worked with *Jeremy* to optimize the GUI and its features and worked with *AK* to make `set_settings()` produce robust error messages for the user.
+Worked with *Jeremy* to optimize the GUI and its features and worked with *AK* to make `set_settings` produce robust error messages for the user.
 
 
 
 #### *Rachel:*
 Job constructor and `get_frames`, work with *Ralph*
 Implemented an option for the user to input a URL link to a YouTube video instead of uploading a video file.
-Discussed with *Krish* on handling updating `get_frames()` tests.
+Discussed with *Krish* on handling updating `get_frames` tests.
 
 #### *Jeremy:*
 GUI constructor and render, work with *Mahmoud*, *AK*
@@ -45,7 +45,7 @@ Implemented the `Seer class`. This is the captioning feature of the project.
 #### *AK:*
 `Job` `start_job` and `kill_job`, work with *Jeremy*, *Mahmoud*
 Wrote and aggregated error messages in the GUI so the program could directly tell users what parts of their input were entered or processed incorrectly.
-Worked with *Mahmoud* to make `set_settings()` produce robust error messages for user.
+Worked with *Mahmoud* to make `set_settings` produce robust error messages for user.
 Wrote final design document.
 
 #### *Michael:*
@@ -55,9 +55,9 @@ Created feature in GUI to select an output clip and provide a caption, descripti
 #### *Krish:*
 - Worker `classify_img` and last min various bug fixes, work with *Ralph*, *David*.
 Takes image and outputs classification labels and probabilities.
-- Implemented `get_related_words()` for semantic similarity. Gets related words, so user does not have to search for exact classification label to receive matching clip. For example, search `spring` will get videos of `fountain` as well.
-- Updated `get_frames()` implementation and testing from Iteration 1. Our previous implementation wrote `opencv` images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the `opencv` images straight to PIL images and store them in memory directly, without writing to the user’s disk.
-    - Discussed with Rachel on handling updating `get_frames()` tests.
+- Implemented `get_related_words` for semantic similarity. Gets related words, so user does not have to search for exact classification label to receive matching clip. For example, search `spring` will get videos of `fountain` as well.
+- Updated `get_frames` implementation and testing from Iteration 1. Our previous implementation wrote `opencv` images to disk and then converted them to PIL images, cleaning up the image files on disk afterwards. Now, we convert the `opencv` images straight to PIL images and store them in memory directly, without writing to the user’s disk.
+    - Discussed with Rachel on handling updating `get_frames` tests.
 
 - Entirety of multiprocessing. Now `get_frames` pulls frames in parallel, `classify_img` classifies images in parallel, and `save_clips` saves clips in parallel as each of the elements of each operation is independent of one another.
 
