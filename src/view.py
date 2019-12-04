@@ -9,7 +9,6 @@ import cv2
 import pygubu
 import re
 from multiprocessing import Process, Queue, Manager
-import multiprocessing as mp
 import sys
 # -*- coding: utf-8 -*-
 
@@ -18,6 +17,7 @@ import sys
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
 manager = Manager()
 q = manager.Queue()
+
 
 class GUI:
 
@@ -35,7 +35,7 @@ class GUI:
         self.prog_len = 100
         self.master = master
         self.queue = q
-        self.multi=None
+        self.multi=True
 
         # create builder
         self.builder = builder = pygubu.Builder()
@@ -53,8 +53,8 @@ class GUI:
             self.has_master = False
 
         if sys.platform == 'darwin':
-            builder.get_object('Checkbutton_1').configure(state='disabled')
-            self.multi = False
+            builder.get_object('Multi').configure(state='disabled')
+            self.multi = None
 
     def set_default_settings(self):
         self.settings = DEFAULT
@@ -123,6 +123,22 @@ class GUI:
         print(search)
         self.update_log(f'Detected search terms: {search}')
 
+    def handle_check_box(self):
+        check_box = self.builder.get_object('Multi')
+        checked = check_box.instate(['selected'])
+        # if checked:
+        #     check_box.state(['!selected'])
+        # else:
+        #     check_box.state(['selected'])
+        if self.multi is not None:
+            if checked:
+                self.update_log('Multiprocessing enabled. Have fun :)')
+                print('Multiprocessing enabled. WARNING: Fire possible.')
+                self.multi = True
+            else:
+                self.update_log('Multiprocessing disabled. Afraid of fun?')
+                print('Multiprocessing disabled. CRISIS AVERTED.')
+                self.multi = False
     # need to add handler for multiprocessing checkmark
     # and make multi attribute for job that is true by default
 
