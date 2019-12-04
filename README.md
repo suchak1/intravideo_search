@@ -14,9 +14,12 @@
 
 <!---Obtain a free API key.--->
 These are hard requirements, and the program will not work without these.
-- Python 3.7
-- Linux (tested on Ubuntu 1or Windows Subsystem for Linux (WSL)
-- an internet connection (for related words API calls and YouTube downloads)
+- [x] [Anaconda (Python 3.7)](https://www.anaconda.com/distribution/)
+- [x] [Linux (Ubuntu 18.04)(https://ubuntu.com/download/desktop)]
+- [x] an internet connection (for API calls and YouTube downloads)
+
+Click the links above to download and install the software. If you are having trouble or would rather not, please take advantage of CSIL's Linux room. Those computers already have Ubuntu and Anaconda installed. If you are not sure whether Anaconda is installed, please ask CSIL staff for help in confirming. You can even ask them for help in making a new virtual environment (which is described in the next step).
+
 
 ### Contributing
 
@@ -24,19 +27,49 @@ To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
 
 
 ### Installation
+If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
-To install the necessary packages, simply run:
+1. Clone the repository:
 ```
-python -m pip install -r requirements.txt
-```
-
-If there is a problem installing `torch`, try this command:
-
-```
-python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+$ git clone https://github.com/suchak1/intravideo_search.git
 ```
 
-Then, install the rest of requirements as necessary.
+2. Navigate into the main directory (`intravideo_search/`):
+```
+$ cd intravideo_search
+```
+
+3. Create a new (fresh) Python 3.7 virtual environment (called `intra` in this case) for Anaconda:
+```
+$ conda create -n intra python=3.7
+```
+
+4. Activate the new environment:
+```
+$ conda activate intra
+```
+
+    To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
+
+6. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
+
+5. Install the necessary packages by running the following command:
+```
+$ pip install -r requirements.txt
+```
+
+    If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
+
+   If there is an error installing `torch` specifically, use this command:
+   ```
+   $ pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+   ```
+   then install the rest of the requirements as necessary.
+
+
+
+Note: Make sure you specify the right python version when you make these commands if you have multiple python installations, i.e. check to make sure `python -V` yields Python 3.7 otherwise your relevant command may be `python3`.
+
 
 ### New Packages
 
@@ -81,29 +114,38 @@ This will automatically update/rewrite all Python code in the entire repo to fol
 ## Deployment
 
 
-## Running the Program
+## Running and Using the Program
+(Make sure you run the program and any utilities in the main dir (`intravideo_search/`).
 
-By running `python src/start.py`, you can start the GUI for yourself and try to add a video. Settings should update as you use the GUI.
+Run `$ python src/start.py` to begin. Then the following steps can be taken from within the GUI.
 
-1. Enter a YT video and click `Add` to add the video to the pending Job. To clear the video from the job, press `Clear`. Or you can choose a local video on your hard drive with the `Browse` button.
+1. Select a video by:
+   - entering a YouTube video URL and click `Add` to add the video to the pending Job. To clear the video from the Job, click `Clear`.
+      *Note: While hypothetically you can enter any YouTube video you'd like, keep in mind that entering an extremely long video (e.g. baby shark 10 hour version) will likely take a long time to download and a long time to classify all the images. YouTube at your own risk.*
+   - clicking `Browse` and choosing a local video on your hard drive.
 
-2. Enter a search term (or list of search terms delimited by commas - whitespace doesn't matter).
+   You will see your selected video on the right in the Settings box.
 
-3. Adjust the settings if necessary.
-    - A high confidence level will likely result in less false positives but also less clips. A low confidence level will likely result in more false positives but also more clips.
-    - A low poll rate with likely result in more precise clip lengths and classification but also longer Job run time. A high poll rate will likely result in less precise clip lengths and classifications but also shorter Job run time.
+2. Enter a search term (or multiple search terms separated by commas — whitespace doesn't matter).
 
-4. To enable multiprocessing (CPU intensive concurrency), enable the multiprocessing checkmark. This is an experimental feature that will drastically speed up the Job but also eat up CPU resources.
+3. Adjust the settings by moving the sliders in the Settings box.
+    - ***Confidence (%)***: Refers to the confidence score given by the ML classifier (i.e. how confident the classifier is that your searched term appears within a given image). The program will only return clips that have at least the confidence level given in the settings.
 
-5. Press `Start Job` to start a Job with the specified settings and inputs (video and search terms). You can cancel at any time as the `Start` button will automatically become a `Cancel` button.
+    A high confidence level will likely result in fewer false positives, but also fewer clips. A low confidence level will likely result in more false positives, but more clips.
 
-6. When the Job completes, the Log will output whether any relevant clips where found and how many. These clips will be saved in the source video's original filepath.
+    - ***Poll Rate (sec)***: Refers to the frequency with which the program will pull a frame to check for searched items (e.g. a poll rate of 5 seconds will check for any searched items every 5 seconds). The poll rate also determines the length of the resulting clips.
 
-***Extra:***
+    A low poll rate will likely result in more precise clip lengths and classifications, but also longer run time. A high poll rate will likely result in less precise clip lengths and classifications, but also shorter run time.
 
-7. Press `Choose Caption` to choose a video clip to caption. This action is available even while a Job is running.
+4. To enable multiprocessing (CPU intensive concurrency), enable the multiprocessing checkmark. This will drastically speed up the Job but will also eat up CPU resources.
 
-## Result
+5. Press `Start Job` to start a Job with the specified settings and inputs (video and search terms). You can cancel at any time as the `Start Job` button will automatically become a `Cancel` button.
+
+6. When the Job, the Log at the bottom of the window will output whether any relevant clips were found and how many. These clips will be saved in the source video's original filepath.
+
+Extra:
+
+7. Press `Choose Clip` to choose a video clip to caption. This action is available even while a Job is running.
 
 ![GUI](pics/gui_v2_working.PNG)
 

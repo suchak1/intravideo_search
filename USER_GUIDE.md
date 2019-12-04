@@ -93,7 +93,7 @@ Run `$ python src/start.py` to begin. Then the following steps can be taken from
 
 6. When the Job, the Log at the bottom of the window will output whether any relevant clips were found and how many. These clips will be saved in the source video's original filepath.
 
-Extra:
+***Extra:***
 
 7. Press `Choose Clip` to choose a video clip to caption. This action is available even while a Job is running.
 
