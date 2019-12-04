@@ -15,7 +15,7 @@
 <!---Obtain a free API key.--->
 These are hard requirements, and the program will not work without these.
 - [x] [Anaconda (Python 3.7)](https://www.anaconda.com/distribution/)
-- [x] [Linux (Ubuntu 18.04)(https://ubuntu.com/download/desktop)]
+- [x] [Linux (Ubuntu 18.04)](https://ubuntu.com/download/desktop)
 - [x] an internet connection (for API calls and YouTube downloads)
 
 Click the links above to download and install the software. If you are having trouble or would rather not, please take advantage of CSIL's Linux room. Those computers already have Ubuntu and Anaconda installed. If you are not sure whether Anaconda is installed, please ask CSIL staff for help in confirming. You can even ask them for help in making a new virtual environment (which is described in the next step).
@@ -29,7 +29,9 @@ To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
 ### Installation
 If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
-Here is a YouTube link to an installation guide for the repo in case you get stuck: https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
+Here is a YouTube link to an installation guide for the repo in case you get stuck: 
+
+https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
 
 Feel free to use the resources at CSIL as well to get started, including CSIL staff.
 
