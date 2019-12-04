@@ -14,9 +14,12 @@
 
 <!---Obtain a free API key.--->
 These are hard requirements, and the program will not work without these.
-- Python 3.7
-- Linux (tested on Ubuntu 1or Windows Subsystem for Linux (WSL)
-- an internet connection (for related words API calls and YouTube downloads)
+- [x] [Anaconda (Python 3.7)](https://www.anaconda.com/distribution/)
+- [x] [Linux (Ubuntu 18.04)(https://ubuntu.com/download/desktop)]
+- [x] an internet connection (for API calls and YouTube downloads)
+
+Click the links above to download and install the software. If you are having trouble or would rather not, please take advantage of CSIL's Linux room. Those computers already have Ubuntu and Anaconda installed. If you are not sure whether Anaconda is installed, please ask CSIL staff for help in confirming. You can even ask them for help in making a new virtual environment (which is described in the next step).
+
 
 ### Contributing
 
@@ -24,19 +27,54 @@ To get set up, please read the [Guide to Git](docs/GUIDE_TO_GIT.md).
 
 
 ### Installation
+If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
-To install the necessary packages, simply run:
+Here is a YouTube link to an installation guide for the repo in case you get stuck: https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
+
+Feel free to use the resources at CSIL as well to get started, including CSIL staff.
+
+
+1. Clone the repository:
 ```
-python -m pip install -r requirements.txt
+$ git clone https://github.com/suchak1/intravideo_search.git
 ```
 
-If there is a problem installing `torch`, try this command:
-
+2. Navigate into the main directory (`intravideo_search/`):
 ```
-python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+$ cd intravideo_search
 ```
 
-Then, install the rest of requirements as necessary.
+3. Create a new (fresh) Python 3.7 virtual environment (called `intra` in this case) for Anaconda:
+```
+$ conda create -n intra python=3.7
+```
+
+4. Activate the new environment:
+```
+$ conda activate intra
+```
+
+    To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
+
+6. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
+
+5. Install the necessary packages by running the following command:
+```
+$ pip install -r requirements.txt
+```
+
+    If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
+
+   If there is an error installing `torch` specifically, use this command:
+   ```
+   $ pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+   ```
+   then install the rest of the requirements as necessary.
+
+
+
+Note: Make sure you specify the right python version when you make these commands if you have multiple python installations, i.e. check to make sure `python -V` yields Python 3.7 otherwise your relevant command may be `python3`.
+
 
 ### New Packages
 
@@ -81,31 +119,83 @@ This will automatically update/rewrite all Python code in the entire repo to fol
 ## Deployment
 
 
-## Running the Program
+## Running and Using the Program
+(Make sure you run the program and any utilities in the main dir (`intravideo_search/`).
 
-By running `python src/start.py`, you can start the GUI for yourself and try to add a video. Settings should update as you use the GUI.
 
-1. Enter a YT video and click `Add` to add the video to the pending Job. To clear the video from the job, press `Clear`. Or you can choose a local video on your hard drive with the `Browse` button.
+#### Using the blackbox utility
 
-2. Enter a search term (or list of search terms delimited by commas - whitespace doesn't matter).
+One limitation of the application stems from using free, pretrained ML models that are only trained on 1000 objects. This means that our program only classifies objects and is specifically good at animals. We try to match your search term to the model's classification labels, but we do not always do so perfectly, or many a time 1000 objects is simply too small a sample of the English language to describe your search term. If you search for `beach`, we will also automatically search for `seashore`, `sea`, `coast`, `coastline`, etc on your behalf. However, sometimes this fails.
 
-3. Adjust the settings if necessary.
-    - A high confidence level will likely result in less false positives but also less clips. A low confidence level will likely result in more false positives but also more clips.
-    - A low poll rate with likely result in more precise clip lengths and classification but also longer Job run time. A high poll rate will likely result in less precise clip lengths and classifications but also shorter Job run time.
+For example, if you search for `waterfall` in the `test/COSTA_RICA.mp4` video included in the repo, then you may not get any results. However if you search for `fountain` or `spring`, you should get multiple clips of waterfalls/fountains. To be sure, you can query the blackbox, and receive a "model-safe" word or phrase for a search term you want to use.
 
-4. To enable multiprocessing (CPU intensive concurrency), enable the multiprocessing checkmark. This is an experimental feature that will drastically speed up the Job but also eat up CPU resources.
+Run the following to get started:
+```
+python src/analyze.py
+```
 
-5. Press `Start Job` to start a Job with the specified settings and inputs (video and search terms). You can cancel at any time as the `Start` button will automatically become a `Cancel` button.
+Here is the waterfall / fountain example:
+![blackbox](pics/blackbox.PNG)
 
-6. When the Job completes, the Log will output whether any relevant clips where found and how many. These clips will be saved in the source video's original filepath.
+Note: This feature requires an internet connection just like rest of the application.
+Now, back to the main GUI application!
+
+#### The Main Application
+
+Run `$ python src/start.py` to begin. Then the following steps can be taken from within the GUI.
+
+1. Select a video by:
+   - entering a YouTube video URL and click `Add` to add the video to the pending Job. To clear the video from the Job, click `Clear`.
+      *Note: While hypothetically you can enter any YouTube video you'd like, keep in mind that entering an extremely long video (e.g. baby shark 10 hour version) will likely take a long time to download and a long time to classify all the images. YouTube at your own risk.*
+   - clicking `Browse` and choosing a local video on your hard drive.
+
+   You will see your selected video on the right in the Settings box.
+
+2. Enter a search term (or multiple search terms separated by commas — whitespace doesn't matter).
+
+3. Adjust the settings by moving the sliders in the Settings box.
+    - ***Confidence (%)***: Refers to the confidence score given by the ML classifier (i.e. how confident the classifier is that your searched term appears within a given image). The program will only return clips that have at least the confidence level given in the settings.
+
+    A high confidence level will likely result in fewer false positives, but also fewer clips. A low confidence level will likely result in more false positives, but more clips.
+
+    - ***Poll Rate (sec)***: Refers to the frequency with which the program will pull a frame to check for searched items (e.g. a poll rate of 5 seconds will check for any searched items every 5 seconds). The poll rate also determines the length of the resulting clips.
+
+    A low poll rate will likely result in more precise clip lengths and classifications, but also longer run time. A high poll rate will likely result in less precise clip lengths and classifications, but also shorter run time.
+
+4. To enable multiprocessing (CPU intensive concurrency), enable the multiprocessing checkmark. This will drastically speed up the Job but will also eat up CPU resources.
+
+5. Press `Start Job` to start a Job with the specified settings and inputs (video and search terms). You can cancel at any time as the `Start Job` button will automatically become a `Cancel` button.
+
+6. When the Job, the Log at the bottom of the window will output whether any relevant clips were found and how many. These clips will be saved in the source video's original filepath.
 
 ***Extra:***
 
-7. Press `Choose Caption` to choose a video clip to caption. This action is available even while a Job is running.
-
-## Result
+7. Press `Choose Clip` to choose a video clip to caption. This action is available even while a Job is running.
 
 ![GUI](pics/gui_v2_working.PNG)
+
+## Known Functionality
+
+The following are known functionality and not bugs.
+
+- Log updates for most actions a user takes. For example, starting a job, saving clips (including number of videos).
+
+- Clips save automatically to video's original source path (path at the time of starting the job).
+
+- The progress bar does not measure actual numerical progress, only that a job is still running.
+
+- Some search term inputs or confidence levels can yield no clips (which will be relayed on the GUI log - "No relevant clips found"). You can use the black box utility in `src/analyze.py` (explained in the section above) to use more model-friendly search terms. Also, output on your bash terminal will hint at which confidence levels the program finds your search terms - so you can adjust on the next run.
+
+- Large video files may fill up your memory and cause the program to crash, so only videos your machine can handle are recommended. If your computer has insufficient memory, use the CSIL machines.
+
+- To find related words (words that relate to your search terms), we use an API called Datamuse. Datamuse allows for 100,000 requests per day by a given IP address. Something to keep in mind - the program will probably stop working if you exceed this limit.
+
+- If you cancel a job, make sure you wait for all output of your bash terminal to stop. (This may include "Broken pipes" if you cancel during the classification stage as we are trying shutdown multiple subprocessing using multiple copies of Tensorflow models all at once as gracefully as we can.) Not doing so will probably not affect classification for the next job, but may lead to memory leaks causing system instability.
+
+- Sometimes YouTube videos will not download. The GUI will display an error message on the Log and explain that this is a network error or isssue with `pytube`. This could be an issue with a specific video or wireless connection. We would suggest trying to download at CSIL or trying a different video.
+
+
+## *Extra*
 
 We have also included a Jupyter notebook, so you can part of the backend dynamically.
 Simply run `jupyter notebook` (make sure you have it installed, not a Python package) in the main directory and select `classify_img.ipynb` in your browser. Click Cell in the taskbar/menu and Run All. Now, note that the notebook successfully recognizes a goldfish with 99% confidence. Feel free to input/replace a URL of your choice to test object detection. ![classify_img](pics/classify_img.PNG)

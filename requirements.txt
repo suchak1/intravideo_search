@@ -18,3 +18,5 @@ cython==0.29.14
 requests==2.22.0
 ttkthemes==2.4.0
 pygubu==0.9.8.4
+fuzzywuzzy==0.17.0
+python-Levenshtein==0.12.0
