@@ -235,10 +235,10 @@ class Job:
             try:
                 yt = my_pytube.YouTube(url)
                 vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-                title = vid.title
+                name = vid.default_filename
 
                 files = os.listdir(folder_path)
-                already_dl = [file for file in files if title in file and file[-4:] == '.mp4']
+                already_dl = [file for file in files if name in file and file[-4:] == '.mp4']
 
                 if already_dl:
                     print(already_dl)
