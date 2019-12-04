@@ -20,36 +20,41 @@
 ### Who Did What:
 
 #### *Mahmoud:*
-GUI `get_settings` and `set_settings`, work with *Jeremy*, *AK*
+GUI `get_settings` and `set_settings`, work with *Jeremy*, *AK*.
 Added a start and cancel button to the GUI and added the functions to connect the frontend and the backend.
 Introduced functions to capture any errors from the code and display them to the user.
 Worked with *Jeremy* to optimize the GUI and its features and worked with *AK* to make `set_settings` produce robust error messages for the user.
 
-
-
 #### *Rachel:*
-Job constructor and `get_frames`, work with *Ralph*
+`Job` constructor and `get_frames`, work with *Ralph*.
 Implemented an option for the user to input a URL link to a YouTube video instead of uploading a video file.
-Discussed with *Krish* on handling updating `get_frames` tests.
+Discussed with *Krish* on handling updating `get_frames()` tests.
+Wrote `README` for interation 1 and interation 2.
+Wrote user guide with *Krish*.
 
 #### *Jeremy:*
-GUI constructor and render, work with *Mahmoud*, *AK*
-Fixed errors and optimized the GUI in order to improve testing and user experience, e.g. removing add/clear buttons (implementing comma separated search terms instead). Has also made the GUI look as good as possible with current knowledge of the GUI package.
+GUI constructor and render, work with *Mahmoud*, *AK*.
+Fixed errors and optimized the GUI in order to improve testing and user experience, e.g. removing add/clear buttons (implementing comma separated search terms instead). 
+Reworked GUI tests to work in compliance with Travis build. 
+Made GUI look as good as possible with current knowledge of the GUI package.
 Added the `Seer` class sentence caption to the GUI after the process has been started.
 Worked with *Mahmoud* to round out the frontend development and David and *Krish* to connect the frontend with the backend.
 
 #### *David:*
-Job `interpret_results` and `Worker` `make_clip`, work with *Krish* and *Ralph* for `interpret_results`, work with *Ralph* for `make_clip`.
-Implemented the `Seer class`. This is the captioning feature of the project.
+Implemented `interpret_results()` which takes the normalized scores and timestamps of sampled frames and outputs the time-ranges which constitute the positive search results (subclips of the original video) with *Krish* and *Ralph*.
+Implemented `make_clips()` which takes a list of tuples of times, cuts subclips out from the original video, and saves them to a specified directory with *Ralph*.
+Implemented the `Seer class` which is wrapper for the pytorch RNN based model which produces descriptive captions for the subclips created through the search.
+Implemented the error-handling for the YouTube downloading feature, so that now if the download fails for network or encoding reasons the user is notified through the GUI and encouraged to try a different link.
+Did general bug hunting / fixing throughout and was an active member during meetings where we came up with ideas of how to implement the program.
 
 #### *AK:*
-`Job` `start_job` and `kill_job`, work with *Jeremy*, *Mahmoud*
+`Job` `start_job` and `kill_job`, work with *Jeremy*, *Mahmoud*.
 Wrote and aggregated error messages in the GUI so the program could directly tell users what parts of their input were entered or processed incorrectly.
 Worked with *Mahmoud* to make `set_settings` produce robust error messages for user.
 Wrote final design document.
 
 #### *Michael:*
-`Worker` constructor, reviewed majority of PRs
+`Worker` constructor, reviewed majority of PRs.
 Created feature in GUI to select an output clip and provide a caption, description, of what is happening in the clip.
 
 #### *Krish:*
