@@ -13,37 +13,60 @@
 
 <!---Obtain a free API key.--->
 These are hard requirements, and the program will not work without these.
-- [x] Python 3.7
-- [x] Linux (tested on Ubuntu or Windows Subsystem for Linux (WSL))
-    - [Get Ubuntu for Windows 10] (https://tutorials.ubuntu.com/tutorial/tutorial-ubuntu-on-windows#0)
-    - [Get Windows Subsystem for Linux] (https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+- [x] [Anaconda (Python 3.7)](https://www.anaconda.com/distribution/)
+- [x] [Linux (Ubuntu 18.04)(https://ubuntu.com/download/desktop)]
 - [x] an internet connection (for API calls and YouTube downloads)
 
+Click the links above to download and install the software. If you are having trouble or would rather not, please take advantage of CSIL's Linux room. Those computers already have Ubuntu and Anaconda installed. If you are not sure whether Anaconda is installed, please ask CSIL staff for help in confirming. You can even ask them for help in making a new virtual environment (which is described in the next step).
+
 ### Installation
-If all prerequisites are met, follow these instructions to install.
+If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
 1. Clone the repository:
 ```
 $ git clone https://github.com/suchak1/intravideo_search.git
 ```
 
-2. Install the necessary packages by running the following command:
+2. Navigate into the main directory (`intravideo_search/`):
 ```
-$ python -m pip install -r requirements.txt
+$ cd intravideo_search
 ```
-   If there is a problem installing `torch`, use this command:
+
+3. Create a new (fresh) Python 3.7 virtual environment (called `intra` in this case) for Anaconda:
+```
+$ conda create -n intra python=3.7
+```
+
+4. Activate the new environment:
+```
+$ conda activate intra
+```
+
+    To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
+
+6. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
+
+5. Install the necessary packages by running the following command:
+```
+$ pip install -r requirements.txt
+```
+
+    If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
+
+   If there is an error installing `torch` specifically, use this command:
    ```
-   $ python -m pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+   $ pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
    ```
    then install the rest of the requirements as necessary.
 
-Troubleshooting:
-  - If you encounter installation errors, try installing (and eventually running the program) within a virtual environment (using Conda, Python virtualenv, or something similar)
 
-Note: Make sure you specify the right python version when you make these commands if you have multiple python installations, i.e. `python3`.
+
+Note: Make sure you specify the right python version when you make these commands if you have multiple python installations, i.e. check to make sure `python -V` yields Python 3.7 otherwise your relevant command may be `python3`.
 
 
 ## Running and Using the Program
+(Make sure you run the program and any utilities in the main dir (`intravideo_search/`).
+
 Run `$ python src/start.py` to begin. Then the following steps can be taken from within the GUI.
 
 1. Select a video by:
