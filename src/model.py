@@ -249,6 +249,7 @@ class Job:
                 print('Downloading video...')
                 vid_path = vid.download(output_path=folder_path)
                 print('Download complete.')
+                break
             except Exception as e:
                 if i == 2:
                     raise ValueError("Your video could not be downloaded: %s" % e)
