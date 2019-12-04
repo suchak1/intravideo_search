@@ -22,7 +22,9 @@ Click the links above to download and install the software. If you are having tr
 ### Installation
 If all prerequisites are met, follow these instructions to clone the repo and install the necessary Python packages. From this point on, we will assume `python` is the command for your Anaconda Python 3.7 distribution.
 
-Here is a YouTube link to an installation guide for the repo in case you get stuck: https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
+Here is a YouTube link to an installation guide for the repo in case you get stuck: 
+
+https://www.youtube.com/watch?v=SulPm5PEae8&feature=youtu.be
 
 Feel free to use the resources at CSIL as well to get started, including CSIL staff.
 
