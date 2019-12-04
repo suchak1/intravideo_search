@@ -56,16 +56,16 @@ $ conda create -n intra python=3.7
 $ conda activate intra
 ```
 
-    To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
+   To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If   not close bash, and try Step 4 again.
 
-6. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
+5. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
 
-5. Install the necessary packages by running the following command:
+6. Install the necessary packages by running the following command:
 ```
 $ pip install -r requirements.txt
 ```
 
-    If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
+   If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
 
    If there is an error installing `torch` specifically, use this command:
    ```
