@@ -53,7 +53,11 @@ class Job:
                 self.video_path = yt_vid_path
 
     def do_the_job(self, queue=None):
-        self.handle_vid()
+        try:
+            self.handle_vid()
+        except:
+            queue.put(-1)
+            return queue
         video = cv2.VideoCapture(self.video_path)
         video.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
         mRuntime = video.get(cv2.CAP_PROP_POS_MSEC)
@@ -234,10 +238,10 @@ class Job:
             try:
                 yt = my_pytube.YouTube(url)
                 vid = yt.streams.filter(file_extension = 'mp4',progressive=True).first()
-                title = vid.title
+                name = vid.default_filename
 
                 files = os.listdir(folder_path)
-                already_dl = [file for file in files if title in file and file[-4:] == '.mp4']
+                already_dl = [file for file in files if name in file and file[-4:] == '.mp4']
 
                 if already_dl:
                     print(already_dl)
@@ -248,6 +252,7 @@ class Job:
                 print('Downloading video...')
                 vid_path = vid.download(output_path=folder_path)
                 print('Download complete.')
+                break
             except Exception as e:
                 if i == 2:
                     raise ValueError("Your video could not be downloaded: %s" % e)
