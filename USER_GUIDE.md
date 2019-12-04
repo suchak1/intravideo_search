@@ -14,7 +14,7 @@
 <!---Obtain a free API key.--->
 These are hard requirements, and the program will not work without these.
 - [x] [Anaconda (Python 3.7)](https://www.anaconda.com/distribution/)
-- [x] [Linux (Ubuntu 18.04](https://ubuntu.com/download/desktop)]
+- [x] [Linux (Ubuntu 18.04)](https://ubuntu.com/download/desktop)
 - [x] an internet connection (for API calls and YouTube downloads)
 
 Click the links above to download and install the software. If you are having trouble or would rather not, please take advantage of CSIL's Linux room. Those computers already have Ubuntu and Anaconda installed. If you are not sure whether Anaconda is installed, please ask CSIL staff for help in confirming. You can even ask them for help in making a new virtual environment (which is described in the next step).
@@ -49,16 +49,16 @@ $ conda create -n intra python=3.7
 $ conda activate intra
 ```
 
-    To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
+   To make sure the environment switched to `intra`, you can do `conda env list` and make sure the star is on the same row as `intra`. If not close bash, and try Step 4 again.
 
-6. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
+5. Confirm that running `python -V` yields Python 3.7. If not, make sure you specified the right Python version in Step 3 and have Anaconda for Python 3.7.
 
-5. Install the necessary packages by running the following command:
+6. Install the necessary packages by running the following command:
 ```
 $ pip install -r requirements.txt
 ```
 
-    If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
+   If the installation hangs for more than 10 min, cancel the command (Ctrl + C) and try again or ask staff at CSIL for help installing packages if you are at Crerar.
 
    If there is an error installing `torch` specifically, use this command:
    ```
