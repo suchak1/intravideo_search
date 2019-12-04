@@ -271,9 +271,11 @@
               </object>
             </child>
             <child>
-              <object class="ttk.Checkbutton" id="Checkbutton_1">
+              <object class="ttk.Checkbutton" id="Multi">
+                <property name="command">handle_check_box</property>
+                <property name="compound">bottom</property>
                 <property name="state">normal</property>
-                <property name="takefocus">true</property>
+                <property name="takefocus">false</property>
                 <property name="text" translatable="yes">multiprocessing</property>
                 <layout>
                   <property name="column">1</property>

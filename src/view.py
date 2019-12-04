@@ -9,7 +9,7 @@ import cv2
 import pygubu
 import re
 from multiprocessing import Process, Queue, Manager
-import multiprocessing as mp
+import sys
 # -*- coding: utf-8 -*-
 
 
@@ -17,6 +17,7 @@ import multiprocessing as mp
 DEFAULT = {'conf': .5, 'poll': 5, 'anti': 5, 'runtime': 1, 'search': []}
 manager = Manager()
 q = manager.Queue()
+
 
 class GUI:
 
@@ -46,6 +47,16 @@ class GUI:
             master.resizable(0, 0)
             # connect callbacks
             builder.connect_callbacks(self)
+            # default checkmark state
+            check = self.builder.get_object('Multi')
+            if sys.platform == 'darwin':
+                check.state(['disabled'])
+                self.multi = None
+            else:
+                check.state(['!alternate'])
+                check.state(['selected'])
+                self.multi = True
+
             self.has_master = True
         else:
             self.has_master = False
@@ -117,6 +128,22 @@ class GUI:
         print(search)
         self.update_log(f'Detected search terms: {search}')
 
+    def handle_check_box(self):
+        check_box = self.builder.get_object('Multi')
+        checked = check_box.instate(['selected'])
+        # if checked:
+        #     check_box.state(['!selected'])
+        # else:
+        #     check_box.state(['selected'])
+        if self.multi is not None:
+            if checked:
+                self.update_log('Multiprocessing enabled. Have fun :)')
+                print('Multiprocessing enabled. WARNING: Fire possible.')
+                self.multi = True
+            else:
+                self.update_log('Multiprocessing disabled. Afraid of fun?')
+                print('Multiprocessing disabled. CRISIS AVERTED.')
+                self.multi = False
     # need to add handler for multiprocessing checkmark
     # and make multi attribute for job that is true by default
 
@@ -252,7 +279,7 @@ class GUI:
         self.parse_search_terms()
         if self.verify_settings():
             settings = self.get_settings()
-            self.job = Job(settings)
+            self.job = Job(settings, self.multi)
             self.update_log(f'PROCESSING: Processing job with settings: {settings}')
             btn = self.builder.get_object('Start')
             try:

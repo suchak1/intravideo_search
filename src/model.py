@@ -18,7 +18,7 @@ class Job:
 
     "Model - data logic"
 
-    def __init__(self, settings):
+    def __init__(self, settings, multi=None):
         if isinstance(settings, type(None)):
             self.video_path = None
             self.settings = None
@@ -26,7 +26,10 @@ class Job:
             self.settings = settings['settings']
             self.video_path = settings['video']
         # disable multiprocessing on mac os
-        self.multi = sys.platform != 'darwin'
+        if multi is None:
+            self.multi = sys.platform != 'darwin'
+        else:
+            self.multi = multi
 
     def multi_map(self, fxn, arr):
         # Given a function and a list to iterate over, multi_map will attempt
