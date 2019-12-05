@@ -176,6 +176,43 @@ Run `$ python src/start.py` to begin. Then the following steps can be taken from
 
 ![GUI](pics/gui_v2_working.PNG)
 
+## Acceptance tests
+
+***Note:*** Multiprocessing/parallelized functions allow for quicker searches, otherwise the application will use slow/non-parallel versions of our functions. To speed up the processes but achieve less accurate results, increase the polling rate.
+
+Here are 3 acceptance tests:
+
+First, run `python src/start.py` to start GUI. Then, choose the test video in `test/COSTA_RICA.mp4` using the `Upload` button. Input each of the following scenarios, and click Start. The output should match the expected outputs below.
+
+1. Test 1
+    - **Input:**
+        - *Confidence:* 30%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* beach
+
+    - **Output:**
+        - 3 clips in `test/` folder all of the beach
+2. Test 2
+    - **Input:**
+        - *Confidence:* 50%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* fountain
+
+    - **Output:**
+        - 3 clips in `test/` 1st and 3rd are waterfalls, 2nd clip is beach
+3. Test 3
+    - **Input:**
+        - *Confidence:* 80%
+        - *Polling Rate:* 2 sec
+        - *Anti:* 5 sec (default)
+        - *Search Terms:* frog
+
+    - **Output:**
+        - 5 clips in `test/` folder first 2 are frogs, middle is komodo dragon, last 2 are snakes
+
+
 ## Known Functionality
 
 The following are known functionality and not bugs.
