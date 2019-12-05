@@ -145,3 +145,5 @@ The following are known functionality and not bugs.
 - If you cancel a job, make sure you wait for all output of your bash terminal to stop. (This may include "Broken pipes" if you cancel during the classification stage as we are trying shutdown multiple subprocessing using multiple copies of Tensorflow models all at once as gracefully as we can.) Not doing so will probably not affect classification for the next job, but may lead to memory leaks causing system instability.
 
 - Sometimes YouTube videos will not download. The GUI will display an error message on the Log and explain that this is a network error or isssue with `pytube`. This could be an issue with a specific video or wireless connection. We would suggest trying to download at CSIL or trying a different video.
+
+- Sometimes the clip captioner gives nonsense captions. This is a limitation of the pretrained model.
