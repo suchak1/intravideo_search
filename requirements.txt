@@ -11,7 +11,7 @@ imageai==2.1.5
 torch==1.3.1
 torchvision==0.4.2
 nltk==3.4.5
-numpy==1.17.4
+numpy==1.22.0
 pickle-mixin==1.0.2
 setuptools==42.0.1
 cython==0.29.14
